@@ -42,6 +42,7 @@ const Form = ({ fClass = '', btnClass = '', btnTxt = 'Submit', hideService = fal
   const success = Boolean(fetcher?.data?.success && fetcher?.data?.message);
 
   const handleVerificationSuccess = (token, ekey) => {
+    console.log({token,ekey});
     setValue("hCaptchaToken", token, { shouldDirty: true, shouldValidate: true });
   };
 

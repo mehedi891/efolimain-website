@@ -183,6 +183,44 @@ export const action = async ({ request }) => {
   // console.log({host:process.env.SMTP_HOST, port:process.env.SMTP_PORT, secure:true, auth:{user:process.env.SMTP_USER, pass:process.env.SMTP_PASS}});
 
 
+  const hToken = data?.hCaptchaToken;
+  if (!hToken) {
+    return {
+      success: false,
+      message: "Please verify that you are not a robot."
+    }
+  }
+
+  const params = new URLSearchParams();
+  params.append("secret", process.env.HCAPTCHA_SECRET_KEY);
+  params.append("response", hToken);
+ 
+
+  try {
+    const res = await fetch("https://api.hcaptcha.com/siteverify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: params,
+    });
+
+    const data = await res.json();
+    if (!data.success) {
+      return {
+        success: false,
+        message: "Captcha verification failed. Please try again."
+      };
+    }
+  } catch (error) {
+    console.error("hCaptcha verification error:", error);
+    return {
+      success: false,
+      message: "Please verify that you are not a robot."
+    };
+  }
+
+
   const mailer = createTransport({
     service: "gmail",
     host: process.env.SMTP_HOST,
@@ -193,6 +231,8 @@ export const action = async ({ request }) => {
       pass: process.env.SMTP_PASS,
     },
   });
+
+
 
   try {
     const sendMail = await mailer.sendMail({
