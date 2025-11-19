@@ -195,7 +195,7 @@ export const action = async ({ request }) => {
   params.append("secret", process.env.HCAPTCHA_SECRET_KEY);
   params.append("response", hToken);
  
-  console.log('sectret:',process.env.HCAPTCHA_SECRET_KEY);
+  
   try {
     const res = await fetch("https://api.hcaptcha.com/siteverify", {
       method: "POST",
@@ -206,7 +206,7 @@ export const action = async ({ request }) => {
     });
 
     const data = await res.json();
-    console.log('Data:',data);
+    // console.log('Data:',data);
     if (!data.success) {
       return {
         success: false,
