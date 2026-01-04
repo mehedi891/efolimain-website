@@ -2,6 +2,7 @@ import Generalfaq from "../../Generalfaq/Generalfaq"
 import sDev from "../../../images/sDevelopmet.webp";
 import sCus from "../../../images/sCustomer.webp";
 
+
 const TextwithImage = () => {
   const faqsArr = [
     {

@@ -3,6 +3,8 @@ import Servicepage from "../component/servicepage/Servicepage"
 import ElegantFloatingText from "../component/Loader/ElegantFloatingText";
 
 
+
+
 export const handle = { darkFooter: true, darkHeader: true, isBannerHide: true };
 
 
