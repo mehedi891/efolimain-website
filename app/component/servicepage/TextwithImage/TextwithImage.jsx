@@ -71,7 +71,6 @@ const TextwithImage = () => {
               <div className="md:w-[48%] ">
                   <h4 className="text-3xl md:text-5xl font-bold font-display tracking-[-1.44px]">Customer Support</h4>
                   <p className="text-base md:text-lg/[1.55] text-[#4B5154] mb-7 mt-5">Real, human-powered 24/7 support teams trained in the Shopify ecosystem. We provide white-label service under your brand, ensuring seamless merchant assistance while you stay focused on scaling your app.</p>
-
                   <Generalfaq
                    faqsArr={faqsArr}
                   />
