@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "react-router build",
-    "dev": "react-router dev",
-    "start": "PORT=6371 npx react-router-serve ./build/server/index.js",
+    "dev": "react-router dev --port 4004",
+    "start": "PORT=4004 npx react-router-serve ./build/server/index.js",
     "lint": "eslint . --cache --max-warnings=0",
     "lint:fix": "eslint . --fix"
   },
