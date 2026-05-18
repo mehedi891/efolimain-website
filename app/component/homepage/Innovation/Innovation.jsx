@@ -7,6 +7,8 @@ import pb_demo from "../../../images/pb.webp";
 import dr_demo from "../../../images/dr.webp";
 import mv_demo from "../../../images/mv_demo.png";
 import em_demo from "../../../images/emDemo.webp";
+import or_thumb from "../../../images/or_thumb.png";
+import or_icon from "../../../images/or_icon.png";
 import { Link } from "react-router";
 import Button from "../../Button/Button";
 import ButtonWithIcon from "../../ButtonWithIcon/ButtonWithIcon";
@@ -105,6 +107,26 @@ const Innovation = () => {
 
 
             <img className="max-w-full max-h-[450px]" loading="lazy" src={em_demo} alt="EmbedUp" />
+
+
+          </div>
+
+          <div className="mt-7 flex md:flex-wrap flex-wrap-reverse items-center justify-between shadow-2xl p-8 rounded-2xl bg-linear-to-r from-[#fff] to-[#f2fbfa]
+        transition ease-in duration-300 hover:scale-105 hover:cursor-pointer hover-drop-shadow-2xl
+        ">
+            <div className="max-w-[550px]">
+              <div className="flex items-center gap-2">
+                <img src={or_icon} alt="Order Rules" className="md:max-w-[42px] max-w-[35px] h-auto" />
+                <h4 className="md:text-2xl text-xl text-[#13181E] font-bold font-display">OrderRules ‑ Store Open Limits</h4>
+              </div>
+              <p className="text-base/[1.75] text-[#4B5154] py-4">Manually toggling your store open and closed, canceling orders that exceed capacity, losing track of daily limits. OrderRules automates all of it.</p>
+              <Link to={"https://orderrules.com"} target="_blank" >
+                <ButtonWithIcon text1="Go to product" text2="Go to product" pClass="text-base font-semibold" />
+              </Link>
+            </div>
+
+
+            <img className="max-w-full max-h-[450px]" loading="lazy" src={or_thumb} alt="Order Rules" />
 
 
           </div>
