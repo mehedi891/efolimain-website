@@ -8,6 +8,8 @@ import mv_demo from "../../../images/mv_demo.png";
 import em_demo from "../../../images/emDemo.webp";
 import or_thumb from "../../../images/or_thumb.png";
 import or_icon from "../../../images/or_icon.png";
+import qwIcon from "./qw-icon.png";
+import qw_demo from "./qw.webp";
 import { Link } from "react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
@@ -63,18 +65,16 @@ const products = [
     glow: "#f43f5e",
     gradient: "from-rose-400 via-pink-500 to-red-500",
   },
-  // {
-  //   key: "qw",
-  //   // TODO: replace with real assets — drop a logo + screenshot in ./ / ../../../images
-  //   // then import them and set icon/demo below (see the other products).
-  //   icon: null,
-  //   demo: null,
-  //   name: "Quotway — Request a Quote",
-  //   desc: "Add a seamless request-a-quote workflow to your store. Let customers submit quote requests, negotiate pricing, and convert them into orders with ease.",
-  //   link: "https://www.quotway.com/",
-  //   glow: "#06b6d4",
-  //   gradient: "from-cyan-300 via-sky-400 to-blue-500",
-  // },
+  {
+    key: "qw",
+    icon: qwIcon,
+    demo: qw_demo,
+    name: "QuotWay — B2B Quote Requests",
+    desc: "QuotWay is a Shopify quote request app for B2B and wholesale stores. Add a “Request a Quote” button, hide prices for selected buyers, manage negotiations and approvals, and convert accepted quotes into Shopify draft orders.",
+    link: "https://www.quotway.com",
+    glow: "#06b6d4",
+    gradient: "from-cyan-300 via-sky-400 to-blue-500",
+  },
 ];
 
 // Renders the product logo, or a lettered gradient badge when no icon asset exists yet.
@@ -135,8 +135,8 @@ const StackCard = ({ p, i, total, progress }) => {
     // Pin below the sticky site header (~6rem tall) so cards never hide under it.
     <div className="sticky top-24 flex h-[calc(100vh-6rem)] items-center justify-center px-4 md:px-6">
       <motion.div
-        style={{ scale, top: `${i * 20}px` }}
-        className="group/card relative w-full max-w-6xl origin-top"
+        style={{ scale, top: `${i * 20}px`, willChange: "transform" }}
+        className="group/card relative w-full max-w-6xl origin-top transform-gpu"
       >
         {/* animated gradient glow border */}
         <div
@@ -145,7 +145,7 @@ const StackCard = ({ p, i, total, progress }) => {
         <Link
           to={p.link}
           target="_blank"
-          className="relative flex h-[72vh] max-h-[560px] flex-col-reverse overflow-hidden rounded-[32px] border border-white/10 bg-[#0a0f1f]/90 backdrop-blur-xl md:flex-row"
+          className="relative flex h-[72vh] max-h-[560px] flex-col-reverse overflow-hidden rounded-[32px] border border-white/10 bg-[#0b1120] md:flex-row"
         >
           {/* spotlight glow */}
           <div
@@ -221,12 +221,12 @@ const Innovation = () => {
           }}
         />
         <div
-          className="absolute -top-24 left-[10%] h-96 w-96 rounded-full bg-[#0D99FF]/25 blur-[120px]"
-          style={{ animation: "efAurora 16s ease-in-out infinite" }}
+          className="absolute -top-24 left-[10%] h-96 w-96 rounded-full bg-[#0D99FF]/25 blur-[110px]"
+          style={{ animation: "efAurora 16s ease-in-out infinite", willChange: "transform" }}
         />
         <div
-          className="absolute top-1/3 right-[5%] h-96 w-96 rounded-full bg-fuchsia-600/20 blur-[130px]"
-          style={{ animation: "efAurora 20s ease-in-out infinite reverse" }}
+          className="absolute top-1/3 right-[5%] h-96 w-96 rounded-full bg-fuchsia-600/20 blur-[110px]"
+          style={{ animation: "efAurora 20s ease-in-out infinite reverse", willChange: "transform" }}
         />
       </div>
 
@@ -272,8 +272,8 @@ const Innovation = () => {
         ))}
       </div>
 
-      {/* tail spacer so the last card settles with breathing room before the next section */}
-      <div className="h-[25vh] md:h-[35vh]" />
+      {/* small tail spacer so the last card settles before the next section */}
+      <div className="h-16 md:h-24" />
     </section>
   );
 };
