@@ -30,6 +30,23 @@ html {
 }
 
 
+/* ---- Innovation (Shopify apps) section animations ---- */
+@keyframes efShimmer {
+  to { background-position: 200% center; }
+}
+@keyframes efSpinGlow {
+  to { transform: rotate(360deg); }
+}
+@keyframes efAurora {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33%      { transform: translate3d(4%, -6%, 0) scale(1.15); }
+  66%      { transform: translate3d(-5%, 4%, 0) scale(0.92); }
+}
+@keyframes efGridPan {
+  to { background-position: 40px 40px; }
+}
+
+
 
 
 

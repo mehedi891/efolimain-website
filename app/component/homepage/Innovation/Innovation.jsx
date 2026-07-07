@@ -1,4 +1,3 @@
-import bg_gradient from "./bg_gradient.webp";
 import mvIcon from "./mv_icon.png";
 import pbIcon from "./pbLogo.png";
 import drIcon from "./drLogo.png";
@@ -10,135 +9,273 @@ import em_demo from "../../../images/emDemo.webp";
 import or_thumb from "../../../images/or_thumb.png";
 import or_icon from "../../../images/or_icon.png";
 import { Link } from "react-router";
-import Button from "../../Button/Button";
-import ButtonWithIcon from "../../ButtonWithIcon/ButtonWithIcon";
-import AnimatedSection from "../../AnimatedSection/AnimatedSection";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
-const Innovation = () => {
+const products = [
+  {
+    key: "mv",
+    icon: mvIcon,
+    demo: mv_demo,
+    name: "MultiVariants — Bulk Order",
+    desc: "Simplify bulk ordering with one click. Apply flexible business rules and watch your sales grow faster with MultiVariants.",
+    link: "https://multivariants.com",
+    glow: "#0D99FF",
+    gradient: "from-sky-400 via-blue-500 to-indigo-500",
+  },
+  {
+    key: "pb",
+    icon: pbIcon,
+    demo: pb_demo,
+    name: "Push Bundle — Build a Box",
+    desc: "Your one-stop bundling solution for Shopify. Build custom product bundles, control pricing rules, and boost your store's AOV with ease.",
+    link: "https://pushbundle.com",
+    glow: "#a855f7",
+    gradient: "from-fuchsia-400 via-purple-500 to-violet-600",
+  },
+  {
+    key: "dr",
+    icon: drIcon,
+    demo: dr_demo,
+    name: "DiscountRay — B2B Custom Pricing",
+    desc: "Create personalized discounts for every customer segment. Define pricing tiers, create conditions, automate exclusive deals.",
+    link: "https://discountray.com",
+    glow: "#f59e0b",
+    gradient: "from-amber-300 via-orange-400 to-rose-500",
+  },
+  {
+    key: "em",
+    icon: emIcon,
+    demo: em_demo,
+    name: "EmbedUp — Sell Anywhere",
+    desc: "Turn any website or blog into a sales channel within minutes. Embed Shopify products seamlessly on WordPress, Wix, Webflow, Squarespace, and more.",
+    link: "https://embedup.com",
+    glow: "#10b981",
+    gradient: "from-emerald-300 via-teal-400 to-cyan-500",
+  },
+  {
+    key: "or",
+    icon: or_icon,
+    demo: or_thumb,
+    name: "OrderRules — Store Open Limits",
+    desc: "Manually toggling your store open and closed, canceling orders that exceed capacity, losing track of daily limits. OrderRules automates all of it.",
+    link: "https://orderrules.com",
+    glow: "#f43f5e",
+    gradient: "from-rose-400 via-pink-500 to-red-500",
+  },
+  // {
+  //   key: "qw",
+  //   // TODO: replace with real assets — drop a logo + screenshot in ./ / ../../../images
+  //   // then import them and set icon/demo below (see the other products).
+  //   icon: null,
+  //   demo: null,
+  //   name: "Quotway — Request a Quote",
+  //   desc: "Add a seamless request-a-quote workflow to your store. Let customers submit quote requests, negotiate pricing, and convert them into orders with ease.",
+  //   link: "https://www.quotway.com/",
+  //   glow: "#06b6d4",
+  //   gradient: "from-cyan-300 via-sky-400 to-blue-500",
+  // },
+];
+
+// Renders the product logo, or a lettered gradient badge when no icon asset exists yet.
+const ProductIcon = ({ p, imgClass, textClass }) =>
+  p.icon ? (
+    <img src={p.icon} alt={p.name} className={imgClass} />
+  ) : (
+    <span
+      className={`bg-gradient-to-br ${p.gradient} bg-clip-text font-display font-bold text-transparent ${textClass}`}
+    >
+      {p.name.trim().charAt(0)}
+    </span>
+  );
+
+// Renders the product screenshot (whole image, never cropped), or a branded
+// gradient placeholder panel when no screenshot asset exists yet.
+const DemoImage = ({ p, imgClass }) =>
+  p.demo ? (
+    <img src={p.demo} alt={p.name} loading="lazy" className={imgClass} />
+  ) : (
+    <div
+      className={`grid h-full w-full place-items-center rounded-2xl bg-gradient-to-br ${p.gradient}`}
+    >
+      <span className="font-display text-3xl font-bold text-white/90 drop-shadow">
+        {p.name.split("—")[0].trim()}
+      </span>
+    </div>
+  );
+
+const GoToProduct = () => (
+  <span className="group/btn mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white">
+    <span className="relative">
+      Go to product
+      <span className="absolute -bottom-1 left-0 block h-px w-full origin-left scale-x-0 bg-current transition-transform duration-500 ease-out group-hover/btn:scale-x-100" />
+    </span>
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 13 13"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="transition-transform duration-300 ease-out group-hover/card:translate-x-1 group-hover/card:-translate-y-1"
+    >
+      <path
+        d="M10.7525 3.97035L2.0955 12.6274L0.673004 11.2049L9.33004 2.54786H1.69981V0.536133H12.7643V11.6006H10.7525V3.97035Z"
+        fill="currentColor"
+      />
+    </svg>
+  </span>
+);
+
+const StackCard = ({ p, i, total, progress }) => {
+  // Each card shrinks slightly as the next one scrolls up to cover it — adds depth.
+  const targetScale = 1 - (total - i) * 0.04;
+  const scale = useTransform(progress, [i / total, 1], [1, targetScale]);
 
   return (
-    <section style={{ backgroundImage: `url(${bg_gradient})` }} className={`md:py-30 py-10 bg-no-repeat bg-cover bg-center`}>
-      <AnimatedSection>
-        <div id="efProducts" className="mx-auto max-w-7xl px-4 md:px-0 ">
-          <h3 className="text-lg text-center text-blue-500 font-[600]">Products</h3>
-          <h2 className="font-display md:text-5xl text-3xl font-bold text-center pt-2 md:mb-20 mb-10">Our Innovative Shopify Apps</h2>
+    // Pin below the sticky site header (~6rem tall) so cards never hide under it.
+    <div className="sticky top-24 flex h-[calc(100vh-6rem)] items-center justify-center px-4 md:px-6">
+      <motion.div
+        style={{ scale, top: `${i * 20}px` }}
+        className="group/card relative w-full max-w-6xl origin-top"
+      >
+        {/* animated gradient glow border */}
+        <div
+          className={`pointer-events-none absolute -inset-px rounded-[32px] bg-gradient-to-r ${p.gradient} opacity-40 blur-md transition-opacity duration-500 group-hover/card:opacity-70`}
+        />
+        <Link
+          to={p.link}
+          target="_blank"
+          className="relative flex h-[72vh] max-h-[560px] flex-col-reverse overflow-hidden rounded-[32px] border border-white/10 bg-[#0a0f1f]/90 backdrop-blur-xl md:flex-row"
+        >
+          {/* spotlight glow */}
+          <div
+            className="pointer-events-none absolute -top-24 left-10 h-72 w-72 rounded-full opacity-40 blur-3xl transition-opacity duration-500 group-hover/card:opacity-70"
+            style={{ background: p.glow }}
+          />
 
-          <div className="mb-7 flex md:flex-wrap flex-wrap-reverse items-center justify-between shadow-lg p-8 rounded-2xl bg-linear-to-r from-[#fff] to-[#f2fbfa] transition ease-in duration-300 hover:scale-105 hover:cursor-pointer hover-drop-shadow-2xl">
-            <div className="max-w-[550px]">
-              <div className="flex items-center gap-2">
-                <img src={mvIcon} alt="Multivariants" className="md:max-w-[42px] max-w-[35px] h-auto" />
-                <h4 className="md:text-2xl text-xl text-[#13181E] font-bold font-display">MultiVariants ‑ Bulk Order</h4>
-              </div>
-              <p className="text-base/[1.75] text-[#4B5154] py-4">Simplify bulk ordering with one click. Apply flexible business rules and watch your sales grow faster with MultiVariants.</p>
-              <Link to={"https://multivariants.com"} target="_blank" >
-                <ButtonWithIcon text1="Go to product" text2="Go to product" pClass="text-base font-semibold" />
-              </Link>
+          {/* content */}
+          <div className="relative z-10 flex flex-1 flex-col justify-center p-6 sm:p-10 md:w-1/2 md:flex-none md:p-14">
+            {/* big index watermark */}
+            <span className="pointer-events-none absolute right-4 top-2 select-none font-display text-[120px] font-bold leading-none text-white/[0.04] md:text-[180px]">
+              {String(i + 1).padStart(2, "0")}
+            </span>
 
+            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-white/70">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              {String(i + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+            </span>
 
-
-
+            <div className="mt-5 flex items-center gap-3">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/10 backdrop-blur">
+                <ProductIcon
+                  p={p}
+                  imgClass="h-8 w-8 object-contain"
+                  textClass="text-2xl"
+                />
+              </span>
+              <h4 className="font-display text-2xl font-bold text-white sm:text-3xl md:text-4xl">
+                {p.name}
+              </h4>
             </div>
 
-            <div className="max-w-[450px]">
-              <img className="object-fill h-auto w-auto" src={mv_demo} alt="Multivariants" />
-            </div>
-
-
-
+            <p className="mt-4 max-w-xl text-base/[1.75] text-white/60">
+              {p.desc}
+            </p>
+            <GoToProduct />
           </div>
 
-          <div className="flex flex-wrap gap-7 justify-between">
-
-            <div className=" flex md:flex-wrap flex-wrap-reverse flex-col-reverse gap-4 items-center justify-self-end md:gap-12 shadow-lg p-8 rounded-2xl bg-linear-to-r from-[#fff] to-[#f2fbfa] max-w-full md:max-w-[50%] flex-1
-          transition ease-in duration-300 hover:scale-105 hover:cursor-pointer hover-drop-shadow-2xl 
-          ">
-              <div className="max-w-[550px]">
-                <div className="flex items-center gap-2">
-                  <img src={pbIcon} alt="Multivariants" className="md:max-w-[42px] max-w-[35px] h-auto rounded-sm" />
-                  <h4 className="md:text-2xl text-xl text-[#13181E] font-bold font-display">Push Bundle ‑ Build a Box</h4>
-                </div>
-                <p className="text-base/[1.75] text-[#4B5154] py-4">Your one-stop bundling solution for Shopify. Build custom product bundles, control pricing rules, and boost your store’s AOV with ease.</p>
-                <Link to={"https://pushbundle.com"} target="_blank">
-                  <ButtonWithIcon text1="Go to product" text2="Go to product" pClass="text-base font-semibold" />
-                </Link>
-              </div>
-
-
-              <img className="max-w-full max-h-[400px]" src={pb_demo} alt="Push Bundle" />
-
-
-            </div>
-
-            <div className=" flex md:flex-wrap flex-wrap-reverse flex-col-reverse gap-4 items-center justify-self-end md:gap-6 shadow-lg p-8 rounded-2xl bg-linear-to-r from-[#fff] to-[#f2fbfa] max-w-full md:max-w-[50%]
-          transition ease-in duration-300 hover:scale-105 hover:cursor-pointer hover-drop-shadow-2xl flex-1
-          ">
-              <div className="max-w-[550px]">
-                <div className="flex items-center gap-2">
-                  <img src={drIcon} alt="DiscountRay" className="md:max-w-[42px] max-w-[35px] h-auto" />
-                  <h4 className="md:text-2xl text-xl text-[#13181E] font-bold font-display">DiscountRay ‑ B2B Custom Pricing</h4>
-                </div>
-                <p className="text-base/[1.75] text-[#4B5154]  py-4">Create personalized discounts for every customer segment. Define pricing tiers, create conditions, automate exclusive deals.</p>
-                <Link to={"https://discountray.com"} target="_blank">
-                  <ButtonWithIcon text1="Go to product" text2="Go to product" pClass="text-base font-semibold" />
-                </Link>
-              </div>
-
-
-              <img className="max-w-full max-h-[400px]" src={dr_demo} alt="DiscountRay" />
-
-
-            </div>
-
+          {/* demo — full screenshot, contained so nothing is cropped */}
+          <div className="relative flex flex-1 items-center justify-center overflow-hidden p-4 sm:p-6 md:w-1/2 md:p-10">
+            <DemoImage
+              p={p}
+              imgClass="max-h-full w-auto max-w-full rounded-xl object-contain shadow-2xl transition-transform duration-700 ease-out group-hover/card:scale-[1.03]"
+            />
           </div>
+        </Link>
+      </motion.div>
+    </div>
+  );
+};
 
-          <div className="mt-7 flex md:flex-wrap flex-wrap-reverse items-center justify-between shadow-2xl p-8 rounded-2xl bg-linear-to-r from-[#fff] to-[#f2fbfa]
-        transition ease-in duration-300 hover:scale-105 hover:cursor-pointer hover-drop-shadow-2xl
-        ">
-            <div className="max-w-[550px]">
-              <div className="flex items-center gap-2">
-                <img src={emIcon} alt="EmbedUp" className="md:max-w-[42px] max-w-[35px] h-auto" />
-                <h4 className="md:text-2xl text-xl text-[#13181E] font-bold font-display">Embedup - sell anywherer</h4>
-              </div>
-              <p className="text-base/[1.75] text-[#4B5154] py-4">Turn any website or blog into a sales channel within minutes. Embed Shopify products seamlessly on WordPress, Wix, Webflow, Squarespace, and more.</p>
-              <Link to={"https://embedup.com"} target="_blank" >
-                <ButtonWithIcon text1="Go to product" text2="Go to product" pClass="text-base font-semibold" />
-              </Link>
-            </div>
+const Innovation = () => {
+  const stackRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: stackRef,
+    offset: ["start start", "end end"],
+  });
 
+  return (
+    <section className="relative bg-[#050813] pt-16 md:pt-28">
+      {/* futuristic grid + aurora backdrop — kept in its OWN clipped layer so it
+          doesn't create an overflow context that would break the sticky stack */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-[0.15]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.4) 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+            maskImage:
+              "radial-gradient(ellipse 80% 50% at 50% 0%, black 20%, transparent 80%)",
+            animation: "efGridPan 8s linear infinite",
+          }}
+        />
+        <div
+          className="absolute -top-24 left-[10%] h-96 w-96 rounded-full bg-[#0D99FF]/25 blur-[120px]"
+          style={{ animation: "efAurora 16s ease-in-out infinite" }}
+        />
+        <div
+          className="absolute top-1/3 right-[5%] h-96 w-96 rounded-full bg-fuchsia-600/20 blur-[130px]"
+          style={{ animation: "efAurora 20s ease-in-out infinite reverse" }}
+        />
+      </div>
 
-            <img className="max-w-full max-h-[450px]" loading="lazy" src={em_demo} alt="EmbedUp" />
+      {/* heading */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, amount: 0.4 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="relative mx-auto max-w-3xl px-4 text-center"
+      >
+        <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-sky-300 backdrop-blur">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-sky-400" />
+          Products
+        </span>
+        <h2 className="mt-5 font-display text-3xl font-bold md:text-5xl">
+          <span
+            className="bg-[linear-gradient(110deg,#ffffff,45%,#7dd3fc,55%,#ffffff)] bg-clip-text text-transparent"
+            style={{
+              backgroundSize: "200% auto",
+              animation: "efShimmer 6s linear infinite",
+            }}
+          >
+            Our Innovative Shopify Apps
+          </span>
+        </h2>
+        <p className="mt-4 text-base/[1.7] text-white/50">
+          Scroll to explore each app — engineered to help modern Shopify
+          merchants sell smarter, scale faster, and automate the busywork.
+        </p>
+      </motion.div>
 
+      {/* stacked scroll cards */}
+      <div id="efProducts" ref={stackRef} className="relative mt-10">
+        {products.map((p, i) => (
+          <StackCard
+            key={p.key}
+            p={p}
+            i={i}
+            total={products.length}
+            progress={scrollYProgress}
+          />
+        ))}
+      </div>
 
-          </div>
-
-          <div className="mt-7 flex md:flex-wrap flex-wrap-reverse items-center justify-between shadow-2xl p-8 rounded-2xl bg-linear-to-r from-[#fff] to-[#f2fbfa]
-        transition ease-in duration-300 hover:scale-105 hover:cursor-pointer hover-drop-shadow-2xl
-        ">
-            <div className="max-w-[550px]">
-              <div className="flex items-center gap-2">
-                <img src={or_icon} alt="Order Rules" className="md:max-w-[42px] max-w-[35px] h-auto" />
-                <h4 className="md:text-2xl text-xl text-[#13181E] font-bold font-display">OrderRules ‑ Store Open Limits</h4>
-              </div>
-              <p className="text-base/[1.75] text-[#4B5154] py-4">Manually toggling your store open and closed, canceling orders that exceed capacity, losing track of daily limits. OrderRules automates all of it.</p>
-              <Link to={"https://orderrules.com"} target="_blank" >
-                <ButtonWithIcon text1="Go to product" text2="Go to product" pClass="text-base font-semibold" />
-              </Link>
-            </div>
-
-
-            <img className="max-w-full max-h-[450px]" loading="lazy" src={or_thumb} alt="Order Rules" />
-
-
-          </div>
-
-        </div>
-      </AnimatedSection>
-
+      {/* tail spacer so the last card settles with breathing room before the next section */}
+      <div className="h-[25vh] md:h-[35vh]" />
     </section>
-  )
-}
+  );
+};
 
-export default Innovation
-
-
-// #f2fbfa
+export default Innovation;
