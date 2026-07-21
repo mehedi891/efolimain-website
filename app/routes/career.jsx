@@ -1,6 +1,13 @@
-import { useNavigation } from "react-router";
+import { useLoaderData, useNavigation } from "react-router";
 import Careerpage from "../component/careerpage/Careerpage"
 import ElegantFloatingText from "../component/Loader/ElegantFloatingText";
+import { getOpenJobs } from "../data/jobs";
+
+export const loader = async () => {
+  // Open positions come from easy.jobs — see app/data/jobs.js
+  const jobs = await getOpenJobs();
+  return { jobs };
+};
 
 export function meta() {
   return [
@@ -245,12 +252,13 @@ export const handle = { darkFooter: true };
 
 const Career = () => {
   const navigation = useNavigation();
+  const { jobs } = useLoaderData();
   return (navigation.state === "loading" ?
     <div className="h-lvh w-lvw bg-blue-50 flex items-center justify-center">
       <ElegantFloatingText text={"Loading..."} />
     </div>
     :
-    <Careerpage />
+    <Careerpage jobs={jobs} />
   )
 }
 

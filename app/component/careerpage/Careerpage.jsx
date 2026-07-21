@@ -3,11 +3,11 @@ import Faq from "./Faq/Faq"
 import Jobs from "./Jobs/Jobs"
 import ShowOffImg from "./ShowOffImg/ShowOffImg"
 
-const Careerpage = () => {
+const Careerpage = ({ jobs = [] }) => {
   return (
     <>
       <CareerHero/>
-      <Jobs/>
+      <Jobs jobs={jobs}/>
       <ShowOffImg/>
       <Faq/>
     </>
