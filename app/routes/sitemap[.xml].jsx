@@ -1,62 +1,88 @@
+import { getAllPosts } from "../data/blogPosts";
+
 const BASE_URL = "https://efoli.com";
 
-const pages = [
-  { path: "/",                                                                                          priority: "1.00" },
-  { path: "/about-us/",                                                                                 priority: "0.80" },
-  { path: "/blog/",                                                                                     priority: "0.80" },
-  { path: "/career/",                                                                                   priority: "0.80" },
-  { path: "/service/",                                                                                  priority: "0.80" },
-  { path: "/contact-us/",                                                                               priority: "0.80" },
-  { path: "/blog/from-shorelines-to-smiles-efolis-annual-gateway-to-saint-martin/",                    priority: "0.80" },
-  { path: "/blog/why-your-ecommerce-store-fails/",                                                     priority: "0.80" },
-  { path: "/blog/how-to-protect-your-business-from-ecommerce-fraud/",                                  priority: "0.80" },
-  { path: "/blog/category/uncategorized/",                                                             priority: "0.64" },
-  { path: "/blog/how-ai-automates-tasks-and-analyzes-customer-behavior/",                              priority: "0.64" },
-  { path: "/blog/ecommerce-ux-tips-that-drive-sales/",                                                 priority: "0.64" },
-  { path: "/blog/conversion-funnel-optimization-for-mobile-ecommerce/",                               priority: "0.64" },
-  { path: "/blog/the-best-color-for-your-add-to-cart-button-at-ecommerce/",                           priority: "0.64" },
-  { path: "/blog/evaluating-the-roi-of-loyalty-programs-for-ecommerce/",                              priority: "0.64" },
-  { path: "/blog/unlocking-ecommerce-growth-choosing-the-perfect-business-model/",                    priority: "0.64" },
-  { path: "/blog/beat-your-email-anxiety-tips-for-confident-communication/",                          priority: "0.64" },
-  { path: "/blog/page/2/",                                                                             priority: "0.64" },
-  { path: "/blog/category/uncategorized/page/2/",                                                     priority: "0.51" },
-  { path: "/blog/ai-in-ecommerce-things-you-must-know-about/",                                        priority: "0.51" },
-  { path: "/blog/common-reasons-why-ecommerce-business-fails/",                                       priority: "0.51" },
-  { path: "/blog/winning-strategies-using-social-proof-to-grow-your-ecommerce-store/",                priority: "0.51" },
-  { path: "/blog/understanding-the-importance-of-offering-complementary-products/",                   priority: "0.51" },
-  { path: "/blog/turn-prospects-into-buyers-master-the-art-of-product-page-design/",                  priority: "0.51" },
-  { path: "/blog/efolis-annual-tour-to-saintmartin/",                                                 priority: "0.51" },
-  { path: "/blog/an-eventful-day-at-efoli-a-memorable-birthday-celebration/",                         priority: "0.51" },
-  { path: "/blog/inkybay-product-personalizer-wins-the-basis-national-ict-award-2022/",               priority: "0.51" },
+/**
+ * Static pages. Blog posts are appended from the CMS at request time.
+ *
+ * URLs have no trailing slash to match the site's canonical form — a sitemap
+ * should only ever list final URLs, never ones that redirect.
+ */
+const staticPages = [
+  { path: "/", priority: "1.00", changefreq: "weekly" },
+  { path: "/blog", priority: "0.90", changefreq: "daily" },
+  { path: "/about-us", priority: "0.80", changefreq: "monthly" },
+  { path: "/service", priority: "0.80", changefreq: "monthly" },
+  { path: "/career", priority: "0.80", changefreq: "weekly" },
+  { path: "/contact-us", priority: "0.80", changefreq: "monthly" },
 ];
 
-export const loader = () => {
-  const lastmod = new Date().toISOString().replace(/\.\d{3}Z$/, "+00:00");
+/** XML-escape a URL (ampersands in query strings must be encoded). */
+const escapeXml = (value) =>
+  String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
 
-  const urls = pages
-    .map(
-      ({ path, priority }) => `
-<url>
-  <loc>${BASE_URL}${path}</loc>
-  <lastmod>${lastmod}</lastmod>
-  <priority>${priority}</priority>
-</url>`
-    )
-    .join("");
+/** W3C datetime, which is what the sitemap spec expects for <lastmod>. */
+const toLastmod = (value) => {
+  const d = new Date(value);
+  if (isNaN(d)) return null;
+  return d.toISOString().replace(/\.\d{3}Z$/, "+00:00");
+};
+
+const buildUrlEntry = ({ loc, lastmod, changefreq, priority }) =>
+  [
+    "<url>",
+    `  <loc>${escapeXml(loc)}</loc>`,
+    lastmod ? `  <lastmod>${lastmod}</lastmod>` : null,
+    changefreq ? `  <changefreq>${changefreq}</changefreq>` : null,
+    priority ? `  <priority>${priority}</priority>` : null,
+    "</url>",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+export const loader = async () => {
+  const posts = await getAllPosts();
+
+  // Newest posts first, and never list anything the CMS marked noIndex.
+  const indexablePosts = posts
+    .filter((post) => post.slug && !post.noIndex)
+    .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+
+  // Freshest post date doubles as the blog index's lastmod.
+  const newestPostDate = indexablePosts[0]?.publishedAt || null;
+
+  const staticEntries = staticPages.map((page) =>
+    buildUrlEntry({
+      loc: `${BASE_URL}${page.path}`,
+      lastmod: page.path === "/blog" ? toLastmod(newestPostDate) : null,
+      changefreq: page.changefreq,
+      priority: page.priority,
+    })
+  );
+
+  const postEntries = indexablePosts.map((post) =>
+    buildUrlEntry({
+      loc: `${BASE_URL}/blog/${post.slug}`,
+      lastmod: toLastmod(post.updatedAt || post.publishedAt),
+      changefreq: "monthly",
+      priority: "0.70",
+    })
+  );
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset
-      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-${urls}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${[...staticEntries, ...postEntries].join("\n")}
 </urlset>`;
 
   return new Response(xml, {
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
-      "Cache-Control": "public, max-age=86400",
+      "Cache-Control": "public, max-age=3600",
     },
   });
 };

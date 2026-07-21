@@ -22,7 +22,7 @@ const Footer = ({ isDark, isBannerHide = false }) => {
             <div className="max-w-[410px]">
               <p className="text-base text-white pb-7">Mission to help fast-growing start-ups and creative enterprises to achieve their goals faster.</p>
               <Link
-                to="/contact-us/"
+                to="/contact-us"
               >
                 <Button
                   pClass="px-7 py-3 bg-white text-[#0D99FF] text-lg font-semibold rounded-lg"
@@ -51,9 +51,9 @@ const Footer = ({ isDark, isBannerHide = false }) => {
           <ul className="text-[18px]/[1.7] ">
             <li className="mb-3"><Link className="transition ease-in duration-200 hover:text-[#0D99FF]" to="/">Home</Link></li>
             <li className="mb-3"><Link className="transition ease-in duration-200 hover:text-[#0D99FF]" to="/#efProducts">Products</Link></li>
-            <li className="mb-3"><Link className="transition ease-in duration-200 hover:text-[#0D99FF]" to="/service/">Services</Link></li>
-            <li className="mb-3"><Link className="transition ease-in duration-200 hover:text-[#0D99FF]" to="/about-us/">About Us</Link></li>
-            <li className="mb-3"><Link className="transition ease-in duration-200 hover:text-[#0D99FF]" to="/contact-us/">Contact</Link></li>
+            <li className="mb-3"><Link className="transition ease-in duration-200 hover:text-[#0D99FF]" to="/service">Services</Link></li>
+            <li className="mb-3"><Link className="transition ease-in duration-200 hover:text-[#0D99FF]" to="/about-us">About Us</Link></li>
+            <li className="mb-3"><Link className="transition ease-in duration-200 hover:text-[#0D99FF]" to="/contact-us">Contact</Link></li>
           </ul>
         </div>
 

@@ -96,7 +96,7 @@ const DemoImage = ({ p, imgClass }) =>
     <img src={p.demo} alt={p.name} loading="lazy" className={imgClass} />
   ) : (
     <div
-      className={`grid h-full w-full place-items-center rounded-2xl bg-gradient-to-br ${p.gradient}`}
+      className={`grid h-full w-full place-items-center rounded-lg bg-gradient-to-br ${p.gradient}`}
     >
       <span className="font-display text-3xl font-bold text-white/90 drop-shadow">
         {p.name.split("—")[0].trim()}
@@ -140,16 +140,16 @@ const StackCard = ({ p, i, total, progress }) => {
       >
         {/* animated gradient glow border */}
         <div
-          className={`pointer-events-none absolute -inset-px rounded-[32px] bg-gradient-to-r ${p.gradient} opacity-40 blur-md transition-opacity duration-500 group-hover/card:opacity-70`}
+          className={`pointer-events-none absolute -inset-px rounded-2xl bg-gradient-to-r ${p.gradient} opacity-20 blur-[2px] transition-opacity duration-500 group-hover/card:opacity-40`}
         />
         <Link
           to={p.link}
           target="_blank"
-          className="relative flex h-[72vh] max-h-[560px] flex-col-reverse overflow-hidden rounded-[32px] border border-white/10 bg-[#0b1120] md:flex-row"
+          className="relative flex h-[72vh] max-h-[560px] flex-col-reverse overflow-hidden rounded-2xl border border-white/10 bg-[#0b1120] md:flex-row"
         >
           {/* spotlight glow */}
           <div
-            className="pointer-events-none absolute -top-24 left-10 h-72 w-72 rounded-full opacity-40 blur-3xl transition-opacity duration-500 group-hover/card:opacity-70"
+            className="pointer-events-none absolute -top-24 left-10 h-72 w-72 rounded-full opacity-25 blur-3xl transition-opacity duration-500 group-hover/card:opacity-45"
             style={{ background: p.glow }}
           />
 
@@ -166,7 +166,7 @@ const StackCard = ({ p, i, total, progress }) => {
             </span>
 
             <div className="mt-5 flex items-center gap-3">
-              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/10 backdrop-blur">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-lg border border-white/10 bg-white/10 backdrop-blur">
                 <ProductIcon
                   p={p}
                   imgClass="h-8 w-8 object-contain"
@@ -188,7 +188,7 @@ const StackCard = ({ p, i, total, progress }) => {
           <div className="relative flex flex-1 items-center justify-center overflow-hidden p-4 sm:p-6 md:w-1/2 md:p-10">
             <DemoImage
               p={p}
-              imgClass="max-h-full w-auto max-w-full rounded-xl object-contain shadow-2xl transition-transform duration-700 ease-out group-hover/card:scale-[1.03]"
+              imgClass="max-h-full w-auto max-w-full rounded-lg object-contain shadow-md transition-transform duration-700 ease-out group-hover/card:scale-[1.03]"
             />
           </div>
         </Link>

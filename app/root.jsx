@@ -3,6 +3,7 @@ import {
   Links,
   Meta,
   Outlet,
+  redirect,
   Scripts,
   ScrollRestoration,
   useLocation,
@@ -12,6 +13,43 @@ import { useEffect } from "react";
 import "./app.css";
 
 const GA_MEASUREMENT_ID = "G-MYXZB5LRXQ";
+
+/**
+ * Legacy WordPress blog archives: /blog/page/…, /blog/category/…, /blog/tag/…,
+ * /blog/author/…, /blog/feed, plus anything two segments deep under /blog
+ * (date archives like /blog/2024/08/ and per-post feeds like /blog/<slug>/feed/).
+ * A normal post URL (/blog/<slug>/) is only one segment deep, so it isn't matched.
+ */
+const LEGACY_BLOG_PATH =
+  /^\/blog\/(?:page|category|tag|author|feed)(?:\/|$)|^\/blog\/[^/]+\/[^/]+/;
+
+/**
+ * Canonicalize every URL to NO trailing slash (/blog, not /blog/).
+ *
+ * Without this both forms resolve with a 200 — duplicate content that splits
+ * ranking signals. A single 301 keeps one canonical form.
+ *
+ * The root path "/" keeps its slash, and paths whose last segment contains a
+ * dot (/sitemap.xml, /robots.txt, asset requests) are left alone.
+ */
+export function loader({ request }) {
+  const { pathname, search } = new URL(request.url);
+
+  if (pathname !== "/" && pathname.endsWith("/")) {
+    // Legacy WordPress blog URLs always carry a trailing slash. Normalizing
+    // them here would cost an extra hop before their own 301 fires, so let
+    // routes/blogLegacyRedirect.jsx handle them directly in a single redirect.
+    if (LEGACY_BLOG_PATH.test(pathname)) return null;
+
+    const stripped = pathname.replace(/\/+$/, "");
+    const lastSegment = stripped.split("/").pop();
+    if (!lastSegment.includes(".")) {
+      return redirect(`${stripped}${search}`, 301);
+    }
+  }
+
+  return null;
+}
 
 export const links = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

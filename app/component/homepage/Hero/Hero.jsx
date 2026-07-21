@@ -78,7 +78,7 @@ export default function Hero() {
 
 
           <Link
-            to="/contact-us/"
+            to="/contact-us"
           >
             <Button
               pClass="rounded-lg px-6 py-3.5 font-medium text-[#0D99FF] border border-[#0D99FF]"

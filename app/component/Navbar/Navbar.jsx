@@ -7,11 +7,11 @@ import Button from "../Button/Button";
 
 const navLinks = [
   { name: "Home", href: "/", end: true },
-  { name: "About Us", href: "/about-us/" },
-  { name: "Blog", href: "https://efoli.com/blog/", target: "_blank" },
-  { name: "Career", href: "/career/" },
-  { name: "Service", href: "/service/" },
-  { name: "Contact Us", href: "/contact-us/" },
+  { name: "About Us", href: "/about-us" },
+  { name: "Blog", href: "/blog" },
+  { name: "Career", href: "/career" },
+  { name: "Service", href: "/service" },
+  { name: "Contact Us", href: "/contact-us" },
 ];
 
 
@@ -35,44 +35,26 @@ const Navbar = ({ parentClassName, linkClassName ,isDark}) => {
       <nav className="mx-auto max-w-7xl px-4 py-4 md:px-0">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <img src={logo} alt="EFOLI, LLC" className="h-18 w-18" />
-          </a>
+          </Link>
 
           {/* Desktop links */}
           <ul className="hidden lg:flex items-center gap-10.5">
             {navLinks.map((l) => (
               <li key={l.name}>
-                {
-                  l.name === "Blog" ?
-                    <a href={l.href}
-                      className={`font-medium ${linkClassName} text-inherit`}
-                    >
-
-                      <Button
-                        text1={l.name}
-                        text2={l.name}
-                      />
-                    </a> :
-
-                    <NavLink
-                      to={l.href}
-                      end={l.end}
-                      className={({ isActive, isPending }) =>
-                        isPending ? "pending text-inherit font-medium" : isActive ? `active ${isDark ? "text-[#0D99FF]" : "text-[#0D99FF]"} font-medium` : `text-[#13181E] font-medium ${linkClassName}`
-                      }
-                    >
-                      <Button
-                        text1={l.name}
-                        text2={l.name}
-                      />
-                    </NavLink>
-
-                }
-
-
-
-
+                <NavLink
+                  to={l.href}
+                  end={l.end}
+                  className={({ isActive, isPending }) =>
+                    isPending ? "pending text-inherit font-medium" : isActive ? `active ${isDark ? "text-[#0D99FF]" : "text-[#0D99FF]"} font-medium` : `text-[#13181E] font-medium ${linkClassName}`
+                  }
+                >
+                  <Button
+                    text1={l.name}
+                    text2={l.name}
+                  />
+                </NavLink>
               </li>
             ))}
           </ul>
@@ -111,32 +93,7 @@ const Navbar = ({ parentClassName, linkClassName ,isDark}) => {
           <ul className="space-y-1">
             {navLinks.map((l) => (
               <li key={l.name}>
-                {l.name === "Blog" ?
-                  <NavLink to={l.href} reloadDocument>
-                    {({ isActive }) => (
-                      <div className={[
-                        "group flex items-center justify-between rounded-lg px-3 py-2 transition-colors",
-                        "text-[16px]",
-                        isActive ? "text-[#1d74bf] bg-[#1d74bf]/5"
-                          : `${linkClassName} hover:text-[#1d74bf] hover:bg-gray-50`,
-                      ].join(" ")}>
-                        <span className="relative">
-                          {l.name}
-                          <span className={[
-                            "pointer-events-none absolute left-0 right-0 -bottom-1 h-[2px] rounded bg-[#1d74bf]",
-                            "origin-left transition-transform duration-200 ease-out",
-                            isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
-                          ].join(" ")} />
-                        </span>
-                        <svg className="h-4 w-4 opacity-60 group-hover:opacity-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M9 18l6-6-6-6" />
-                        </svg>
-                      </div>
-                    )}
-                  </NavLink> :
-
-
-                  <NavLink to={l.href} end={l.end} onClick={() => setOpen(false)}>
+                <NavLink to={l.href} end={l.end} onClick={() => setOpen(false)}>
                     {({ isActive }) => (
                       <div
                         className={[
@@ -171,7 +128,6 @@ const Navbar = ({ parentClassName, linkClassName ,isDark}) => {
                       </div>
                     )}
                   </NavLink>
-                }
               </li>
             ))}
           </ul>

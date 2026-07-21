@@ -12,7 +12,7 @@ const JoinTeam = () => {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pb-14 sm:pb-10 lg:pb-24 md:pt-10 pt-0">
           <div className="flex items-end md:justify-between  flex-wrap gap-4">
             <h2 className="md:text-5xl/[1.13] text-3xl/snug max-w-[637px] font-bold font-display text-left">Creative Minds, One Team,Endless Growth</h2>
-            <Link to="/career/">
+            <Link to="/career">
               <ButtonWithIcon text1="Join The Team" text2="Join The Team" pClass="text-base font-semibold" />
             </Link>
           </div>
