@@ -53,6 +53,7 @@ const Footer = ({ isDark, isBannerHide = false }) => {
             <li className="mb-3"><Link className="transition ease-in duration-200 hover:text-[#0D99FF]" to="/#efProducts">Products</Link></li>
             <li className="mb-3"><Link className="transition ease-in duration-200 hover:text-[#0D99FF]" to="/service">Services</Link></li>
             <li className="mb-3"><Link className="transition ease-in duration-200 hover:text-[#0D99FF]" to="/about-us">About Us</Link></li>
+            <li className="mb-3"><Link className="transition ease-in duration-200 hover:text-[#0D99FF]" to="/affiliate">Affiliate</Link></li>
             <li className="mb-3"><Link className="transition ease-in duration-200 hover:text-[#0D99FF]" to="/contact-us">Contact</Link></li>
           </ul>
         </div>

@@ -9,6 +9,7 @@ export default [
     route("contact-us", "routes/contact.jsx"),
     route("service", "routes/service.jsx"),
     route("offer", "routes/offer.jsx"),
+    route("affiliate", "routes/affiliate.jsx"),
     route("blog", "routes/blog.jsx"),
     // Legacy WordPress URLs → 301. Static segments ("page"/"category"/"tag"/
     // "author"/"feed") outrank the dynamic :slug route when matching.
