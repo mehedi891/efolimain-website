@@ -7,7 +7,7 @@ Everything a storefront needs to render content from the CMS.
 - **Visibility:** only `PUBLISHED` content is ever returned. Drafts and scheduled items are invisible.
 - **Method:** `GET` for everything except the contact form (`POST`).
 
-### Site slugs
+### Site slugs 
 
 Every endpoint requires a `site` query parameter:
 
