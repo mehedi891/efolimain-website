@@ -2,6 +2,10 @@ import { index, layout, route } from "@react-router/dev/routes";
 
 export default [
   route("sitemap.xml", "routes/sitemap[.xml].jsx"),
+  // CMS integration endpoints (no layout — they return Response, never UI).
+  route("api/revalidate", "routes/apiRevalidate.jsx"),
+  route("api/preview", "routes/apiPreview.jsx"),
+  route("api/preview/exit", "routes/apiPreviewExit.jsx"),
   layout("layouts/layout.jsx", [
     index("routes/home.jsx"),
     route("about-us", "routes/about.jsx"),

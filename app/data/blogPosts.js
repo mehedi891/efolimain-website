@@ -15,7 +15,24 @@
  * are delegated to the API so we only ever fetch one page.
  */
 
-const API_BASE = process.env.CMS_API_URL || "https://cms.efoli.com/api/public";
+/**
+ * All CMS storefront endpoints live under `/api/public` (posts, single post,
+ * and the preview draft fetch all use it). Accept CMS_API_URL in any of these
+ * forms and always resolve to the public API root, so setting it to
+ * `https://cms.efoli.com/api` (or a bare host, or the full `/api/public`) all
+ * work and can't silently 404:
+ *   https://cms.efoli.com               → https://cms.efoli.com/api/public
+ *   https://cms.efoli.com/api           → https://cms.efoli.com/api/public
+ *   https://cms.efoli.com/api/public/   → https://cms.efoli.com/api/public
+ */
+function resolvePublicApiBase(raw) {
+  const base = (raw || "https://cms.efoli.com").trim().replace(/\/+$/, "");
+  if (/\/api\/public$/.test(base)) return base;
+  if (/\/api$/.test(base)) return `${base}/public`;
+  return `${base}/api/public`;
+}
+
+const API_BASE = resolvePublicApiBase(process.env.CMS_API_URL);
 const SITE = process.env.CMS_SITE || "efoli";
 
 /** Max the CMS allows per request. */
@@ -59,6 +76,9 @@ function normalizePost(raw) {
     ogImage: raw.ogImage || null,
     canonicalUrl: raw.canonicalUrl || null,
     noIndex: Boolean(raw.noIndex),
+    // Preview-only fields (present when fetched with the preview token).
+    status: raw.status || null, // DRAFT · PUBLISHED · SCHEDULED · ARCHIVED
+    isPreview: Boolean(raw.isPreview),
   };
 }
 
@@ -73,8 +93,11 @@ function buildUrl(path, params = {}) {
   return url.toString();
 }
 
-async function fetchJson(url) {
-  const res = await fetch(url, { headers: { Accept: "application/json" } });
+async function fetchJson(url, { headers = {}, cache } = {}) {
+  const res = await fetch(url, {
+    headers: { Accept: "application/json", ...headers },
+    ...(cache ? { cache } : {}),
+  });
   if (!res.ok) {
     const error = new Error(`CMS request failed (${res.status}) for ${url}`);
     error.status = res.status;
@@ -109,6 +132,14 @@ async function fetchAllPosts() {
 
   allPostsCache = { at: Date.now(), posts: collected };
   return collected;
+}
+
+/**
+ * Drop the cached post list so the next read hits the CMS immediately.
+ * Called by the /api/revalidate endpoint when the CMS pushes a content change.
+ */
+export function clearBlogCache() {
+  allPostsCache = { at: 0, posts: null };
 }
 
 function matchesQuery(post, query) {
@@ -200,11 +231,27 @@ export async function getLatestPosts(limit = 3) {
   return posts;
 }
 
-/** A single post by slug, or null when it doesn't exist. */
-export async function getPostBySlug(slug) {
+/**
+ * A single post by slug, or null when it doesn't exist.
+ *
+ * In preview mode the CMS's preview token is sent as an `x-preview-token`
+ * header (never a query string — the doc is explicit about that) and caching is
+ * disabled, so an editor sees the newest DRAFT on every reload.
+ */
+export async function getPostBySlug(slug, { preview = false } = {}) {
   if (!slug) return null;
+
+  const previewToken = process.env.PREVIEW_SECRET || "";
+  const options =
+    preview && previewToken
+      ? { headers: { "x-preview-token": previewToken }, cache: "no-store" }
+      : {};
+
   try {
-    const data = await fetchJson(buildUrl(`/posts/${encodeURIComponent(slug)}`));
+    const data = await fetchJson(
+      buildUrl(`/posts/${encodeURIComponent(slug)}`),
+      options
+    );
     return normalizePost(data);
   } catch (error) {
     if (error.status === 404) return null;

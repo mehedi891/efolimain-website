@@ -2,19 +2,21 @@ import { redirect, useLoaderData } from "react-router";
 import Singlepost from "../component/blogpage/Singlepost";
 import { getPostBySlug, getRelatedPosts } from "../data/blogPosts";
 import { stripHtml } from "../utils/blog";
+import { isPreviewRequest } from "../utils/preview.server";
 
-export const loader = async ({ params }) => {
+export const loader = async ({ params, request }) => {
   // Legacy WordPress year archive (/blog/2024/) — never a post slug.
   if (/^\d{4}$/.test(params.slug)) {
     throw redirect("/blog", 301);
   }
 
-  const post = await getPostBySlug(params.slug);
+  const preview = await isPreviewRequest(request);
+  const post = await getPostBySlug(params.slug, { preview });
   if (!post) {
     throw new Response("Not Found", { status: 404 });
   }
   const related = await getRelatedPosts(params.slug, 3);
-  return { post, related };
+  return { post, related, preview };
 };
 
 export function meta({ data }) {
@@ -35,7 +37,10 @@ export function meta({ data }) {
     { title: `${title} | eFoli Blog` },
     { name: "description", content: description },
     { tagName: "link", rel: "canonical", href: url },
-    ...(post.noIndex ? [{ name: "robots", content: "noindex, nofollow" }] : []),
+    // A draft preview must never be indexed — force noindex in preview mode.
+    ...(data?.preview || post.noIndex
+      ? [{ name: "robots", content: "noindex, nofollow" }]
+      : []),
 
     { property: "og:title", content: title },
     { property: "og:description", content: description },
