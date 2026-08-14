@@ -84,7 +84,7 @@ const Footer = ({ isDark, isBannerHide = false }) => {
       </div>
 
       <div className="max-w-7xl mx-auto pb-5 pt-10 pl-5">
-        <p className="text-base">©eFoli 2011 - 2025. All rights reserved</p>
+        <p className="text-base">©eFoli 2011 - {new Date().getFullYear()}. All rights reserved</p>
       </div>
 
     </footer>
