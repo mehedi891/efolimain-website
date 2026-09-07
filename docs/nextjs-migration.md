@@ -450,12 +450,13 @@ function region or `maxDuration` override).
 
 ## 7. Suggested phased plan
 
-> **Progress (Phases 1–6 done):** All eight pages ported and verified in the
-> browser; contact form (Server route + nodemailer/hCaptcha), and native
-> preview/revalidate endpoints working. Remaining: Phase 7 (redirect/canonical
-> parity — largely covered by proxy.ts), Phase 8 (SEO parity — port the JSON-LD
-> structured data, deferred through the port), Phase 9 (Vercel deploy), Phase 10
-> (next/image + polish). Full build passes; TypeScript clean.
+> **Progress (Phases 1–8 done):** All eight pages ported and verified in the
+> browser; contact form (Server route + nodemailer/hCaptcha) and native
+> preview/revalidate endpoints working; SEO parity complete — JSON-LD
+> auto-extracted from the RR sources into lib/jsonld.ts, self-referencing
+> canonicals, blog noindex on search/pagination, custom 404. Full build passes;
+> TypeScript clean. **Remaining: Phase 9 (Vercel deploy — needs the user to
+> connect the repo + set env vars) and Phase 10 (next/image + polish).**
 >
 > **Earlier progress:** Phases 1–3 done on branch `feat/nextjs-migration`, in the
 > `next-app/` subdirectory (the React Router app at the repo root is untouched).
