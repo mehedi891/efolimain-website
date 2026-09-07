@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import SiteChrome from "@/components/SiteChrome";
 import Homepage from "@/components/home/Homepage";
+import JsonLd from "@/components/JsonLd";
+import { homeJsonLd } from "@/lib/jsonld";
 import { getLatestPosts } from "@/data/blogPosts";
 
 export const metadata: Metadata = {
@@ -26,6 +28,7 @@ export default async function Home() {
   const posts = await getLatestPosts(3);
   return (
     <SiteChrome>
+      <JsonLd data={homeJsonLd} />
       <Homepage posts={posts} />
     </SiteChrome>
   );

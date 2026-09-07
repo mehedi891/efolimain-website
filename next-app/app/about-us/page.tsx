@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import SiteChrome from "@/components/SiteChrome";
 import Aboutpage from "@/components/about/Aboutpage";
+import JsonLd from "@/components/JsonLd";
+import { aboutJsonLd } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: "About eFoli | Global B2B eCommerce Innovators",
@@ -20,6 +22,7 @@ export const metadata: Metadata = {
 export default function AboutRoute() {
   return (
     <SiteChrome darkHeader darkFooter>
+      <JsonLd data={aboutJsonLd} />
       <Aboutpage />
     </SiteChrome>
   );

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import SiteChrome from "@/components/SiteChrome";
 import Servicepage from "@/components/service/Servicepage";
+import JsonLd from "@/components/JsonLd";
+import { serviceJsonLd } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: "Shopify App Development & Support Services | eFoli",
@@ -20,6 +22,7 @@ export const metadata: Metadata = {
 export default function ServiceRoute() {
   return (
     <SiteChrome darkHeader darkFooter hideBanner>
+      <JsonLd data={serviceJsonLd} />
       <Servicepage />
     </SiteChrome>
   );

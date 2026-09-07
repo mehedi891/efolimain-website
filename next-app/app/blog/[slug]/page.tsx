@@ -3,8 +3,39 @@ import { draftMode } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import SiteChrome from "@/components/SiteChrome";
 import Singlepost from "@/components/blog/Singlepost";
+import JsonLd from "@/components/JsonLd";
 import { getPostBySlug, getRelatedPosts } from "@/data/blogPosts";
 import { stripHtml } from "@/lib/blog";
+import type { Post } from "@/data/cms-types";
+
+/** BlogPosting structured data (ported from the RR blogPost meta). */
+function blogPostingLd(post: Post) {
+  const url = post.canonicalUrl || `https://efoli.com/blog/${post.slug}`;
+  const image = post.ogImage || post.cover;
+  const description =
+    post.metaDescription ||
+    post.excerpt ||
+    stripHtml(post.content).slice(0, 160);
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description,
+    ...(image ? { image } : {}),
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt || post.publishedAt,
+    author: { "@type": "Person", name: post.author?.name || "eFoli" },
+    publisher: {
+      "@type": "Organization",
+      name: "EFOLI",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://efoli.com/assets/logo-qfFYDzw2.svg",
+      },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+  };
+}
 
 export async function generateMetadata({
   params,
@@ -71,6 +102,7 @@ export default async function BlogPostRoute({
 
   return (
     <SiteChrome preview={isEnabled}>
+      {!isEnabled && <JsonLd data={blogPostingLd(post)} />}
       <Singlepost post={post} related={related} />
     </SiteChrome>
   );

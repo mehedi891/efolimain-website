@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import SiteChrome from "@/components/SiteChrome";
 import Contactpage from "@/components/contact/Contactpage";
+import JsonLd from "@/components/JsonLd";
+import { contactJsonLd } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: "Contact eFoli | Let’s Start Your Next Project",
@@ -20,6 +22,7 @@ export const metadata: Metadata = {
 export default function ContactRoute() {
   return (
     <SiteChrome darkHeader darkFooter>
+      <JsonLd data={contactJsonLd} />
       <Contactpage />
     </SiteChrome>
   );

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import SiteChrome from "@/components/SiteChrome";
 import Careerpage from "@/components/career/Careerpage";
+import JsonLd from "@/components/JsonLd";
+import { careerJsonLd } from "@/lib/jsonld";
 import { getOpenJobs } from "@/data/jobs";
 
 export const metadata: Metadata = {
@@ -26,6 +28,7 @@ export default async function CareerRoute() {
   const jobs = await getOpenJobs();
   return (
     <SiteChrome darkFooter>
+      <JsonLd data={careerJsonLd} />
       <Careerpage jobs={jobs} />
     </SiteChrome>
   );
