@@ -1,5 +1,6 @@
-const startImg = "/img/home/starIcon.svg";
-const shopifyImg = "/img/home/shopifyImg.png";
+import Image from "next/image";
+import startImg from "@/public/img/home/starIcon.svg";
+import shopifyImg from "@/public/img/home/shopifyImg.png";
 const blurImg = "/img/home/blur.webp";
 import { motion } from "motion/react";
 import Button from "@/components/Button";
@@ -210,17 +211,17 @@ Thank You!`,
               <div key={index} className="mb-6 break-inside-avoid rounded-xl bg-white px-6 py-7">
                 <div className="flex items-center gap-4 mb-3.5">
                   <div className="rounded-full w-[50px] h-[50px] border border-[#e5e5e5] flex items-center justify-center">
-                    <img src={shopifyImg} className="w-6" alt="Shopify" />
+                    <Image src={shopifyImg} className="w-6 h-auto" alt="Shopify" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <h5 className="text-base font-display font-semibold text-[#13181E]">{review.name}</h5>
                     <div className="flex items-center gap-2">
-                      {[startImg, startImg, startImg, startImg, startImg].map((imgsrc, i) => <img
+                      {[startImg, startImg, startImg, startImg, startImg].map((imgsrc, i) => <Image
                         key={i}
                         src={imgsrc}
                         alt="Star"
-                        width={'16px'}
-                        height={'16px'}
+                        width={16}
+                        height={16}
                       />)
                       }
                     </div>

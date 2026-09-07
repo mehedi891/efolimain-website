@@ -1,25 +1,26 @@
 "use client";
 
-const mvIcon = "/img/home/mv_icon.png";
-const pbIcon = "/img/home/pbLogo.png";
-const drIcon = "/img/home/drLogo.png";
-const emIcon = "/img/home/emLogo.png";
-const pb_demo = "/img/home/pb.webp";
-const dr_demo = "/img/home/dr.webp";
-const mv_demo = "/img/home/mv_demo.png";
-const em_demo = "/img/home/emDemo.webp";
-const or_thumb = "/img/home/or_thumb.png";
-const or_icon = "/img/home/or_icon.png";
-const qwIcon = "/img/home/qw-icon.png";
-const qw_demo = "/img/home/qw.webp";
+import Image, { type StaticImageData } from "next/image";
+import mvIcon from "@/public/img/home/mv_icon.png";
+import pbIcon from "@/public/img/home/pbLogo.png";
+import drIcon from "@/public/img/home/drLogo.png";
+import emIcon from "@/public/img/home/emLogo.png";
+import pb_demo from "@/public/img/home/pb.webp";
+import dr_demo from "@/public/img/home/dr.webp";
+import mv_demo from "@/public/img/home/mv_demo.png";
+import em_demo from "@/public/img/home/emDemo.webp";
+import or_thumb from "@/public/img/home/or_thumb.png";
+import or_icon from "@/public/img/home/or_icon.png";
+import qwIcon from "@/public/img/home/qw-icon.png";
+import qw_demo from "@/public/img/home/qw.webp";
 import Link from "next/link";
 import { motion, useScroll, useTransform, type MotionValue } from "motion/react";
 import { useRef } from "react";
 
 interface Product {
   key: string;
-  icon: string;
-  demo: string;
+  icon: StaticImageData;
+  demo: StaticImageData;
   name: string;
   desc: string;
   link: string;
@@ -93,7 +94,7 @@ const products: Product[] = [
 // Renders the product logo, or a lettered gradient badge when no icon asset exists yet.
 const ProductIcon = ({ p, imgClass, textClass }: { p: Product; imgClass: string; textClass: string }) =>
   p.icon ? (
-    <img src={p.icon} alt={p.name} className={imgClass} />
+    <Image src={p.icon} alt={p.name} className={imgClass} />
   ) : (
     <span
       className={`bg-gradient-to-br ${p.gradient} bg-clip-text font-display font-bold text-transparent ${textClass}`}
@@ -106,7 +107,7 @@ const ProductIcon = ({ p, imgClass, textClass }: { p: Product; imgClass: string;
 // gradient placeholder panel when no screenshot asset exists yet.
 const DemoImage = ({ p, imgClass }: { p: Product; imgClass: string }) =>
   p.demo ? (
-    <img src={p.demo} alt={p.name} loading="lazy" className={imgClass} />
+    <Image src={p.demo} alt={p.name} sizes="(max-width: 768px) 100vw, 50vw" className={imgClass} />
   ) : (
     <div
       className={`grid h-full w-full place-items-center rounded-lg bg-gradient-to-br ${p.gradient}`}

@@ -1,11 +1,14 @@
 import Link from "next/link";
+import Image from "next/image";
 import Button from "./Button";
+import partner from "@/public/footer/partner.png";
+import basis from "@/public/footer/basis.png";
 
+// Background images (CSS url()) and the SVG logo stay as plain paths — next/image
+// is for raster content images, not CSS backgrounds or vector SVGs.
 const footerBg = "/footer/footerBg.webp";
 const ctaBg = "/footer/ctaBg.webp";
 const logo = "/brand/logo.svg";
-const partner = "/footer/partner.png";
-const basis = "/footer/basis.png";
 
 interface FooterProps {
   isDark?: boolean;
@@ -78,16 +81,15 @@ export default function Footer({ isDark, isBannerHide = false }: FooterProps) {
           </p>
           <div className="flex items-center gap-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={partner}
               alt="eFoli"
-              className="max-w-[200px] h-[60px] object-contain"
+              className="max-w-[200px] h-[60px] w-auto object-contain"
             />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={basis}
               alt="eFoli"
-              className="max-w-[120px] h-[60px] object-contain "
+              className="max-w-[120px] h-[60px] w-auto object-contain "
             />
           </div>
         </div>

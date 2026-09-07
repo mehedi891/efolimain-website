@@ -2,6 +2,7 @@
  * Author avatar. The CMS returns `avatarUrl: null` for most authors, so fall
  * back to an initials badge in the brand blue rather than a broken image.
  */
+import Image from "next/image";
 import type { Author } from "@/data/cms-types";
 
 const initialsOf = (name: string = ""): string =>
@@ -26,10 +27,11 @@ const Avatar = ({
 }: AvatarProps) => {
   if (author?.avatar) {
     return (
-      <img
+      <Image
         src={author.avatar}
         alt={author.name}
-        loading="lazy"
+        width={64}
+        height={64}
         className={`${className} shrink-0 rounded-full object-cover`}
       />
     );

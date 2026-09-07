@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-const heroImg1 = "/img/home/heroImg1.webp";
-const heroImg2 = "/img/home/heroImg2.webp";
-const heroImg3 = "/img/home/heroImg3.webp";
-const heroImg4 = "/img/home/heroImg4.webp";
-const mobHero = "/img/home/mobHero.webp";
+import Image from "next/image";
+import heroImg1 from "@/public/img/home/heroImg1.webp";
+import heroImg2 from "@/public/img/home/heroImg2.webp";
+import heroImg3 from "@/public/img/home/heroImg3.webp";
+import heroImg4 from "@/public/img/home/heroImg4.webp";
+import mobHero from "@/public/img/home/mobHero.webp";
 
 const t1 = "/img/home/c1.webp";
 const t2 = "/img/home/c2.webp";
@@ -107,7 +108,7 @@ export default function Hero() {
 
           <div className="[grid-area:A]">
             <div className="w-full h-full pl-5">
-              <img src={heroImg1} alt="Team" loading="lazy" className="object-cover w-auto h-full  md:rounded-tr-[100px] rounded-xs" />
+              <Image src={heroImg1} alt="Team" priority sizes="(max-width: 768px) 100vw, 25vw" className="object-cover w-auto h-full  md:rounded-tr-[100px] rounded-xs" />
             </div>
           </div>
           <div className="[grid-area:B]">
@@ -123,15 +124,15 @@ export default function Hero() {
             </div>
           </div>
           <div className="[grid-area:C]">
-            <img src={heroImg3} alt="Team" loading="lazy" className="object-cover h-full rounded-xs lg:rounded-tr-[100px]" />
+            <Image src={heroImg3} alt="Team" sizes="(max-width: 768px) 100vw, 25vw" className="object-cover h-full rounded-xs lg:rounded-tr-[100px]" />
           </div>
           <div className="[grid-area:D]">
             <div className="w-full h-full pr-5">
-              <img src={heroImg4} alt="Team" loading="lazy" className="object-cover h-full rounded-xs lg:rounded-tl-[100px]" />
+              <Image src={heroImg4} alt="Team" sizes="(max-width: 768px) 100vw, 25vw" className="object-cover h-full rounded-xs lg:rounded-tl-[100px]" />
             </div>
           </div>
           <div className="[grid-area:E]">
-            <img src={heroImg2} alt="Team" loading="lazy" className="object-cover h-full rounded-xs lg:rounded-tr-[100px]" />
+            <Image src={heroImg2} alt="Team" sizes="(max-width: 768px) 100vw, 25vw" className="object-cover h-full rounded-xs lg:rounded-tr-[100px]" />
           </div>
           <div className="[grid-area:F]">
             <div className="w-full h-full pr-5">
@@ -151,7 +152,7 @@ export default function Hero() {
         </div>
 
         <div className="md:hidden flex flex-col gap-6 px-4">
-          <img src={mobHero} alt="Team" loading="lazy" className="object-inherit w-full h-auto rounded-xs" />
+          <Image src={mobHero} alt="Team" sizes="100vw" className="object-inherit w-full h-auto rounded-xs" />
           <div className="flex gap-6">
             <div className="bg-[#FFD4EE] w-full h-full gap-3 flex flex-col items-center justify-center rounded-xl px-2 py-4">
               <CounterText

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useSpring } from "motion/react";
 import {
@@ -10,6 +11,9 @@ import {
 } from "@/lib/blog";
 import Avatar from "./Avatar";
 import type { Post } from "@/data/cms-types";
+
+// Keep the cover's entrance animation while gaining next/image optimization.
+const MotionImage = motion.create(Image);
 
 const minutesOf = (post: Post): number =>
   post.readingTimeMinutes || readingTime(post.content || "");
@@ -74,10 +78,12 @@ const RelatedCard = ({ post }: { post: Post }) => (
   <Link href={postPath(post)} className="group flex flex-col">
     <div className="overflow-hidden rounded-2xl">
       {post.cover ? (
-        <img
+        <Image
           src={post.cover}
           alt={post.coverAlt}
-          loading="lazy"
+          width={800}
+          height={450}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="h-[200px] w-full object-cover transition duration-700 ease-out group-hover:scale-105"
         />
       ) : (
@@ -193,12 +199,16 @@ const Singlepost = ({ post, related = [] }: SinglepostProps) => {
       {/* ── Cover ────────────────────────────────────────────── */}
       {post.cover && (
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <motion.img
+          <MotionImage
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
             src={post.cover}
             alt={post.coverAlt}
+            width={1600}
+            height={900}
+            priority
+            sizes="(max-width: 1152px) 100vw, 1152px"
             className="max-h-[520px] w-full rounded-3xl object-cover shadow-xl"
           />
         </div>

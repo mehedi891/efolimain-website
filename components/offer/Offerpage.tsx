@@ -9,19 +9,20 @@ import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useState } from "react";
 import SliderMarque from "@/components/SliderMarque";
 import FormsubmitSuccessModal from "@/components/contact/FormsubmitSuccessModal";
+import Image from "next/image";
+import hero from "@/public/img/offer/hero.webp";
+import mvIcon from "@/public/img/offer/mv_icon.png";
+import pbIcon from "@/public/img/offer/pbLogo.png";
+import drIcon from "@/public/img/offer/drLogo.png";
+import emIcon from "@/public/img/offer/emLogo.png";
+import pb_demo from "@/public/img/offer/pb.webp";
+import dr_demo from "@/public/img/offer/dr.webp";
+import mv_demo from "@/public/img/offer/mv_demo.png";
+import em_demo from "@/public/img/offer/emDemo.webp";
+import currveBg from "@/public/img/offer/sectionBg.png";
+import plusImg from "@/public/img/offer/plus.svg";
+import minusImg from "@/public/img/offer/minus.svg";
 
-const hero = "/img/offer/hero.webp";
-const mvIcon = "/img/offer/mv_icon.png";
-const pbIcon = "/img/offer/pbLogo.png";
-const drIcon = "/img/offer/drLogo.png";
-const emIcon = "/img/offer/emLogo.png";
-const pb_demo = "/img/offer/pb.webp";
-const dr_demo = "/img/offer/dr.webp";
-const mv_demo = "/img/offer/mv_demo.png";
-const em_demo = "/img/offer/emDemo.webp";
-const currveBg = "/img/offer/sectionBg.png";
-const plusImg = "/img/offer/plus.svg";
-const minusImg = "/img/offer/minus.svg";
 const shape = "/img/offer/shape.png";
 const t1 = "/img/offer/discount.png";
 
@@ -83,7 +84,7 @@ const Offerpage = () => {
     <>
       <section className="">
         <div className="grid ">
-          <img src={hero} alt="Offerpage Hero" className="w-full h-auto col-start-1 row-start-1" />
+          <Image src={hero} alt="Offerpage Hero" className="w-full h-auto col-start-1 row-start-1" sizes="100vw" priority />
           <div className="col-start-1 row-start-1 z-10 place-self-center pt-100">
             <Timer3 endDate="2025-11-29T00:00:00Z" persistKey="bfcm-countdown" />
             <div className="flex items-center gap-4">
@@ -132,7 +133,7 @@ const Offerpage = () => {
         </div>
 
         <div>
-          <img src={currveBg} alt="Section" className="w-full h-auto" />
+          <Image src={currveBg} alt="Section" className="w-full h-auto" sizes="100vw" />
         </div>
       </section>
 
@@ -145,7 +146,7 @@ const Offerpage = () => {
             <div className="mb-7 flex md:flex-wrap flex-wrap-reverse items-center justify-between shadow-lg p-10 rounded-2xl bg-linear-to-r from-[#fff] to-[#f2fbfa] transition ease-in duration-300 hover:scale-105 hover:cursor-pointer hover-drop-shadow-2xl">
               <div className="max-w-[550px]">
                 <div className="flex items-center gap-2">
-                  <img src={mvIcon} alt="Multivariants" className="md:max-w-[42px] max-w-[35px] h-auto" />
+                  <Image src={mvIcon} alt="Multivariants" className="md:max-w-[42px] max-w-[35px] h-auto" />
                   <h4 className="md:text-2xl text-xl text-[#13181E] font-bold font-display">MultiVariants ‑ Bulk Order</h4>
                 </div>
                 <div className="mt-6 mb-4 text-[#13181E]">
@@ -173,7 +174,7 @@ const Offerpage = () => {
               </div>
 
               <div className="max-w-[500px]">
-                <img className="object-cover" src={mv_demo} alt="Multivariants" />
+                <Image className="object-cover w-full h-auto" src={mv_demo} alt="Multivariants" sizes="(max-width: 768px) 100vw, 600px" />
               </div>
 
             </div>
@@ -185,7 +186,7 @@ const Offerpage = () => {
           ">
                 <div className="max-w-[550px]">
                   <div className="flex items-center gap-2">
-                    <img src={drIcon} alt="Multivariants" className="md:max-w-[42px] max-w-[35px] h-auto" />
+                    <Image src={drIcon} alt="Multivariants" className="md:max-w-[42px] max-w-[35px] h-auto" />
                     <h4 className="md:text-2xl text-xl text-[#13181E] font-bold font-display">DiscountRay ‑ B2B Custom Pricing</h4>
                   </div>
                   <div className="mt-6 mb-4 text-[#13181E]">
@@ -209,7 +210,7 @@ const Offerpage = () => {
                 </div>
 
                 <div className="max-w-[600px]">
-                  <img className="object-cover" src={dr_demo} alt="Multivariants" />
+                  <Image className="object-cover w-full h-auto" src={dr_demo} alt="Multivariants" sizes="(max-width: 768px) 100vw, 600px" />
                 </div>
 
               </div>
@@ -219,7 +220,7 @@ const Offerpage = () => {
           ">
                 <div className="max-w-[550px]">
                   <div className="flex items-center gap-2">
-                    <img src={pbIcon} alt="Multivariants" className="md:max-w-[42px] max-w-[35px] h-auto rounded-sm" />
+                    <Image src={pbIcon} alt="Multivariants" className="md:max-w-[42px] max-w-[35px] h-auto rounded-sm" />
                     <h4 className="md:text-2xl text-xl text-[#13181E] font-bold font-display">Push Bundle ‑ Build a Box</h4>
                   </div>
                   <div className="mt-6 mb-4 text-[#13181E]">
@@ -243,7 +244,7 @@ const Offerpage = () => {
                 </div>
 
                 <div className="max-w-[550px]">
-                  <img className="object-cover" src={pb_demo} alt="Multivariants" />
+                  <Image className="object-cover w-full h-auto" src={pb_demo} alt="Multivariants" sizes="(max-width: 768px) 100vw, 600px" />
                 </div>
 
               </div>
@@ -257,7 +258,7 @@ const Offerpage = () => {
         ">
               <div className="max-w-[550px]">
                 <div className="flex items-center gap-2">
-                  <img src={emIcon} alt="EmbedUp" className="md:max-w-[42px] max-w-[35px] h-auto" />
+                  <Image src={emIcon} alt="EmbedUp" className="md:max-w-[42px] max-w-[35px] h-auto" />
                   <h4 className="md:text-2xl text-xl text-[#13181E] font-bold font-display">Embedup - sell anywherer</h4>
                 </div>
                 <div className="mt-6 mb-4 text-[#13181E]">
@@ -281,7 +282,7 @@ const Offerpage = () => {
               </div>
 
               <div className="max-w-[600px]">
-                <img className="object-cover" src={em_demo} alt="EmbedUp" />
+                <Image className="object-cover w-full h-auto" src={em_demo} alt="EmbedUp" sizes="(max-width: 768px) 100vw, 600px" />
               </div>
 
             </div>
@@ -332,9 +333,9 @@ const Offerpage = () => {
                       <h4 className="text-[22px] font-semibold tracking-[-0.44px] font-display">{faq?.question}</h4>
 
                       {open ? (
-                        <img src={minusImg} alt="minus" className="w-10 h-10" />
+                        <Image src={minusImg} alt="minus" className="w-10 h-10" />
                       ) : (
-                        <img src={plusImg} alt="plus" className="w-10 h-10" />
+                        <Image src={plusImg} alt="plus" className="w-10 h-10" />
                       )
                       }
 

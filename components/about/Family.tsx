@@ -1,10 +1,11 @@
-const aboutHero = "/img/about/aboutHero.webp";
-const ceoImg = "/img/about/ceoJA.webp";
+import Image from "next/image";
+import aboutHero from "@/public/img/about/aboutHero.webp";
+import ceoImg from "@/public/img/about/ceoJA.webp";
 const Family = () => {
   return (
     <section className="lg:mb-30 mb-6 relative">
        <div  className='max-w-7xl mx-auto md:-mt-60 mt-10 md:px-0 px-4'>
-          <img className='object-contain rounded-3xl' src={aboutHero} alt="About Us" />
+          <Image className='object-contain rounded-3xl w-full h-auto' src={aboutHero} alt="About Us" sizes="(max-width: 1280px) 100vw, 1280px" priority />
         </div>
       <div  className="max-w-7xl mx-auto md:mt-30 mt-10 md:px-0 px-4">
         <div className="flex flex-wrap lg:gap-40 gap-4">
@@ -39,7 +40,7 @@ const Family = () => {
 
         <div className="mt-5 lg:mt-30">
           <div className="flex items-center gap-3 flex-wrap lg:gap-24 bg-[#F1F5F9] rounded-[20px]">
-            <img src={ceoImg} loading="lazy" alt="JA" className="object-contain max-h-[460px]" />
+            <Image src={ceoImg} alt="JA" className="object-contain max-h-[460px] w-auto h-auto" sizes="(max-width: 768px) 100vw, 700px" />
             <div className="max-w-[505px]">
               <h3 className="md:text-4xl/[1.38] text-2xl text-[#13181E] tracking-[-0.72px] font-display font-semibold text-center">“Behind every feature is a real merchant, and behind every success is a team that listens and builds with care.”</h3>
               <p className="mt-4 text-center"><strong>Jahangir Alam</strong> / Founder & CEO</p>

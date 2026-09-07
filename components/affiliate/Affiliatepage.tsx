@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, type Variants } from "motion/react";
+import Image from "next/image";
 import Button from "@/components/Button";
 import Generalfaq from "@/components/Generalfaq";
 import {
@@ -374,7 +375,7 @@ const Apps = () => (
             className="group flex items-start gap-4 rounded-2xl border border-gray-100 bg-gradient-to-br from-white to-[#f2fbfa] p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
           >
             <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-gray-100 bg-white shadow-sm">
-              <img src={app.icon} alt={app.name} className="h-9 w-9 object-contain" />
+              <Image src={app.icon} alt={app.name} width={36} height={36} className="h-9 w-9 object-contain" />
             </span>
             <div>
               <h3 className="font-display text-lg font-bold text-[#13181E] transition group-hover:text-[#0D99FF]">

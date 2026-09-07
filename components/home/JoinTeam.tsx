@@ -1,7 +1,8 @@
 import Link from "next/link";
-const careerImg1 = "/img/home/jointeam-1.webp";
-const careerImg2 = "/img/home/team_saint.webp";
-const careerImg3 = "/img/home/ty_ja.webp";
+import Image from "next/image";
+import careerImg1 from "@/public/img/home/jointeam-1.webp";
+import careerImg2 from "@/public/img/home/team_saint.webp";
+import careerImg3 from "@/public/img/home/ty_ja.webp";
 import ButtonWithIcon from "@/components/ButtonWithIcon";
 import AnimatedSection from "@/components/AnimatedSection";
 
@@ -20,7 +21,7 @@ const JoinTeam = () => {
           <div className="md:grid flex flex-wrap grid-cols-12 gap-6 mt-8 md:mt-15 [grid-template-areas:'A_A_A_A_B_B_B_C_C_C_C_C''A_A_A_A_D_D_D_D_D_E_E_E']">
 
             <div className="[grid-area:A] hidden md:block">
-              <img src={careerImg1} alt="Career Image 1" loading="lazy" className="h-full w-full object-fill rounded-2xl" />
+              <Image src={careerImg1} alt="Career Image 1" sizes="(max-width: 768px) 100vw, 33vw" className="h-full w-full object-fill rounded-2xl" />
             </div>
             <div className="[grid-area:B] hidden md:block">
               <div className="rounded-[20px] bg-[#D7FBEA] p-6 w-full h-full">
@@ -31,10 +32,10 @@ const JoinTeam = () => {
               </div>
             </div>
             <div className="[grid-area:C]">
-              <img src={careerImg2} alt="Career Image 2" loading="lazy" className="rounded-2xl w-full h-full" />
+              <Image src={careerImg2} alt="Career Image 2" sizes="(max-width: 768px) 100vw, 42vw" className="rounded-2xl w-full h-full" />
             </div>
             <div className="[grid-area:D] hidden md:block">
-              <img src={careerImg3} alt="Career Image 3" loading="lazy" className="  h-full rounded-2xl" />
+              <Image src={careerImg3} alt="Career Image 3" sizes="42vw" className="  h-full rounded-2xl" />
             </div>
             <div className="[grid-area:E] md:w-full w-[45%]">
               <div className="rounded-[20px] bg-[#FFD4EE] md:p-6 p-4 w-full h-full">

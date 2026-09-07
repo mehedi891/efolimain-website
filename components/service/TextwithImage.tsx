@@ -1,7 +1,7 @@
+import Image from "next/image";
 import Generalfaq from "@/components/Generalfaq";
-
-const sDev = "/img/service/sDevelopmet.webp";
-const sCus = "/img/service/sCustomer.webp";
+import sDev from "@/public/img/service/sDevelopmet.webp";
+import sCus from "@/public/img/service/sCustomer.webp";
 
 const TextwithImage = () => {
   const faqsArr = [
@@ -65,7 +65,7 @@ const TextwithImage = () => {
           <div className="flex items-start justify-between gap-7 flex-wrap md:flex-row flex-col md:flex-nowrap md:gap-25 md:mb-25 mb-15">
               <div className="md:w-[48%] w-full">
                 {/* <div className="h-[450px] md:w-[95%] w-full bg-[#D9D9D9]"></div> */}
-                <img src={sCus} alt="Customer Suppport" className="max-w-full object-cover " />
+                <Image src={sCus} alt="Customer Suppport" className="max-w-full h-auto object-cover " sizes="(max-width: 768px) 100vw, 600px" />
               </div>
 
               <div className="md:w-[48%] ">
@@ -91,7 +91,7 @@ const TextwithImage = () => {
               </div>
 
              <div className="md:w-[48%] w-full">
-                <img src={sDev} alt="Shopify development" className="max-w-full object-cover " />
+                <Image src={sDev} alt="Shopify development" className="max-w-full h-auto object-cover " sizes="(max-width: 768px) 100vw, 600px" />
               </div>
 
 

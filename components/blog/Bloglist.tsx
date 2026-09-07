@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
@@ -36,7 +37,14 @@ const Meta = ({ post, className = "" }: { post: Post; className?: string }) => (
 
 const CoverImage = ({ post, className }: { post: Post; className?: string }) =>
   post.cover ? (
-    <img src={post.cover} alt={post.coverAlt} loading="lazy" className={className} />
+    <Image
+      src={post.cover}
+      alt={post.coverAlt}
+      width={1200}
+      height={675}
+      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+      className={className}
+    />
   ) : (
     <div
       className={`${className} grid place-items-center bg-gradient-to-br from-[#0D99FF] to-[#7dd3fc]`}

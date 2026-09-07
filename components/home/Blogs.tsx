@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Post } from "@/data/cms-types";
 import ButtonWithIcon from "@/components/ButtonWithIcon";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -37,11 +38,17 @@ const Blogs = ({ posts }: BlogsProps) => {
               {posts.map((post) => (
                 <Link key={post.id} href={`/blog/${post.slug}`}>
                   <article className="flex flex-col gap-2 group">
-                    <img src={post.cover ?? undefined} alt={post.coverAlt} loading="lazy" className="max-h-[300px] mb-3 h-[240px] md:h-[300px] object-cover rounded-2xl w-full
+                    {post.cover ? (
+                      <div className="relative max-h-[300px] mb-3 h-[240px] md:h-[300px] w-full">
+                        <Image src={post.cover} alt={post.coverAlt} fill sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover rounded-2xl
               transition ease-initial duration-600
               group-hover:scale-105
               group-hover:drop-shadow-2xl
               " />
+                      </div>
+                    ) : (
+                      <div className="max-h-[300px] mb-3 h-[240px] md:h-[300px] w-full rounded-2xl bg-[#F1F5F9]" />
+                    )}
                     <h3 className="font-display text-lg md:text-2xl font-bold text-[#13181E] line-clamp-2
                 transition ease-initial duration-600 group-hover:text-[#0D99FF]
               ">{post.title}</h3>

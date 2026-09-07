@@ -1,4 +1,5 @@
-const kivoImg = "/img/home/kivo.webp";
+import Image from "next/image";
+import kivoImg from "@/public/img/home/kivo.webp";
 const kivoBg = "/img/home/service_bg.webp";
 import Button from "@/components/Button";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -44,7 +45,7 @@ const Kivo = () => {
             </div>
 
             <div className="max-w-[600px]">
-              <img className="object-cover" src={kivoImg} alt="Multivariants" />
+              <Image className="object-cover w-full h-auto" src={kivoImg} alt="Multivariants" sizes="(max-width: 768px) 100vw, 600px" />
             </div>
 
           </div>

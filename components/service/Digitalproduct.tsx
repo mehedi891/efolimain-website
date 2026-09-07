@@ -1,15 +1,16 @@
-const circleImg = "/img/service/circle.png";
-const circleImg2 = "/img/service/circle2.png";
+import Image from "next/image";
+import circleImg from "@/public/img/service/circle.png";
+import circleImg2 from "@/public/img/service/circle2.png";
 
 const Digitalproduct = () => {
   return (
     <section className="md:py-30 py-10 bg-[#0A0C00] text-white relative ">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute right-[-1%] md:top-[-7%] top-[-3%] rotateCircleAbout">
-          <img className="object-contain md:max-w-[200px] max-w-25" src={circleImg2} alt="" />
+          <Image className="object-contain md:max-w-[200px] max-w-25 h-auto" src={circleImg2} alt="" />
         </div>
         <div className="absolute left-[-2%] bottom-[-7%] rotateCircleAbout md:block hidden">
-          <img className="object-contain max-w-[230px]" src={circleImg} alt="" />
+          <Image className="object-contain max-w-[230px] h-auto" src={circleImg} alt="" />
         </div>
       </div>
       <div className="max-w-7xl mx-auto">

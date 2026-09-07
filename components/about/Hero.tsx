@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "motion/react";
-
-const circleImg = "/img/about/circle.png";
-const circleImg2 = "/img/about/circle2.png";
+import Image from "next/image";
+import circleImg from "@/public/img/about/circle.png";
+import circleImg2 from "@/public/img/about/circle2.png";
 
 const Hero = () => {
   return (
@@ -28,11 +28,11 @@ const Hero = () => {
       </div>
 
       <div className='absolute right-[-3%] top-[-5%] md:top-[-0%] rotateCircleAbout'>
-        <img className='object-contain md:max-w-[200px] max-w-[100px]' src={circleImg2} alt="About Us" />
+        <Image className='object-contain md:max-w-[200px] max-w-[100px] h-auto' src={circleImg2} alt="About Us" />
       </div>
 
       <div className='hidden md:block absolute left-[-3%] bottom-[-12%] rotateCircleAbout'>
-        <img className='object-contain max-w-[230px]' src={circleImg} alt="About Us" />
+        <Image className='object-contain max-w-[230px] h-auto' src={circleImg} alt="About Us" />
       </div>
       {/* <div className='max-w-7xl mx-auto absolute bottom-[-75%] left-0 right-0'>
         <img className='object-contain' src={aboutHero} alt="About Us" />
