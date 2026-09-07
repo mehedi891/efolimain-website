@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
       // CMS media (blog covers, author avatars) is served from R2.
       { protocol: "https", hostname: "media.efoli.io" },
       { protocol: "https", hostname: "mediadev.efoli.io" },
+      // Some CMS media (e.g. author avatars) is served from Vercel Blob.
+      { protocol: "https", hostname: "**.public.blob.vercel-storage.com" },
       { protocol: "https", hostname: "i.ibb.co" },
     ],
   },
