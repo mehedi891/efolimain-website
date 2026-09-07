@@ -450,14 +450,17 @@ function region or `maxDuration` override).
 
 ## 7. Suggested phased plan
 
-> **Progress:** Phases 1–2 done on branch `feat/nextjs-migration`, in the
+> **Progress:** Phases 1–3 done on branch `feat/nextjs-migration`, in the
 > `next-app/` subdirectory (the React Router app at the repo root is untouched).
 > Next 16.3.4 + React 19.2.8 + TS + Tailwind v4 scaffolded; theme/fonts/GA
 > ported; `blogPosts.ts` + `jobs.ts` typed; `proxy.ts` + `sitemap.ts` built and
 > **verified** (build passes, every redirect is a single-hop 301, sitemap serves
-> 7 static + live CMS post URLs). `affiliateContent` is deferred to Phase 4 — it's
-> page content bound to image assets and the affiliate component, not an external
-> API seam, so it ports with that page. Dev runs on **port 4005** (RR stays 4004).
+> 7 static + live CMS post URLs). Site chrome (`SiteChrome` + `Navbar` + `Footer`
+> + `PreviewBanner`) ported and **verified in the browser** — light *and* black
+> header/footer both render correctly, server-side. `affiliateContent` is
+> deferred to Phase 4 — it's page content bound to image assets and the affiliate
+> component, not an external API seam, so it ports with that page. Dev runs on
+> **port 4005** (RR stays 4004).
 
 1. ✅ **Scaffold** — Next 16 (App Router, **TypeScript**) in `next-app/`; Tailwind
    v4 (PostCSS), `next/font` (Inter + Red Hat Display), `@/*` alias, env
@@ -466,8 +469,11 @@ function region or `maxDuration` override).
 2. ✅ **Data & SEO plumbing** — typed `blogPosts.ts` + `jobs.ts` seams; `proxy.ts`
    (trailing slash + legacy redirects, `skipTrailingSlashRedirect: true` so it's
    one hop); native `app/sitemap.ts`.
-3. **Redesign site chrome** (§4.1) — `SiteChrome`/Navbar/Footer, preview banner
-   via `draftMode()`.
+3. ✅ **Site chrome** (§4.1) — `SiteChrome` (Server Component) composes `Navbar`
+   (client), `Footer` (server), and `PreviewBanner` from explicit per-page props
+   (`darkHeader`/`darkFooter`/`hideBanner`/`preview`). Chrome assets copied to
+   `public/`. The `preview` prop is wired to `draftMode()` in Phase 6 (kept off
+   the shared chrome so marketing pages stay static/ISR-capable).
 4. **Port pages** in order of independence: static (offer/service/about) →
    home → career/affiliate → blog list → blog post. Mark client boundaries as
    you go.
