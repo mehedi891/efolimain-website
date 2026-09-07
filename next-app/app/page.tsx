@@ -1,20 +1,32 @@
+import type { Metadata } from "next";
 import SiteChrome from "@/components/SiteChrome";
+import Homepage from "@/components/home/Homepage";
+import { getLatestPosts } from "@/data/blogPosts";
 
-// Temporary placeholder — the real homepage is ported in Phase 4.
-// Wrapped in SiteChrome (light chrome) to verify Navbar + Footer.
-export default function Home() {
+export const metadata: Metadata = {
+  title: "B2B eCommerce Solutions & Shopify Apps | eFoli",
+  description:
+    "Scalable Shopify apps and B2B eCommerce solutions built for growth. Power your business with intuitive products, custom development, and 24/7 support.",
+  alternates: { canonical: "https://efoli.com/" },
+  openGraph: {
+    title: "B2B eCommerce Solutions & Shopify Apps | eFoli",
+    description:
+      "Scalable Shopify apps and B2B eCommerce solutions built for growth. Power your business with intuitive products, custom development, and 24/7 support.",
+    type: "website",
+    url: "https://efoli.com/",
+  },
+};
+
+// Refresh the CMS-driven latest-posts rail periodically (and on-demand via
+// /api/revalidate, which calls revalidatePath("/")).
+export const revalidate = 300;
+
+// HOME uses the light header + light footer (see docs §4.1 matrix).
+export default async function Home() {
+  const posts = await getLatestPosts(3);
   return (
     <SiteChrome>
-      <main className="mx-auto max-w-3xl px-6 py-24">
-        <h1 className="font-display text-4xl font-bold text-[#13181e]">
-          eFoli — Next.js migration scaffold
-        </h1>
-        <p className="mt-4 text-lg text-[#4b5154]">
-          Phase 3 chrome (Navbar + Footer + preview banner) is in place. Real
-          page content is ported in Phase 4. See{" "}
-          <code>docs/nextjs-migration.md</code>.
-        </p>
-      </main>
+      <Homepage posts={posts} />
     </SiteChrome>
   );
 }

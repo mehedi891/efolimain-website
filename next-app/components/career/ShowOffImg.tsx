@@ -1,29 +1,58 @@
 "use client";
 
-import { useAnimationFrame, useMotionValue, useReducedMotion, motion } from "motion/react";
-import { useRef } from "react";
+import { motion, useAnimationFrame, useMotionValue, useReducedMotion } from "motion/react";
+import { useMemo, useRef } from "react";
 
-interface SliderMarqueProps {
+const img1 = "/img/career/img1.webp";
+const img2 = "/img/career/img2.webp";
+const img3 = "/img/career/img3.webp";
+const img4 = "/img/career/img4.webp";
+
+const ShowOffImg = () => {
+  const images = useMemo(() => [img1, img2, img3, img4, img2, img4], []);
+  return (
+    <section>
+      <div className="mx-auto max-w-full px-4 sm:px-6 pb-10 md:pb-8 pt-1">
+          <div>
+
+            <div className="pb-20">
+              <FMMarquee
+                images={images}
+                slotWidth={370}
+                slotGap={35}
+                itemHeight={550}
+                speedPx={30}
+                bg="#fff"
+                edgeFade
+              />
+            </div>
+          </div>
+      </div>
+    </section>
+  );
+};
+
+export default ShowOffImg;
+
+interface MarqueeProps {
   images: string[];
   slotWidth?: number;
   slotGap?: number;
-  itemHeight?: number | string;
+  itemHeight?: number;
   speedPx?: number;
   edgeFade?: boolean;
   bg?: string;
-  containerCls?: string;
 }
 
-function SliderMarque({
+function FMMarquee({
   images,
   slotWidth = 300,
   slotGap = 12,
   itemHeight = 220,
   speedPx = 5000,
   edgeFade = false,
-  bg = "#0D99FF",
-  containerCls = "",
-}: SliderMarqueProps) {
+  bg = "#fff",
+}: MarqueeProps) {
   const reduce = useReducedMotion();
   const x = useMotionValue(0);
   const current = useRef(0);
@@ -32,6 +61,7 @@ function SliderMarque({
 
   useAnimationFrame((t, delta) => {
     if (reduce) return;
+    // delta in ms; convert to seconds
     const dx = (speedPx * delta) / 1000;
     current.current -= dx;
     if (current.current <= -trackDistance) current.current += trackDistance;
@@ -39,7 +69,7 @@ function SliderMarque({
   });
 
   return (
-    <div className={`relative overflow-hidden ${containerCls}`}>
+    <div className="relative overflow-x-hidden h-[640px]">
       {edgeFade && (
         <>
           <div
@@ -72,7 +102,7 @@ function Track({
   images: string[];
   slotWidth: number;
   slotGap: number;
-  itemHeight: number | string;
+  itemHeight: number;
   ariaHidden?: boolean;
 }) {
   return (
@@ -87,7 +117,7 @@ function Track({
           <img
             src={src}
             alt=""
-            className="block w-full h-auto object-contain rounded-xl"
+            className={`block w-full h-auto object-contain rounded-xl ${i%2 === 0 ? 'translate-y-[14%]' : ''}`}
             style={{ height: itemHeight }}
             loading="lazy"
             draggable="false"
@@ -97,5 +127,3 @@ function Track({
     </div>
   );
 }
-
-export default SliderMarque;
