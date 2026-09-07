@@ -450,7 +450,14 @@ function region or `maxDuration` override).
 
 ## 7. Suggested phased plan
 
-> **Progress:** Phases 1–3 done on branch `feat/nextjs-migration`, in the
+> **Progress (Phases 1–6 done):** All eight pages ported and verified in the
+> browser; contact form (Server route + nodemailer/hCaptcha), and native
+> preview/revalidate endpoints working. Remaining: Phase 7 (redirect/canonical
+> parity — largely covered by proxy.ts), Phase 8 (SEO parity — port the JSON-LD
+> structured data, deferred through the port), Phase 9 (Vercel deploy), Phase 10
+> (next/image + polish). Full build passes; TypeScript clean.
+>
+> **Earlier progress:** Phases 1–3 done on branch `feat/nextjs-migration`, in the
 > `next-app/` subdirectory (the React Router app at the repo root is untouched).
 > Next 16.3.4 + React 19.2.8 + TS + Tailwind v4 scaffolded; theme/fonts/GA
 > ported; `blogPosts.ts` + `jobs.ts` typed; `proxy.ts` + `sitemap.ts` built and
