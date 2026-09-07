@@ -450,10 +450,22 @@ function region or `maxDuration` override).
 
 ## 7. Suggested phased plan
 
-1. **Scaffold** a Next.js (App Router, JS) project alongside; wire Tailwind v4
-   (PostCSS), `next/font`, `jsconfig` alias, env, base `app/layout.jsx`.
-2. **Port the data & SEO plumbing** — copy the three data seams verbatim; build
-   `proxy.ts` (trailing slash + legacy redirects); `app/sitemap.ts`.
+> **Progress:** Phases 1–2 done on branch `feat/nextjs-migration`, in the
+> `next-app/` subdirectory (the React Router app at the repo root is untouched).
+> Next 16.3.4 + React 19.2.8 + TS + Tailwind v4 scaffolded; theme/fonts/GA
+> ported; `blogPosts.ts` + `jobs.ts` typed; `proxy.ts` + `sitemap.ts` built and
+> **verified** (build passes, every redirect is a single-hop 301, sitemap serves
+> 7 static + live CMS post URLs). `affiliateContent` is deferred to Phase 4 — it's
+> page content bound to image assets and the affiliate component, not an external
+> API seam, so it ports with that page. Dev runs on **port 4005** (RR stays 4004).
+
+1. ✅ **Scaffold** — Next 16 (App Router, **TypeScript**) in `next-app/`; Tailwind
+   v4 (PostCSS), `next/font` (Inter + Red Hat Display), `@/*` alias, env
+   (`.env.local` + committed `.env.example`), GA via `@next/third-parties`, base
+   `app/layout.tsx`.
+2. ✅ **Data & SEO plumbing** — typed `blogPosts.ts` + `jobs.ts` seams; `proxy.ts`
+   (trailing slash + legacy redirects, `skipTrailingSlashRedirect: true` so it's
+   one hop); native `app/sitemap.ts`.
 3. **Redesign site chrome** (§4.1) — `SiteChrome`/Navbar/Footer, preview banner
    via `draftMode()`.
 4. **Port pages** in order of independence: static (offer/service/about) →
