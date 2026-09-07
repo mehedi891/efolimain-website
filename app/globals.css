@@ -132,6 +132,74 @@ body {
   border-color: #e5e7eb;
   margin-top: 2.5em;
 }
+
+/* Tables (CMS HTML uses <table><tbody><tr><td>, first row = header) */
+.blog-content table {
+  display: block;
+  width: 100%;
+  overflow-x: auto; /* wide tables scroll instead of overflowing the page */
+  border-collapse: collapse;
+  margin: 1.75em 0;
+  font-size: 0.98em;
+}
+.blog-content th,
+.blog-content td {
+  border: 1px solid #e5e7eb;
+  padding: 0.65rem 0.9rem;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.55;
+}
+.blog-content thead td,
+.blog-content thead th,
+.blog-content tbody tr:first-child td {
+  background: #f2fbfa;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: #13181e;
+  white-space: nowrap;
+}
+
+/* FAQ accordions (CMS HTML uses <details><summary>) */
+.blog-content details {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: #fff;
+  padding: 0 1.15rem;
+  margin-top: 0.75rem;
+}
+.blog-content details + details {
+  margin-top: 0.6rem;
+}
+.blog-content summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: #13181e;
+}
+.blog-content summary::-webkit-details-marker {
+  display: none;
+}
+.blog-content summary::after {
+  content: "+";
+  color: #0d99ff;
+  font-size: 1.4em;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+.blog-content details[open] summary::after {
+  content: "\2212"; /* minus */
+}
+.blog-content details > *:not(summary) {
+  margin: 0 0 1rem;
+}
+
 @media (min-width: 768px) {
   .blog-content {
     font-size: 1.125rem;
