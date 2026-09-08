@@ -36,24 +36,34 @@ const Blogs = ({ posts }: BlogsProps) => {
           {posts && posts.length > 0 ? (
             <div className="pt-8 md:pt-13 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {posts.map((post) => (
-                <Link key={post.id} href={`/blog/${post.slug}`}>
-                  <article className="flex flex-col gap-2 group">
+                <Link
+                  key={post.id}
+                  href={`/blog/${post.slug}`}
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-[#0D99FF]/40 hover:shadow-lg"
+                >
+                  <div className="relative aspect-[16/9] overflow-hidden bg-gray-50">
                     {post.cover ? (
-                      <div className="relative max-h-[300px] mb-3 h-[240px] md:h-[300px] w-full">
-                        <Image src={post.cover} alt={post.coverAlt} fill sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover rounded-2xl
-              transition ease-initial duration-600
-              group-hover:scale-105
-              group-hover:drop-shadow-2xl
-              " />
-                      </div>
+                      <Image
+                        src={post.cover}
+                        alt={post.coverAlt}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover transition duration-700 ease-out group-hover:scale-105"
+                      />
                     ) : (
-                      <div className="max-h-[300px] mb-3 h-[240px] md:h-[300px] w-full rounded-2xl bg-[#F1F5F9]" />
+                      <div className="grid h-full w-full place-items-center bg-gradient-to-br from-[#0D99FF] to-[#7dd3fc]">
+                        <span className="px-6 text-center font-display text-lg font-bold text-white/90">
+                          {post.category?.name || "eFoli"}
+                        </span>
+                      </div>
                     )}
-                    <h3 className="font-display text-lg md:text-2xl font-bold text-[#13181E] line-clamp-2
-                transition ease-initial duration-600 group-hover:text-[#0D99FF]
-              ">{post.title}</h3>
-                    <p className="text-base text-[#4B5154]">── {formatDate(post.publishedAt)}</p>
-                  </article>
+                  </div>
+                  <div className="flex flex-1 flex-col p-5">
+                    <h3 className="font-display text-lg md:text-xl font-bold text-[#13181E] line-clamp-2 transition duration-300 group-hover:text-[#0D99FF]">
+                      {post.title}
+                    </h3>
+                    <p className="mt-2 text-sm text-[#4B5154]">{formatDate(post.publishedAt)}</p>
+                  </div>
                 </Link>
               ))
               }

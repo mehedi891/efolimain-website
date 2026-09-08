@@ -3,7 +3,8 @@ import SiteChrome from "@/components/SiteChrome";
 import Bloglist from "@/components/blog/Bloglist";
 import { getCategories, listPosts } from "@/data/blogPosts";
 
-const PER_PAGE = 9;
+// 12 posts per page — a clean 3- and 4-column grid, the rest paginate.
+const PER_PAGE = 12;
 const SITE_URL = "https://efoli.com/blog";
 
 /**
