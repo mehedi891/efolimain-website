@@ -12,6 +12,7 @@
  * Caching + rate-limit land in Phase 5.
  */
 
+import { after } from "next/server";
 import { runAudit, normalizeUrl } from "@/lib/grader";
 import { getCachedReport, setCachedReport } from "@/lib/grader/cache";
 import { rateLimit, clientIp } from "@/lib/grader/rateLimit";
@@ -53,8 +54,9 @@ export async function POST(request: Request) {
     );
   }
 
-  // Record the use as soon as a valid store URL is submitted — no email needed.
-  await recordScan({ tool: "shopify-store-audit", storeUrl: normalized });
+  // Record the use (no email needed) — after the response, so analytics never
+  // block or break the audit even if the DB is slow/unreachable.
+  after(() => recordScan({ tool: "shopify-store-audit", storeUrl: normalized }));
 
   const cached = getCachedReport(normalized);
   if (cached) {

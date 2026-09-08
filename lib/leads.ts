@@ -49,11 +49,19 @@ function connect(): Promise<MongoClient> | null {
   const uri = process.env.MONGODB_URI;
   if (!uri) return null;
   if (!clientPromise) {
-    clientPromise = new MongoClient(uri).connect().catch((err) => {
-      // Reset so a later request can retry the connection.
-      clientPromise = null;
-      throw err;
-    });
+    // Fail fast: default serverSelectionTimeoutMS is 30s, which would hang a
+    // whole request if Atlas is unreachable (e.g. Network Access not allowing
+    // Vercel). 5s is plenty for a healthy cluster.
+    clientPromise = new MongoClient(uri, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
+    })
+      .connect()
+      .catch((err) => {
+        // Reset so a later request can retry the connection.
+        clientPromise = null;
+        throw err;
+      });
   }
   return clientPromise;
 }

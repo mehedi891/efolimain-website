@@ -4,6 +4,7 @@
  * Node runtime (server fetch/parse).
  */
 
+import { after } from "next/server";
 import { getTool } from "@/lib/tools/registry";
 import { normalizeUrl } from "@/lib/tools/http";
 import { getCached, setCached } from "@/lib/tools/cache";
@@ -39,8 +40,9 @@ export async function POST(request: Request) {
     return Response.json({ success: false, message: err instanceof Error ? err.message : "Invalid URL." }, { status: 400 });
   }
 
-  // Record the use as soon as a valid store URL is submitted — no email needed.
-  await recordScan({ tool: slug, storeUrl: url });
+  // Record the use (no email needed) — after the response, so analytics never
+  // block or break the scan even if the DB is slow/unreachable.
+  after(() => recordScan({ tool: slug, storeUrl: url }));
 
   const key = `${slug}:${url}`;
   const cached = getCached(key);
