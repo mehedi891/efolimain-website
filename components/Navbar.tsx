@@ -5,9 +5,29 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Button from "./Button";
 
-const navLinks: { name: string; href: string; end?: boolean; badge?: string }[] = [
+interface NavChild {
+  name: string;
+  href: string;
+}
+interface NavLink {
+  name: string;
+  href: string;
+  end?: boolean;
+  badge?: string;
+  children?: NavChild[];
+}
+
+const TOOL_LINKS: NavChild[] = [
+  { name: "All Growth Tools", href: "/free-tools" },
+  { name: "Shopify Store Audit", href: "/free-tools/shopify-store-audit" },
+  { name: "Meta & Social Preview", href: "/free-tools/meta-social-preview" },
+  { name: "Structured Data Checker", href: "/free-tools/structured-data-checker" },
+  { name: "AI Visibility Checker", href: "/free-tools/ai-visibility-checker" },
+];
+
+const navLinks: NavLink[] = [
   { name: "Home", href: "/", end: true },
-  { name: "Free Tools", href: "/free-tools", badge: "Free" },
+  { name: "Growth Tools", href: "/free-tools", badge: "Free", children: TOOL_LINKS },
   { name: "About Us", href: "/about-us" },
   { name: "Blog", href: "/blog" },
   { name: "Career", href: "/career" },
@@ -64,9 +84,10 @@ export default function Navbar({
             {navLinks.map((l) => {
               const active = isActive(l.href, l.end);
               return (
-                <li key={l.name}>
+                <li key={l.name} className={l.children ? "relative group/nav" : undefined}>
                   <Link
                     href={l.href}
+                    aria-haspopup={l.children ? "menu" : undefined}
                     className={`inline-flex items-center gap-1.5 ${
                       active
                         ? "active text-[#0D99FF] font-medium"
@@ -79,7 +100,41 @@ export default function Navbar({
                         {l.badge}
                       </span>
                     )}
+                    {l.children && (
+                      <svg
+                        aria-hidden
+                        className="h-3.5 w-3.5 opacity-70 transition-transform duration-200 group-hover/nav:rotate-180"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                      >
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                    )}
                   </Link>
+
+                  {l.children && (
+                    <div className="invisible absolute left-0 top-full z-50 translate-y-1 pt-4 opacity-0 transition duration-200 group-hover/nav:visible group-hover/nav:translate-y-0 group-hover/nav:opacity-100 group-focus-within/nav:visible group-focus-within/nav:translate-y-0 group-focus-within/nav:opacity-100">
+                      <ul className="w-72 rounded-2xl bg-white p-2 shadow-[0_18px_50px_-20px_rgba(13,153,255,0.35)] ring-1 ring-gray-200">
+                        {l.children.map((c) => {
+                          const cActive = c.href === "/free-tools" ? pathname === "/free-tools" : isActive(c.href);
+                          return (
+                            <li key={c.href}>
+                              <Link
+                                href={c.href}
+                                className={`block rounded-xl px-3 py-2.5 text-[15px] font-medium transition-colors ${
+                                  cActive ? "bg-[#F2FBFA] text-[#0A7ACC]" : "text-[#13181E] hover:bg-gray-50 hover:text-[#0D99FF]"
+                                }`}
+                              >
+                                {c.name}
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
                 </li>
               );
             })}
@@ -125,8 +180,8 @@ export default function Navbar({
 
       {/* Mobile sheet */}
       <div
-        className={`lg:hidden overflow-hidden border-t border-gray-100 transition-[max-height] duration-300 ${
-          open ? "max-h-96" : "max-h-0"
+        className={`lg:hidden border-t border-gray-100 transition-[max-height] duration-300 ${
+          open ? "max-h-[85vh] overflow-y-auto" : "max-h-0 overflow-hidden"
         }`}
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3">
@@ -175,6 +230,23 @@ export default function Navbar({
                       <path d="M9 18l6-6-6-6" />
                     </svg>
                   </Link>
+
+                  {/* Sub-tools, shown indented under the parent (like the footer) */}
+                  {l.children && (
+                    <ul className="mb-1 ml-3 border-l border-gray-100 pl-3">
+                      {l.children.slice(1).map((c) => (
+                        <li key={c.href}>
+                          <Link
+                            href={c.href}
+                            onClick={() => setOpen(false)}
+                            className="block rounded-lg px-3 py-1.5 text-[15px] text-[#4B5154] transition-colors hover:bg-gray-50 hover:text-[#1d74bf]"
+                          >
+                            {c.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </li>
               );
             })}
