@@ -66,7 +66,7 @@ function connect(): Promise<MongoClient> | null {
   return clientPromise;
 }
 
-async function getDb(): Promise<Db | null> {
+export async function getDb(): Promise<Db | null> {
   const cp = connect();
   if (!cp) return null;
   const db = (await cp).db(DB_NAME);
