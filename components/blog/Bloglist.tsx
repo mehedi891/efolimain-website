@@ -57,21 +57,24 @@ const CoverImage = ({ post, className }: { post: Post; className?: string }) =>
 
 const PostCard = ({ post }: { post: Post }) => (
   <motion.article variants={fadeUp} className="h-full">
-    <Link href={postPath(post)} className="group flex h-full flex-col">
-      <div className="relative overflow-hidden rounded-2xl">
+    <Link
+      href={postPath(post)}
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-[#0D99FF]/40 hover:shadow-lg"
+    >
+      <div className="relative aspect-[16/9] overflow-hidden bg-gray-50">
         <CoverImage
           post={post}
-          className="h-[220px] w-full object-cover transition duration-700 ease-out group-hover:scale-105 md:h-[240px]"
+          className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105"
         />
         {post.category && (
-          <span className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-[#0D99FF] backdrop-blur">
+          <span className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-[#0D99FF] shadow-sm backdrop-blur">
             {post.category.name}
           </span>
         )}
       </div>
 
-      <div className="flex flex-1 flex-col pt-5">
-        <h3 className="font-display text-lg font-bold text-[#13181E] transition duration-300 group-hover:text-[#0D99FF] md:text-2xl">
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-display text-lg font-bold text-[#13181E] transition duration-300 group-hover:text-[#0D99FF] md:text-xl">
           {post.title}
         </h3>
         <p className="mt-3 line-clamp-3 text-base/[1.7] text-[#4B5154]">
