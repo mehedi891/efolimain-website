@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import SiteChrome from "@/components/SiteChrome";
 import Bloglist from "@/components/blog/Bloglist";
-import { getCategories, listPosts } from "@/data/blogPosts";
+import { getCategories, listPosts, listBlogIndex } from "@/data/blogPosts";
 
 // 12 posts per page — a clean 3- and 4-column grid, the rest paginate.
 const PER_PAGE = 12;
@@ -89,8 +89,14 @@ export default async function BlogRoute({ searchParams }: PageProps<"/blog">) {
   const tag = (typeof sp.tag === "string" && sp.tag) || "";
   const q = (typeof sp.q === "string" && sp.q) || "";
 
+  // The unfiltered index features the latest post above the grid, so it needs
+  // a featured-aware page size (feature + full grid); filtered/search views
+  // have no feature and paginate uniformly.
+  const isFiltered = Boolean(category) || Boolean(tag) || Boolean(q);
   const [result, categories] = await Promise.all([
-    listPosts({ page, limit: PER_PAGE, category, tag, search: q }),
+    isFiltered
+      ? listPosts({ page, limit: PER_PAGE, category, tag, search: q })
+      : listBlogIndex({ page, gridSize: PER_PAGE }),
     getCategories(),
   ]);
 

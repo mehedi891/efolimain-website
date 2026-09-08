@@ -244,6 +244,45 @@ export async function listPosts({
   }
 }
 
+/**
+ * The unfiltered blog index, accounting for the featured post.
+ *
+ * Page 1 renders the latest post as a full-width feature ABOVE the grid, so it
+ * shows `gridSize + 1` posts total (feature + a full grid) — otherwise the grid
+ * would be one short and leave a gap in the last row. Later pages continue the
+ * stream `gridSize` at a time with no overlap. Returns the same shape as
+ * listPosts, with the feature as posts[0] on page 1 (Bloglist slices it off).
+ */
+export async function listBlogIndex({
+  page = 1,
+  gridSize = 12,
+}: { page?: number; gridSize?: number } = {}): Promise<PostListResult> {
+  const size = Math.max(1, Number(gridSize) || 12);
+  try {
+    const all = await fetchAllPosts(); // newest first, cached
+    const total = all.length;
+    const firstPageCount = size + 1; // feature + full grid
+
+    const totalPages =
+      total <= firstPageCount ? 1 : 1 + Math.ceil((total - firstPageCount) / size);
+    const current = Math.min(Math.max(1, Number(page) || 1), totalPages);
+
+    const start = current === 1 ? 0 : firstPageCount + (current - 2) * size;
+    const count = current === 1 ? firstPageCount : size;
+
+    return {
+      posts: all.slice(start, start + count),
+      total,
+      page: current,
+      limit: size,
+      totalPages,
+    };
+  } catch (error) {
+    console.error("[blog] listBlogIndex failed:", (error as Error).message);
+    return { posts: [], total: 0, page: 1, limit: size, totalPages: 1 };
+  }
+}
+
 /** Every published post — used by the sitemap. Empty array if the CMS is down. */
 export async function getAllPosts(): Promise<Post[]> {
   try {
