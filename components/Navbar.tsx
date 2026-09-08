@@ -5,8 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Button from "./Button";
 
-const navLinks = [
+const navLinks: { name: string; href: string; end?: boolean; badge?: string }[] = [
   { name: "Home", href: "/", end: true },
+  { name: "Free Tools", href: "/free-tools", badge: "Free" },
   { name: "About Us", href: "/about-us" },
   { name: "Blog", href: "/blog" },
   { name: "Career", href: "/career" },
@@ -66,13 +67,18 @@ export default function Navbar({
                 <li key={l.name}>
                   <Link
                     href={l.href}
-                    className={
+                    className={`inline-flex items-center gap-1.5 ${
                       active
                         ? "active text-[#0D99FF] font-medium"
                         : `text-[#13181E] font-medium ${linkClassName ?? ""}`
-                    }
+                    }`}
                   >
                     <Button text1={l.name} text2={l.name} />
+                    {l.badge && (
+                      <span className="rounded-full bg-[#0D99FF] px-1.5 py-0.5 text-[10px] font-bold uppercase leading-none text-white">
+                        {l.badge}
+                      </span>
+                    )}
                   </Link>
                 </li>
               );
@@ -140,17 +146,24 @@ export default function Navbar({
                         : `${linkClassName ?? ""} hover:text-[#1d74bf] hover:bg-gray-50`,
                     ].join(" ")}
                   >
-                    <span className="relative">
-                      {l.name}
-                      <span
-                        className={[
-                          "pointer-events-none absolute left-0 right-0 -bottom-1 h-[2px] rounded bg-[#1d74bf]",
-                          "origin-left transition-transform duration-200 ease-out",
-                          active
-                            ? "scale-x-100"
-                            : "scale-x-0 group-hover:scale-x-100",
-                        ].join(" ")}
-                      />
+                    <span className="flex items-center gap-2">
+                      <span className="relative">
+                        {l.name}
+                        <span
+                          className={[
+                            "pointer-events-none absolute left-0 right-0 -bottom-1 h-[2px] rounded bg-[#1d74bf]",
+                            "origin-left transition-transform duration-200 ease-out",
+                            active
+                              ? "scale-x-100"
+                              : "scale-x-0 group-hover:scale-x-100",
+                          ].join(" ")}
+                        />
+                      </span>
+                      {l.badge && (
+                        <span className="rounded-full bg-[#0D99FF] px-1.5 py-0.5 text-[10px] font-bold uppercase leading-none text-white">
+                          {l.badge}
+                        </span>
+                      )}
                     </span>
                     <svg
                       className="h-4 w-4 opacity-60 group-hover:opacity-100"

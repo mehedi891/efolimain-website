@@ -131,6 +131,25 @@ export default function Footer({ isDark, isBannerHide = false }: FooterProps) {
         </div>
 
         <div>
+          <h3 className="text-xl font-bold font-display mb-5">Free Tools</h3>
+          <ul className="text-[18px]/[1.7] ">
+            {[
+              ["/free-tools", "All Free Tools"],
+              ["/free-tools/shopify-store-audit", "Shopify Store Audit"],
+              ["/free-tools/meta-social-preview", "Meta & Social Preview"],
+              ["/free-tools/structured-data-checker", "Structured Data Checker"],
+              ["/free-tools/ai-visibility-checker", "AI Visibility Checker"],
+            ].map(([href, label]) => (
+              <li className="mb-3" key={label}>
+                <Link className={linkClass} href={href}>
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
           <h3 className="text-xl font-bold font-display mb-5">Products</h3>
           <ul className="text-[18px]/[1.7] ">
             {[
