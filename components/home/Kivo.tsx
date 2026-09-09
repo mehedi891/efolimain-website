@@ -11,8 +11,8 @@ const Kivo = () => {
           <h3 className="text-lg text-center text-blue-500 font-[600]">Our Service</h3>
           <h2 className="font-display md:text-5xl/[1.25] text-3xl font-bold text-center pt-3 line">KivoSupport - White Label <br /> Customer Support</h2>
 
-          <div className="md:mt-20 mt-15 flex md:flex-wrap flex-wrap-reverse gap-6 md:gap-0 items-center justify-between">
-            <div className="max-w-[550px]">
+          <div className="md:mt-20 mt-15 flex flex-col-reverse md:flex-row gap-10 md:gap-6 items-center md:justify-between">
+            <div className="w-full md:max-w-[550px]">
               <div className="pb-7 border-b border-[#e5e5e5]">
                 <h3 className="font-display text-lg md:text-2xl font-bold">24/7 Technical Support</h3>
                 <p className="pt-2 text-[#4b5154]">Round-the-clock technical care for your Shopify app users. Never miss a bug report, issue, or chance to impress.</p>
@@ -44,7 +44,7 @@ const Kivo = () => {
 
             </div>
 
-            <div className="max-w-[600px]">
+            <div className="w-full md:w-[600px] md:shrink-0">
               <Image className="object-cover w-full h-auto" src={kivoImg} alt="Multivariants" sizes="(max-width: 768px) 100vw, 600px" />
             </div>
 
