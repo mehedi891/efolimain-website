@@ -281,6 +281,12 @@ function PillarCard({ pillar, defaultOpen }: { pillar: Pillar; defaultOpen: bool
                   {check.value && (
                     <p className="mt-0.5 text-sm text-gray-500 tabular-nums">{check.value}</p>
                   )}
+                  {check.current && (
+                    <p className="mt-1 break-words text-sm text-[#4B5154]">{check.current}</p>
+                  )}
+                  {check.status === "na" && check.note && (
+                    <p className="mt-1 text-xs text-gray-400">Not measured — {check.note}</p>
+                  )}
                 </div>
                 <StatusIcon status={check.status} />
               </div>
@@ -351,6 +357,10 @@ function PageCard({ page }: { page: PageAudit }) {
                 </span>
                 <StatusIcon status={c.status} />
               </div>
+              {c.current && <p className="mt-1 break-words text-[13px] text-[#4B5154]">{c.current}</p>}
+              {c.status === "na" && c.note && (
+                <p className="mt-1 text-xs text-gray-400">Not measured — {c.note}</p>
+              )}
               {(c.status === "warn" || c.status === "fail") && c.fix && (
                 <p className="mt-1.5 rounded-lg bg-[#F2FBFA] px-3 py-2 text-[13px] text-[#13181E]">
                   <span className="font-semibold text-[#0A7ACC]">Fix:</span> {c.fix}

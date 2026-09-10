@@ -25,6 +25,12 @@ const REF = {
   sitemap: "https://developers.google.com/search/docs/crawling-indexing/sitemaps/overview",
 } as const;
 
+/** Collapse whitespace and cap length — for showing the current found text. */
+function trunc(s: string, n = 100): string {
+  const t = s.replace(/\s+/g, " ").trim();
+  return t.length > n ? `${t.slice(0, n - 1)}…` : t;
+}
+
 /** Does robots.txt block major AI crawlers with a blanket disallow? */
 function blocksAiCrawlers(robots: string): boolean {
   const bots = ["gptbot", "claudebot", "ccbot", "google-extended", "perplexitybot"];
@@ -55,6 +61,7 @@ export function seoChecks(scan: SiteScan, contentReliable: boolean): Check[] {
     status: cr ? titleStatus : "na",
     tier: "measured",
     value: title ? `${titleLen} chars` : "missing",
+    current: cr ? (title ? `Current: “${trunc(title)}”` : "No <title> tag found") : undefined,
     impact: "M",
     effort: "L",
     fix: "Write a unique 10–60 character title with your brand and primary keyword.",
@@ -72,6 +79,7 @@ export function seoChecks(scan: SiteScan, contentReliable: boolean): Check[] {
     status: cr ? descStatus : "na",
     tier: "measured",
     value: desc ? `${descLen} chars` : "missing",
+    current: cr ? (desc ? `Current: “${trunc(desc)}”` : "No meta description found") : undefined,
     impact: "M",
     effort: "L",
     fix: "Add a unique 50–160 character meta description that earns the click.",

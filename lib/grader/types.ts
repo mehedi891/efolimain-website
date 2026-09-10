@@ -28,6 +28,11 @@ export interface Check {
   tier: Tier;
   /** Human-readable measured value, e.g. "LCP 3.8s". */
   value?: string;
+  /** The actual current content we found, so the user sees exactly what to
+   *  change — e.g. the current title text, or the LCP image element. */
+  current?: string;
+  /** Why a check is "Not measured" (na), e.g. "Needs real-user field data". */
+  note?: string;
   impact?: Impact;
   effort?: Effort;
   /** One-line, actionable recommendation. */

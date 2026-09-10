@@ -97,6 +97,12 @@ function fmtMs(ms: number | null): string {
   return ms >= 1000 ? `${(ms / 1000).toFixed(1)}s` : `${Math.round(ms)}ms`;
 }
 
+/** Collapse whitespace and cap length — for showing a found snippet/value. */
+function truncate(s: string, n: number): string {
+  const t = s.replace(/\s+/g, " ").trim();
+  return t.length > n ? `${t.slice(0, n - 1)}…` : t;
+}
+
 function buildPerformanceChecks(mobile: PageSpeedData, desktop: PageSpeedData): Check[] {
   // Mobile is the weighted reference (majority of Shopify traffic).
   const src = mobile.fetchedOk ? mobile : desktop;
@@ -119,6 +125,7 @@ function buildPerformanceChecks(mobile: PageSpeedData, desktop: PageSpeedData): 
       status: lowerIsBetter(src.lcpMs, 2500, 4000),
       tier: "measured",
       value: `${fmtMs(src.lcpMs)} (${src.cwvSource})`,
+      current: src.lcpElement ? `Largest element: ${truncate(src.lcpElement, 160)}` : undefined,
       impact: "H",
       effort: "M",
       fix: "Compress and preload the largest above-the-fold image; serve WebP/AVIF and correct sizing.",
@@ -142,6 +149,9 @@ function buildPerformanceChecks(mobile: PageSpeedData, desktop: PageSpeedData): 
       status: lowerIsBetter(src.inpMs, 200, 500),
       tier: "measured",
       value: src.inpMs != null ? fmtMs(src.inpMs) : "no field data",
+      note: src.inpMs == null
+        ? "Needs real-user data (Chrome UX Report), which only exists once a store gets enough traffic — so it can't be measured yet."
+        : undefined,
       impact: "M",
       effort: "H",
       fix: "Reduce heavy third-party JavaScript so taps and clicks respond quickly.",
@@ -307,6 +317,17 @@ export async function runAudit({ url, email = "" }: RunAuditInput): Promise<Repo
 
   if (!mobile.fetchedOk && !desktop.fetchedOk) {
     notes.push("PageSpeed data was unavailable — speed scores could not be measured. Please retry shortly.");
+  } else if (!desktop.fetchedOk) {
+    notes.push("Desktop speed data wasn't available this run, so the score is based on the mobile scan.");
+  } else if (!mobile.fetchedOk) {
+    notes.push("Mobile speed data wasn't available this run, so the score is based on the desktop scan.");
+  }
+  // Field-data metrics (like INP) only exist for stores with enough real traffic.
+  if ((mobile.fetchedOk || desktop.fetchedOk) && (mobile.fetchedOk ? mobile : desktop).inpMs == null) {
+    notes.push("Some real-user metrics (e.g. Interaction to Next Paint) need Chrome UX Report data, which only exists once a store has enough traffic — those show as “Not measured”, not as failures.");
+  }
+  if (productUrl && !prodMobile?.fetchedOk) {
+    notes.push("We couldn't measure the product page speed this run — only the homepage speed is reflected.");
   }
   if (!scan.home.ok) {
     notes.push("We couldn't fetch the storefront HTML — SEO, trust, CRO, and app checks were skipped.");

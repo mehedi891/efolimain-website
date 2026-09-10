@@ -37,6 +37,8 @@ export interface PageSpeedData {
   /** Diagnostics for findings. */
   renderBlockingMs: number | null;
   totalByteBytes: number | null;
+  /** The element/image that is the Largest Contentful Paint (what to optimize). */
+  lcpElement: string | null;
   /** Final rendered screenshot as a data URI (from Lighthouse). */
   screenshotDataUri: string | null;
 }
@@ -44,12 +46,33 @@ export interface PageSpeedData {
 interface PsiMetric {
   percentile?: number;
 }
+interface PsiNode {
+  snippet?: string;
+  nodeLabel?: string;
+}
+interface PsiListItem {
+  node?: PsiNode;
+  items?: PsiListItem[];
+}
 interface PsiAudit {
   numericValue?: number;
   details?: {
     data?: string;
     overallSavingsMs?: number;
+    items?: PsiListItem[];
   };
+}
+
+/** Pull the first element snippet/label from an audit's nested details list. */
+function firstNode(items: PsiListItem[] | undefined): string | null {
+  if (!Array.isArray(items)) return null;
+  for (const it of items) {
+    if (it.node?.snippet) return it.node.snippet;
+    if (it.node?.nodeLabel) return it.node.nodeLabel;
+    const nested = firstNode(it.items);
+    if (nested) return nested;
+  }
+  return null;
 }
 interface PsiResponse {
   loadingExperience?: {
@@ -88,6 +111,7 @@ export async function runPageSpeed(
     cwvSource: "none",
     renderBlockingMs: null,
     totalByteBytes: null,
+    lcpElement: null,
     screenshotDataUri: null,
   };
 
@@ -149,6 +173,7 @@ export async function runPageSpeed(
     cwvSource: hasField ? "field" : labLcp != null ? "lab" : "none",
     renderBlockingMs: audits["render-blocking-resources"]?.details?.overallSavingsMs ?? null,
     totalByteBytes: audits["total-byte-weight"]?.numericValue ?? null,
+    lcpElement: firstNode(audits["largest-contentful-paint-element"]?.details?.items),
     screenshotDataUri: audits["final-screenshot"]?.details?.data ?? null,
   };
 }
