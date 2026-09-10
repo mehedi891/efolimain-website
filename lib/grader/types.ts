@@ -61,6 +61,20 @@ export interface Shot {
   hostedUrl?: string;
 }
 
+/** Core Web Vitals snapshot for the detailed vitals panel. */
+export interface Vitals {
+  /** field = real-user (CrUX), lab = Lighthouse lab, none = unavailable. */
+  source: "field" | "lab" | "none";
+  /** LCP/INP/TTFB in ms; CLS unitless. Null when not measured. */
+  lcpMs: number | null;
+  clsScore: number | null;
+  inpMs: number | null;
+  ttfbMs: number | null;
+  /** Lighthouse performance scores 0..100. */
+  mobileScore: number | null;
+  desktopScore: number | null;
+}
+
 export interface BfcmSummary {
   /** 0..100, re-weighted for peak-traffic season. */
   score: number;
@@ -99,6 +113,8 @@ export interface Report {
   /** Headline 0..100 across all pillars. */
   storeScore: number;
   grade: Grade;
+  /** Core Web Vitals headline (mobile-first, with the data source). */
+  vitals: Vitals;
   bfcm: BfcmSummary;
   pillars: Pillar[];
   /** Per-page audits (Home / Collection / Product / Cart). */

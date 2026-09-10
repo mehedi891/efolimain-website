@@ -364,6 +364,9 @@ export async function runAudit({ url, email = "" }: RunAuditInput): Promise<Repo
   const storeScore = headlineScore(pillars);
   const now = new Date();
 
+  // Core Web Vitals snapshot (mobile is the reference; fall back to desktop).
+  const cwvSrc = mobile.fetchedOk ? mobile : desktop;
+
   return {
     url: normalized,
     email,
@@ -372,6 +375,15 @@ export async function runAudit({ url, email = "" }: RunAuditInput): Promise<Repo
     screenshots: screenshotsFrom(mobile, desktop),
     storeScore,
     grade: gradeFromScore(storeScore),
+    vitals: {
+      source: cwvSrc.cwvSource,
+      lcpMs: cwvSrc.lcpMs,
+      clsScore: cwvSrc.clsScore,
+      inpMs: cwvSrc.inpMs,
+      ttfbMs: cwvSrc.ttfbMs,
+      mobileScore: mobile.performanceScore,
+      desktopScore: desktop.performanceScore,
+    },
     bfcm: computeBfcm(pillars, now),
     pillars,
     pages,
