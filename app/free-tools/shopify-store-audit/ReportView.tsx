@@ -84,7 +84,7 @@ function ScoreGauge({ score, grade }: { score: number; grade: string }) {
 type VitalKind = "ms" | "num";
 
 const VITAL_DEFS: {
-  key: "lcpMs" | "inpMs" | "clsScore" | "ttfbMs";
+  key: "lcpMs" | "inpMs" | "clsScore" | "ttfbMs" | "fcpMs" | "tbtMs";
   abbr: string;
   label: string;
   good: number;
@@ -92,8 +92,10 @@ const VITAL_DEFS: {
   kind: VitalKind;
 }[] = [
   { key: "lcpMs", abbr: "LCP", label: "Largest Contentful Paint", good: 2500, poor: 4000, kind: "ms" },
-  { key: "inpMs", abbr: "INP", label: "Interaction to Next Paint", good: 200, poor: 500, kind: "ms" },
+  { key: "fcpMs", abbr: "FCP", label: "First Contentful Paint", good: 1800, poor: 3000, kind: "ms" },
   { key: "clsScore", abbr: "CLS", label: "Cumulative Layout Shift", good: 0.1, poor: 0.25, kind: "num" },
+  { key: "tbtMs", abbr: "TBT", label: "Total Blocking Time", good: 200, poor: 600, kind: "ms" },
+  { key: "inpMs", abbr: "INP", label: "Interaction to Next Paint", good: 200, poor: 500, kind: "ms" },
   { key: "ttfbMs", abbr: "TTFB", label: "Time to First Byte", good: 800, poor: 1800, kind: "ms" },
 ];
 
@@ -259,6 +261,7 @@ function PillarCard({ pillar, defaultOpen }: { pillar: Pillar; defaultOpen: bool
                 {counts.pass > 0 && <span className="text-[#16a34a]">{counts.pass} pass</span>}
                 {counts.warn > 0 && <span className="text-[#b45309]">{counts.warn} warn</span>}
                 {counts.fail > 0 && <span className="text-[#dc2626]">{counts.fail} fail</span>}
+                <span className="text-gray-400">· {Math.round(pillar.weight * 100)}% of score</span>
               </>
             ) : (
               <span>Not measured for this scan</span>

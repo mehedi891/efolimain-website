@@ -18,7 +18,7 @@ function band(value: number, goodMax: number, warnMax: number): Status {
 }
 
 export function appChecks(detection: ShopifyDetection, scanOk: boolean): Check[] {
-  const { apps, thirdPartyScriptCount } = detection;
+  const { apps, thirdPartyScriptCount, thirdPartyScriptHosts } = detection;
   const checks: Check[] = [];
 
   checks.push({
@@ -39,6 +39,9 @@ export function appChecks(detection: ShopifyDetection, scanOk: boolean): Check[]
     status: !scanOk ? "na" : band(thirdPartyScriptCount, 15, 30),
     tier: "signal",
     value: `${thirdPartyScriptCount} distinct hosts`,
+    current: thirdPartyScriptHosts.length
+      ? `Loading from: ${thirdPartyScriptHosts.slice(0, 8).join(", ")}${thirdPartyScriptHosts.length > 8 ? ` +${thirdPartyScriptHosts.length - 8} more` : ""}`
+      : undefined,
     impact: "M",
     effort: "M",
     fix: "Reduce third-party scripts; defer non-critical ones to cut render-blocking and improve INP.",

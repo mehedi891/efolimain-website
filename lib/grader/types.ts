@@ -70,11 +70,13 @@ export interface Shot {
 export interface Vitals {
   /** field = real-user (CrUX), lab = Lighthouse lab, none = unavailable. */
   source: "field" | "lab" | "none";
-  /** LCP/INP/TTFB in ms; CLS unitless. Null when not measured. */
+  /** LCP/INP/TTFB/FCP/TBT in ms; CLS unitless. Null when not measured. */
   lcpMs: number | null;
   clsScore: number | null;
   inpMs: number | null;
   ttfbMs: number | null;
+  fcpMs: number | null;
+  tbtMs: number | null;
   /** Lighthouse performance scores 0..100. */
   mobileScore: number | null;
   desktopScore: number | null;

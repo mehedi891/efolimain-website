@@ -42,6 +42,8 @@ export interface ShopifyDetection {
   apps: string[];
   /** Distinct third-party script hosts (excludes the store's own + Shopify CDN). */
   thirdPartyScriptCount: number;
+  /** The actual third-party script hosts, so findings can name them. */
+  thirdPartyScriptHosts: string[];
 }
 
 export function detectShopify(home: PageData): ShopifyDetection {
@@ -76,7 +78,12 @@ export function detectShopify(home: PageData): ShopifyDetection {
     ),
   );
 
-  return { isShopify, apps: [...apps], thirdPartyScriptCount: thirdParty.size };
+  return {
+    isShopify,
+    apps: [...apps],
+    thirdPartyScriptCount: thirdParty.size,
+    thirdPartyScriptHosts: [...thirdParty],
+  };
 }
 
 function prettifyAppSlug(slug: string): string {

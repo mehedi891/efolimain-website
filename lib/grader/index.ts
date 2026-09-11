@@ -35,8 +35,8 @@ const REF = {
 
 /** Which page each check is derived from (collection/cart checks self-tag). */
 const PAGE_BY_ID: Record<string, CheckScope> = {
-  "perf-score": "home", lcp: "home", cls: "home", inp: "home", ttfb: "home",
-  "render-blocking": "home", "page-weight": "home", "product-perf-score": "product",
+  "perf-score": "home", lcp: "home", fcp: "home", cls: "home", inp: "home", ttfb: "home",
+  tbt: "home", "render-blocking": "home", "page-weight": "home", "product-perf-score": "product",
   "mobile-perf": "home", "mobile-cls": "home", "mobile-a11y": "home",
   "seo-lighthouse": "home", "seo-title": "home", "seo-meta-description": "home",
   "seo-h1": "home", "seo-canonical": "home", "seo-og": "home",
@@ -133,6 +133,17 @@ function buildPerformanceChecks(mobile: PageSpeedData, desktop: PageSpeedData): 
       weight: 1.5,
     },
     {
+      id: "fcp",
+      label: "First Contentful Paint (FCP)",
+      status: lowerIsBetter(src.fcpMs, 1800, 3000),
+      tier: "measured",
+      value: fmtMs(src.fcpMs),
+      impact: "M",
+      effort: "M",
+      fix: "Cut server response time and render-blocking CSS/JS so the first content paints sooner.",
+      ref: REF.perf,
+    },
+    {
       id: "cls",
       label: "Cumulative Layout Shift (CLS)",
       status: lowerIsBetter(src.clsScore, 0.1, 0.25),
@@ -167,6 +178,17 @@ function buildPerformanceChecks(mobile: PageSpeedData, desktop: PageSpeedData): 
       effort: "H",
       fix: "Trim server-side app/theme work and rely on Shopify's CDN caching for faster first byte.",
       ref: REF.ttfb,
+    },
+    {
+      id: "tbt",
+      label: "Total Blocking Time (TBT)",
+      status: lowerIsBetter(src.tbtMs, 200, 600),
+      tier: "measured",
+      value: fmtMs(src.tbtMs),
+      impact: "M",
+      effort: "H",
+      fix: "Break up long JavaScript tasks and defer non-critical third-party scripts so the main thread stays responsive.",
+      ref: REF.perf,
     },
     {
       id: "render-blocking",
@@ -402,6 +424,8 @@ export async function runAudit({ url, email = "" }: RunAuditInput): Promise<Repo
       clsScore: cwvSrc.clsScore,
       inpMs: cwvSrc.inpMs,
       ttfbMs: cwvSrc.ttfbMs,
+      fcpMs: cwvSrc.fcpMs,
+      tbtMs: cwvSrc.tbtMs,
       mobileScore: mobile.performanceScore,
       desktopScore: desktop.performanceScore,
     },

@@ -32,6 +32,8 @@ export interface PageSpeedData {
   inpMs: number | null;
   ttfbMs: number | null;
   tbtMs: number | null;
+  /** First Contentful Paint (ms, lab). */
+  fcpMs: number | null;
   /** Whether CWV came from field (CrUX) or lab (Lighthouse). */
   cwvSource: "field" | "lab" | "none";
   /** Diagnostics for findings. */
@@ -108,6 +110,7 @@ export async function runPageSpeed(
     inpMs: null,
     ttfbMs: null,
     tbtMs: null,
+    fcpMs: null,
     cwvSource: "none",
     renderBlockingMs: null,
     totalByteBytes: null,
@@ -170,6 +173,7 @@ export async function runPageSpeed(
     inpMs: fieldInp, // INP is field-only
     ttfbMs: hasField ? fieldTtfb : labTtfb,
     tbtMs: labTbt,
+    fcpMs: audits["first-contentful-paint"]?.numericValue ?? null,
     cwvSource: hasField ? "field" : labLcp != null ? "lab" : "none",
     renderBlockingMs: audits["render-blocking-resources"]?.details?.overallSavingsMs ?? null,
     totalByteBytes: audits["total-byte-weight"]?.numericValue ?? null,
