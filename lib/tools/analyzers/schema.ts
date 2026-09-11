@@ -54,8 +54,15 @@ export async function analyzeSchema(url: string): Promise<ToolResult> {
   const product = products[0] ?? null;
   const offer = product ? firstOffer(product) : null;
 
-  const hasOrg = allTypes.some((t) => t === "Organization" || t === "WebSite" || t === "LocalBusiness");
+  const hasOrg = allTypes.some((t) => t === "Organization" || t === "LocalBusiness");
+  const websiteNode = nodes.find((n) => typesOf(n).includes("WebSite"));
+  const hasSearchAction = (() => {
+    const pa = websiteNode?.potentialAction;
+    const arr = Array.isArray(pa) ? pa : pa ? [pa] : [];
+    return arr.some((a) => a && typeof a === "object" && typesOf(a as Node).includes("SearchAction"));
+  })();
   const hasBreadcrumb = allTypes.includes("BreadcrumbList");
+  const hasFaq = allTypes.includes("FAQPage");
 
   const productField = (present: boolean): ToolStatus => (!product ? "na" : present ? "pass" : "warn");
 
@@ -102,16 +109,31 @@ export async function analyzeSchema(url: string): Promise<ToolResult> {
     },
     {
       id: "product-rating",
-      label: "Product: aggregateRating / reviews",
-      status: productField(!!(product?.aggregateRating || product?.review)),
-      fix: "Add aggregateRating or review to earn star ratings in results.",
+      label: "Product: rating / reviews (only if real)",
+      status: !product ? "na" : product.aggregateRating || product.review ? "pass" : "info",
+      value: !product ? undefined : product.aggregateRating || product.review ? "present" : "none",
+      fix: "Star ratings help — but only add aggregateRating/review backed by REAL reviews. Fabricated ratings risk a manual Google penalty.",
     },
     {
       id: "org-schema",
-      label: "Organization / WebSite schema",
+      label: "Organization schema (brand entity)",
       status: hasOrg ? "pass" : "warn",
       value: hasOrg ? "present" : "missing",
-      fix: "Add Organization/WebSite JSON-LD (logo, name, sameAs) for brand knowledge panels.",
+      fix: "Add Organization JSON-LD (name, logo, sameAs) for brand knowledge panels and AI entity recognition.",
+    },
+    {
+      id: "website-schema",
+      label: "WebSite schema with SearchAction",
+      status: websiteNode ? (hasSearchAction ? "pass" : "warn") : "warn",
+      value: websiteNode ? (hasSearchAction ? "present + SearchAction" : "present, no SearchAction") : "missing",
+      fix: "Add WebSite JSON-LD with a SearchAction so Google can show a sitelinks search box.",
+    },
+    {
+      id: "faq-schema",
+      label: "FAQPage schema (rich results + AI answers)",
+      status: hasFaq ? "pass" : "info",
+      value: hasFaq ? "present" : "none",
+      fix: "Add FAQPage JSON-LD that mirrors your visible Q&A — strong for rich results and AI citations.",
     },
     {
       id: "breadcrumb",

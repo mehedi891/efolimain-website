@@ -86,11 +86,18 @@ export async function analyzeMeta(url: string): Promise<ToolResult> {
       fix: "Set og:title and og:description for clean social shares.",
     },
     {
+      id: "og-complete",
+      label: "Open Graph URL, type & site name",
+      status: og.url && og.type && og.siteName ? "pass" : "warn",
+      value: [og.url && "url", og.type && "type", og.siteName && "site_name"].filter(Boolean).join(", ") || "missing",
+      fix: "Set og:url, og:type and og:site_name so social cards render complete and correct.",
+    },
+    {
       id: "twitter-card",
-      label: "Twitter/X card tags",
-      status: twitter.card ? "pass" : "warn",
-      value: twitter.card ?? "missing",
-      fix: 'Add twitter:card (e.g. "summary_large_image") plus title/description/image.',
+      label: "Twitter/X card (summary_large_image + image)",
+      status: twitter.card ? (twitter.image ? "pass" : "warn") : "warn",
+      value: twitter.card ? (twitter.image ? `${twitter.card} + image` : `${twitter.card}, no image`) : "missing",
+      fix: 'Add twitter:card="summary_large_image" plus twitter:title/description/image.',
     },
     {
       id: "canonical",
