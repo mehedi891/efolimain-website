@@ -54,18 +54,27 @@ export async function POST(request: Request) {
     );
   }
 
-  // Record the use (no email needed) — after the response, so analytics never
-  // block or break the audit even if the DB is slow/unreachable.
-  after(() => recordScan({ tool: "shopify-store-audit", storeUrl: normalized }));
-
   const cached = getCachedReport(normalized);
   if (cached) {
+    // Record the use with its score (no email needed) — after the response, so
+    // analytics never block or break the audit even if the DB is slow.
+    after(() => recordScan({
+      tool: "shopify-store-audit",
+      storeUrl: normalized,
+      ...(cached.speedMeasured ? { score: cached.storeScore, grade: cached.grade } : {}),
+    }));
     return Response.json({ success: true, report: cached, cached: true });
   }
 
   try {
     const report = await runAudit({ url: normalized });
     setCachedReport(normalized, report);
+    // A withheld grade (speed unmeasured) is excluded from the score average.
+    after(() => recordScan({
+      tool: "shopify-store-audit",
+      storeUrl: normalized,
+      ...(report.speedMeasured ? { score: report.storeScore, grade: report.grade } : {}),
+    }));
     return Response.json({ success: true, report });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Something went wrong running the audit.";

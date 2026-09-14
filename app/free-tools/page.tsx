@@ -4,6 +4,12 @@ import { FiActivity, FiArrowRight, FiShare2, FiCode, FiCpu } from "react-icons/f
 import SiteChrome from "@/components/SiteChrome";
 import BfcmCountdown from "@/components/BfcmCountdown";
 import AppStudioSection from "@/components/free-tools/AppStudioSection";
+import StatsPanel from "@/components/free-tools/StatsPanel";
+import { getPublicStats } from "@/lib/tools/publicStats";
+
+// ISR: regenerate at most every 10 minutes so the live stats stay fresh
+// without hitting Mongo on every request.
+export const revalidate = 600;
 
 const TITLE = "Free Shopify Tools | eFoli";
 const DESCRIPTION =
@@ -59,25 +65,30 @@ const TOOLS: Tool[] = [
   },
 ];
 
-export default function FreeToolsHub() {
+export default async function FreeToolsHub() {
+  const stats = await getPublicStats();
   return (
     <SiteChrome darkFooter hideBanner>
       <main className="bg-white">
         <section className="max-w-7xl mx-auto px-4 pt-20 pb-16 md:pt-28">
-          <div className="max-w-2xl">
-            <span className="inline-flex items-center rounded-full bg-[#F2FBFA] px-4 py-1.5 text-sm font-semibold text-[#0D99FF] ring-1 ring-[#0D99FF]/15">
-              Free tools
-            </span>
-            <h1 className="mt-6 font-display text-4xl md:text-6xl font-bold tracking-[-1.5px] text-[#13181E]">
-              Free tools for Shopify merchants
-            </h1>
-            <p className="mt-5 text-lg md:text-xl/[1.6] text-[#4B5154]">
-              Quick, no-login diagnostics from the eFoli team. Find what&apos;s
-              costing you sales — then fix it before the biggest weekend of the year.
-            </p>
-            <div className="mt-8">
-              <BfcmCountdown align="start" />
+          <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:justify-between">
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center rounded-full bg-[#F2FBFA] px-4 py-1.5 text-sm font-semibold text-[#0D99FF] ring-1 ring-[#0D99FF]/15">
+                Free tools
+              </span>
+              <h1 className="mt-6 font-display text-4xl md:text-6xl font-bold tracking-[-1.5px] text-[#13181E]">
+                Free tools for Shopify merchants
+              </h1>
+              <p className="mt-5 text-lg md:text-xl/[1.6] text-[#4B5154]">
+                Quick, no-login diagnostics from the eFoli team. Find what&apos;s
+                costing you sales — then fix it before the biggest weekend of the year.
+              </p>
+              <div className="mt-8">
+                <BfcmCountdown align="start" />
+              </div>
             </div>
+
+            {stats && <StatsPanel stats={stats} className="w-full shrink-0 lg:w-[380px]" />}
           </div>
 
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

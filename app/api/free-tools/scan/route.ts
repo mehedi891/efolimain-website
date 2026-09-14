@@ -40,17 +40,19 @@ export async function POST(request: Request) {
     return Response.json({ success: false, message: err instanceof Error ? err.message : "Invalid URL." }, { status: 400 });
   }
 
-  // Record the use (no email needed) — after the response, so analytics never
-  // block or break the scan even if the DB is slow/unreachable.
-  after(() => recordScan({ tool: slug, storeUrl: url }));
-
   const key = `${slug}:${url}`;
   const cached = getCached(key);
-  if (cached) return Response.json({ success: true, result: cached, cached: true });
+  if (cached) {
+    // Record the use with its score (no email needed) — after the response, so
+    // analytics never block or break the scan even if the DB is slow.
+    after(() => recordScan({ tool: slug, storeUrl: url, score: cached.score, grade: cached.grade }));
+    return Response.json({ success: true, result: cached, cached: true });
+  }
 
   try {
     const result = await tool.analyze(url);
     setCached(key, result);
+    after(() => recordScan({ tool: slug, storeUrl: url, score: result.score, grade: result.grade }));
     return Response.json({ success: true, result });
   } catch (err) {
     return Response.json(

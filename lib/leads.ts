@@ -37,6 +37,9 @@ export interface ScanDoc {
   storeUrl: string;
   day: string;
   at: Date;
+  /** Headline score 0..100 + letter grade, when the scan produced one. */
+  score?: number;
+  grade?: string;
 }
 
 const DB_NAME = process.env.MONGODB_DB || "efoli";
@@ -110,15 +113,40 @@ async function bumpDaily(db: Db, inc: Record<string, number>, now: Date): Promis
  * append-only scan event and bumps the day's rollup. Returns true when
  * persisted, false when skipped/failed (never throws).
  */
-export async function recordScan({ tool, storeUrl }: { tool: string; storeUrl: string }): Promise<boolean> {
+export async function recordScan({
+  tool,
+  storeUrl,
+  score,
+  grade,
+}: {
+  tool: string;
+  storeUrl: string;
+  score?: number;
+  grade?: string;
+}): Promise<boolean> {
   const key = storeKey(storeUrl);
   if (!tool || !key) return false;
+  const hasScore = typeof score === "number" && Number.isFinite(score);
   try {
     const db = await getDb();
     if (!db) return false;
     const now = new Date();
-    await db.collection<ScanDoc>("scans").insertOne({ tool, storeUrl: key, day: dayKey(now), at: now });
-    await bumpDaily(db, { scans: 1, [`byTool.${tool}`]: 1 }, now);
+    await db.collection<ScanDoc>("scans").insertOne({
+      tool,
+      storeUrl: key,
+      day: dayKey(now),
+      at: now,
+      ...(hasScore ? { score } : {}),
+      ...(hasScore && grade ? { grade } : {}),
+    });
+    // Roll up counts (and score totals, for a cheap running average).
+    const inc: Record<string, number> = { scans: 1, [`byTool.${tool}`]: 1 };
+    if (hasScore) {
+      inc.scored = 1;
+      inc.scoreSum = score as number;
+      if (grade) inc[`byGrade.${grade}`] = 1;
+    }
+    await bumpDaily(db, inc, now);
     return true;
   } catch (err) {
     console.error("[analytics] recordScan failed:", err);
