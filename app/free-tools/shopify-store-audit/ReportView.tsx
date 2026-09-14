@@ -45,14 +45,18 @@ function isScored(c: Check): boolean {
 
 /* ---------- score gauge ---------- */
 
-function ScoreGauge({ score, grade }: { score: number; grade: string }) {
+function ScoreGauge({ score, grade, withheld }: { score: number; grade: string; withheld?: boolean }) {
   const reduce = useReducedMotion();
   const r = 78;
   const c = 2 * Math.PI * r;
-  const color = scoreColor(score);
-  const offset = c - (score / 100) * c;
+  const color = withheld ? "#9aa5ac" : scoreColor(score);
+  const offset = withheld ? c : c - (score / 100) * c;
   return (
-    <div className="relative h-48 w-48 shrink-0" role="img" aria-label={`Store score ${score} out of 100, grade ${grade}`}>
+    <div
+      className="relative h-48 w-48 shrink-0"
+      role="img"
+      aria-label={withheld ? "Store score unavailable — speed could not be measured this run" : `Store score ${score} out of 100, grade ${grade}`}
+    >
       <svg viewBox="0 0 180 180" className="h-full w-full -rotate-90">
         <circle cx="90" cy="90" r={r} fill="none" stroke="#eef2f4" strokeWidth="14" />
         <motion.circle
@@ -70,10 +74,21 @@ function ScoreGauge({ score, grade }: { score: number; grade: string }) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-display text-5xl font-bold tabular-nums text-[#13181E]">{score}</span>
-        <span className="text-sm font-semibold" style={{ color }}>
-          Grade {grade}
-        </span>
+        {withheld ? (
+          <>
+            <span className="font-display text-5xl font-bold text-[#9aa5ac]">—</span>
+            <span className="mt-1 max-w-28 text-center text-xs font-semibold text-gray-500">
+              Speed not measured
+            </span>
+          </>
+        ) : (
+          <>
+            <span className="font-display text-5xl font-bold tabular-nums text-[#13181E]">{score}</span>
+            <span className="text-sm font-semibold" style={{ color }}>
+              Grade {grade}
+            </span>
+          </>
+        )}
       </div>
     </div>
   );
@@ -568,7 +583,7 @@ export default function ReportView({ report, onReset }: { report: Report; onRese
                 </div>
               </div>
             </div>
-            <ScoreGauge score={report.storeScore} grade={report.grade} />
+            <ScoreGauge score={report.storeScore} grade={report.grade} withheld={!report.speedMeasured} />
           </div>
 
           {report.partial && (

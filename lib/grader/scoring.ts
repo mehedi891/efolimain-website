@@ -17,10 +17,14 @@ const STATUS_POINTS: Record<Exclude<Status, "na">, number> = {
   fail: 0,
 };
 
-/** Pillar weights for the headline Store Score (must sum to 1). See research §4. */
+/** Pillar weights for the headline Store Score (must sum to 1). See research §4.
+ *  Performance carries the most weight because it's the pillar with the concrete,
+ *  actionable Core Web Vitals. Mobile is deliberately light: it no longer re-scores
+ *  the mobile Lighthouse number (that lives in Performance) — it only covers
+ *  mobile-specific UX (tap targets, legibility, mobile layout stability). */
 export const PILLAR_WEIGHTS = {
-  performance: 0.25,
-  mobile: 0.2,
+  performance: 0.33,
+  mobile: 0.12,
   cro: 0.2,
   seo: 0.15,
   apps: 0.1,

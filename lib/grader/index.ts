@@ -38,7 +38,7 @@ const PAGE_BY_ID: Record<string, CheckScope> = {
   "perf-score": "home", lcp: "home", fcp: "home", cls: "home", inp: "home", ttfb: "home",
   tbt: "home", "render-blocking": "home", "asset-caching": "home", "lcp-preload": "home",
   "page-weight": "home", "product-perf-score": "product",
-  "mobile-perf": "home", "mobile-cls": "home", "mobile-a11y": "home",
+  "mobile-cls": "home", "mobile-a11y": "home",
   "seo-lighthouse": "home", "seo-title": "home", "seo-meta-description": "home",
   "seo-h1": "home", "seo-canonical": "home", "seo-og": "home",
   "seo-structured-data": "product", "seo-robots": "store", "seo-sitemap": "store",
@@ -110,6 +110,9 @@ function buildPerformanceChecks(mobile: PageSpeedData, desktop: PageSpeedData): 
   const checks: Check[] = [
     {
       id: "perf-score",
+      // The composite Lighthouse score is a summary of the specific vitals below,
+      // so it carries base weight — the actionable metrics it summarizes (LCP,
+      // render-blocking, LCP preload) are weighted higher so real weaknesses show.
       label: "Lighthouse performance score (mobile)",
       status: higherIsBetter(mobile.performanceScore, 90, 50),
       tier: "measured",
@@ -118,7 +121,6 @@ function buildPerformanceChecks(mobile: PageSpeedData, desktop: PageSpeedData): 
       effort: "M",
       fix: "Improve the core issues below (images, render-blocking scripts, server response) to lift the overall score.",
       ref: REF.perf,
-      weight: 1.5,
     },
     {
       id: "lcp",
@@ -209,6 +211,7 @@ function buildPerformanceChecks(mobile: PageSpeedData, desktop: PageSpeedData): 
       effort: "M",
       fix: "Defer or async non-critical scripts and inline critical CSS to unblock first paint.",
       ref: REF.renderBlocking,
+      weight: 1.5,
     },
     {
       id: "asset-caching",
@@ -233,6 +236,7 @@ function buildPerformanceChecks(mobile: PageSpeedData, desktop: PageSpeedData): 
       effort: "M",
       fix: "Preload the LCP image (<link rel=preload>) and mark it fetchpriority=high so it loads first.",
       ref: REF.lcp,
+      weight: 1.5,
     },
     {
       id: "page-weight",
@@ -254,19 +258,10 @@ function buildPerformanceChecks(mobile: PageSpeedData, desktop: PageSpeedData): 
 }
 
 function buildMobileChecks(mobile: PageSpeedData): Check[] {
+  // The mobile Lighthouse *speed* score lives in the Performance pillar (which is
+  // measured on mobile). This pillar covers only mobile-specific UX so the same
+  // number isn't scored twice.
   return [
-    {
-      id: "mobile-perf",
-      label: "Mobile performance score",
-      status: higherIsBetter(mobile.performanceScore, 90, 50),
-      tier: "measured",
-      value: mobile.performanceScore != null ? `${mobile.performanceScore}/100` : undefined,
-      impact: "H",
-      effort: "M",
-      fix: "Over 70% of Shopify traffic is mobile — prioritize mobile speed fixes first.",
-      ref: REF.mobile,
-      weight: 1.5,
-    },
     {
       id: "mobile-cls",
       label: "Mobile layout stability (CLS)",
@@ -371,7 +366,7 @@ export async function runAudit({ url, email = "" }: RunAuditInput): Promise<Repo
   const contentReliable = scan.home.ok && getTitle(scan.home.html) !== null && !blocked;
 
   if (!mobile.fetchedOk && !desktop.fetchedOk) {
-    notes.push("PageSpeed data was unavailable — speed scores could not be measured. Please retry shortly.");
+    notes.push("PageSpeed data was unavailable this run, so speed couldn't be measured. Because speed is the biggest part of the score, we're holding back the overall grade rather than showing a misleading one — please retry shortly.");
   } else if (!desktop.fetchedOk) {
     notes.push("Desktop speed data wasn't available this run, so the score is based on the mobile scan.");
   } else if (!mobile.fetchedOk) {
@@ -471,6 +466,7 @@ export async function runAudit({ url, email = "" }: RunAuditInput): Promise<Repo
     topFixes: topFixes(pillars, 5),
     manualChecklist: BFCM_MANUAL_CHECKLIST,
     partial: !mobile.fetchedOk || !desktop.fetchedOk || !scan.home.ok || !contentReliable,
+    speedMeasured: mobile.fetchedOk || desktop.fetchedOk,
     notes,
   };
 }

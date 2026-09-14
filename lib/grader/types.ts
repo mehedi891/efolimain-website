@@ -132,6 +132,10 @@ export interface Report {
   manualChecklist: ManualItem[];
   /** True when one or more collectors failed and the report is partial. */
   partial: boolean;
+  /** True when at least one PageSpeed (mobile or desktop) run returned. When false,
+   *  the headline score is withheld — speed is the heaviest pillar and scoring only
+   *  the remaining pillars would inflate the grade. */
+  speedMeasured: boolean;
   /** Non-fatal notes surfaced to the UI (e.g. "PageSpeed data unavailable"). */
   notes: string[];
 }
