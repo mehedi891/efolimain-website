@@ -11,6 +11,7 @@
 import type { ToolCheck, ToolResult, ToolStatus } from "../types";
 import { fetchPage, fetchText, host } from "../http";
 import { scoreChecks, gradeFromScore } from "../score";
+import { SNIPPET_ORG, SNIPPET_PRODUCT, SNIPPET_FAQ } from "../snippets";
 import {
   getTitle,
   getMetaName,
@@ -142,6 +143,15 @@ export async function analyzeAiVisibility(url: string): Promise<ToolResult> {
   const contentReliable = page.ok && title !== null && !looksBlocked(html);
   const types = getJsonLdTypes(html);
   const hasEntity = types.includes("Organization") || types.includes("WebSite") || types.includes("LocalBusiness");
+  const hasFaq = types.includes("FAQPage");
+  const hasProduct = types.includes("Product") || types.includes("ProductGroup");
+  const isProductPage = (() => {
+    try {
+      return /\/products\//.test(new URL(page.finalUrl).pathname);
+    } catch {
+      return /\/products\//.test(page.finalUrl);
+    }
+  })();
   const sitemapPresent = !!sitemapXml || sitemaps.length > 0;
 
   if (!page.ok) notes.push("We couldn't fetch this store's homepage.");
@@ -178,13 +188,46 @@ export async function analyzeAiVisibility(url: string): Promise<ToolResult> {
       status: !contentReliable ? "na" : hasEntity ? "pass" : "warn",
       value: hasEntity ? types.filter((t) => ["Organization", "WebSite", "LocalBusiness"].includes(t)).join(", ") : "missing",
       fix: "Add Organization + WebSite JSON-LD so AI engines can identify your brand as an entity.",
+      howto: [
+        "In Shopify: Online Store → Themes → Edit code → theme.liquid.",
+        "Paste the Organization JSON-LD below (before </head>) with your real name, logo and social links.",
+        "Add a matching WebSite node so AI + Google recognize your site as one entity.",
+      ],
+      snippet: hasEntity ? undefined : SNIPPET_ORG,
     },
     {
       id: "product-schema",
       label: "Product structured data (quotable details)",
-      status: !contentReliable ? "na" : types.includes("Product") ? "pass" : "warn",
-      value: types.includes("Product") ? "present" : "not found on this page",
-      fix: "Expose Product JSON-LD (name, price, availability) so AI answers cite accurate product facts.",
+      status: !contentReliable ? "na" : hasProduct ? "pass" : isProductPage ? "warn" : "info",
+      value: hasProduct
+        ? "present"
+        : isProductPage
+          ? "missing on this product page"
+          : "not a product page — run on a /products/… URL",
+      fix: hasProduct
+        ? undefined
+        : isProductPage
+          ? "Expose Product JSON-LD (name, price, availability) so AI answers cite accurate product facts."
+          : "Run this tool on a product URL to check the Product schema that AI answers quote for price & availability.",
+      howto: hasProduct || !isProductPage ? undefined : [
+        "Open your product template (Online Store → Themes → Edit code → product section).",
+        "Add Product JSON-LD populated from Liquid ({{ product.title }}, {{ product.selected_or_first_available_variant.price }}, etc.).",
+        "Validate with Google's Rich Results Test.",
+      ],
+      snippet: hasProduct || !isProductPage ? undefined : SNIPPET_PRODUCT,
+    },
+    {
+      id: "faq-schema",
+      label: "FAQ content AI can quote (FAQPage schema)",
+      status: !contentReliable ? "na" : hasFaq ? "pass" : "info",
+      value: hasFaq ? "present" : "none found",
+      fix: "Publish visible FAQs with FAQPage JSON-LD — AI engines lift Q&A pairs directly into answers, and it earns FAQ rich results.",
+      howto: hasFaq ? undefined : [
+        "Add a visible FAQ section to key pages (shipping, returns, product questions).",
+        "Mark it up with FAQPage JSON-LD that mirrors the visible text exactly.",
+        "Keep answers factual and self-contained — that's what AI engines quote.",
+      ],
+      snippet: hasFaq ? undefined : SNIPPET_FAQ,
     },
     {
       id: "description",

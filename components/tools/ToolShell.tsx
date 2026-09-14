@@ -14,6 +14,8 @@ import {
   FiExternalLink,
   FiRefreshCw,
   FiArrowLeft,
+  FiCopy,
+  FiCheck,
 } from "react-icons/fi";
 
 function AllToolsLink({ className = "" }: { className?: string }) {
@@ -65,9 +67,36 @@ function ScoreGauge({ score, grade }: { score: number; grade: string }) {
   );
 }
 
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* clipboard unavailable — no-op */
+    }
+  }
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      className="inline-flex items-center gap-1.5 rounded-md bg-white/10 px-2.5 py-1 text-xs font-semibold text-gray-200 transition hover:bg-white/20 cursor-pointer"
+    >
+      {copied ? <FiCheck aria-hidden /> : <FiCopy aria-hidden />} {copied ? "Copied" : "Copy"}
+    </button>
+  );
+}
+
 function CheckRow({ c }: { c: ToolCheck }) {
   const m = STATUS_META[c.status];
   const Icon = m.Icon;
+  // Show guidance for anything actionable — failures, warnings, and info items
+  // that carry how-to steps or a snippet (e.g. "add FAQPage schema").
+  const showGuidance =
+    (c.status === "warn" || c.status === "fail" || c.status === "info") &&
+    (!!c.fix || !!c.howto?.length || !!c.snippet);
   return (
     <li className="px-5 py-3.5">
       <div className="flex items-start justify-between gap-3">
@@ -79,13 +108,29 @@ function CheckRow({ c }: { c: ToolCheck }) {
           <Icon aria-hidden /> {m.label}
         </span>
       </div>
-      {(c.status === "warn" || c.status === "fail") && c.fix && (
+      {showGuidance && (
         <div className="mt-2 rounded-lg bg-[#F2FBFA] px-3.5 py-2.5">
-          <p className="text-sm text-[#13181E]">{c.fix}</p>
-          {c.ref && (
-            <a href={c.ref} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-[#0D99FF] hover:text-[#0A7ACC]">
-              Learn more <FiExternalLink aria-hidden />
-            </a>
+          {c.fix && <p className="text-sm text-[#13181E]">{c.fix}</p>}
+          {c.howto && c.howto.length > 0 && (
+            <div className="mt-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#0D99FF]">How to fix it</p>
+              <ol className="mt-1 list-decimal space-y-1 pl-5 text-sm text-[#13181E]">
+                {c.howto.map((step, i) => (
+                  <li key={i}>{step}</li>
+                ))}
+              </ol>
+            </div>
+          )}
+          {c.snippet && (
+            <div className="mt-3 overflow-hidden rounded-lg bg-[#0b1220]">
+              <div className="flex items-center justify-between px-3 py-1.5">
+                <span className="text-xs font-semibold text-gray-400">Copy-paste</span>
+                <CopyButton text={c.snippet} />
+              </div>
+              <pre className="overflow-x-auto px-3 pb-3 text-xs leading-relaxed text-gray-100">
+                <code>{c.snippet}</code>
+              </pre>
+            </div>
           )}
         </div>
       )}

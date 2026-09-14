@@ -77,6 +77,12 @@ export async function analyzeMeta(url: string): Promise<ToolResult> {
       status: og.image ? "pass" : "fail",
       value: og.image ? "present" : "missing",
       fix: "Add an og:image (1200×630) so shared links show a rich preview.",
+      howto: [
+        "In Shopify: Online Store → Themes → Edit code → theme.liquid.",
+        "Add the og:image meta tag inside <head> with an absolute URL to a 1200×630 image.",
+        "Test with Facebook's Sharing Debugger and re-scrape after publishing.",
+      ],
+      snippet: og.image ? undefined : `<meta property="og:image" content="https://yourstore.com/share-image-1200x630.jpg">`,
     },
     {
       id: "og-basic",
@@ -84,6 +90,8 @@ export async function analyzeMeta(url: string): Promise<ToolResult> {
       status: og.title && og.description ? "pass" : og.title || og.description ? "warn" : "fail",
       value: og.title && og.description ? "present" : "incomplete",
       fix: "Set og:title and og:description for clean social shares.",
+      snippet: og.title && og.description ? undefined : `<meta property="og:title" content="Your page title">
+<meta property="og:description" content="A short, compelling description.">`,
     },
     {
       id: "og-complete",
@@ -91,6 +99,9 @@ export async function analyzeMeta(url: string): Promise<ToolResult> {
       status: og.url && og.type && og.siteName ? "pass" : "warn",
       value: [og.url && "url", og.type && "type", og.siteName && "site_name"].filter(Boolean).join(", ") || "missing",
       fix: "Set og:url, og:type and og:site_name so social cards render complete and correct.",
+      snippet: og.url && og.type && og.siteName ? undefined : `<meta property="og:url" content="https://yourstore.com/page">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Your Store">`,
     },
     {
       id: "twitter-card",
@@ -98,6 +109,10 @@ export async function analyzeMeta(url: string): Promise<ToolResult> {
       status: twitter.card ? (twitter.image ? "pass" : "warn") : "warn",
       value: twitter.card ? (twitter.image ? `${twitter.card} + image` : `${twitter.card}, no image`) : "missing",
       fix: 'Add twitter:card="summary_large_image" plus twitter:title/description/image.',
+      snippet: twitter.card && twitter.image ? undefined : `<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Your page title">
+<meta name="twitter:description" content="A short, compelling description.">
+<meta name="twitter:image" content="https://yourstore.com/share-image-1200x630.jpg">`,
     },
     {
       id: "canonical",

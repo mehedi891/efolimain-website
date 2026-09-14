@@ -11,7 +11,12 @@ export interface ToolCheck {
   label: string;
   status: ToolStatus;
   value?: string;
+  /** One-line summary of the fix. */
   fix?: string;
+  /** Step-by-step "how to fix it" instructions (rendered as an ordered list). */
+  howto?: string[];
+  /** Copy-paste code (usually JSON-LD or a meta tag) showing exactly what to add. */
+  snippet?: string;
   ref?: string;
   /** Free in the teaser (true) vs gated behind the email unlock (false). */
   free?: boolean;
