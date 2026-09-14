@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SiteChrome from "@/components/SiteChrome";
+import AppStudioSection from "@/components/free-tools/AppStudioSection";
 import MetaToolClient from "./MetaToolClient";
 
 const TITLE = "Free Meta & Social Preview Tool | Google + Social Cards — eFoli";
@@ -17,6 +18,7 @@ export default function Route() {
   return (
     <SiteChrome darkFooter hideBanner>
       <MetaToolClient />
+      <AppStudioSection />
     </SiteChrome>
   );
 }

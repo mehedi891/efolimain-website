@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SiteChrome from "@/components/SiteChrome";
+import AppStudioSection from "@/components/free-tools/AppStudioSection";
 import AiToolClient from "./AiToolClient";
 
 const TITLE = "Free AI Visibility Checker + llms.txt Generator — eFoli";
@@ -17,6 +18,7 @@ export default function Route() {
   return (
     <SiteChrome darkFooter hideBanner>
       <AiToolClient />
+      <AppStudioSection />
     </SiteChrome>
   );
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SiteChrome from "@/components/SiteChrome";
+import AppStudioSection from "@/components/free-tools/AppStudioSection";
 import AuditTool from "./AuditTool";
 
 const TITLE = "Free Shopify Store Audit | Speed, SEO & BFCM Readiness — eFoli";
@@ -23,6 +24,7 @@ export default function ShopifyStoreAuditRoute() {
   return (
     <SiteChrome darkFooter hideBanner>
       <AuditTool />
+      <AppStudioSection />
     </SiteChrome>
   );
 }

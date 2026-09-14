@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SiteChrome from "@/components/SiteChrome";
+import AppStudioSection from "@/components/free-tools/AppStudioSection";
 import SchemaToolClient from "./SchemaToolClient";
 
 const TITLE = "Free Structured Data / Rich Results Checker — eFoli";
@@ -17,6 +18,7 @@ export default function Route() {
   return (
     <SiteChrome darkFooter hideBanner>
       <SchemaToolClient />
+      <AppStudioSection />
     </SiteChrome>
   );
 }
