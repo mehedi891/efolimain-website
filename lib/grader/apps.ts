@@ -17,7 +17,13 @@ function band(value: number, goodMax: number, warnMax: number): Status {
   return "fail";
 }
 
-export function appChecks(detection: ShopifyDetection, scanOk: boolean): Check[] {
+/** Rendered third-party data from PageSpeed (more accurate than static HTML). */
+export interface PsiThirdParty {
+  count: number | null;
+  blockingMs: number | null;
+}
+
+export function appChecks(detection: ShopifyDetection, scanOk: boolean, psi?: PsiThirdParty): Check[] {
   const { apps, thirdPartyScriptCount, thirdPartyScriptHosts } = detection;
   const checks: Check[] = [];
 
@@ -33,18 +39,26 @@ export function appChecks(detection: ShopifyDetection, scanOk: boolean): Check[]
     ref: REF.bloat,
   });
 
+  // Prefer PageSpeed's rendered third-party count (catches JS-injected app
+  // scripts that server-side HTML parsing misses); fall back to static hosts.
+  const rendered = psi?.count != null;
+  const count = rendered ? (psi!.count as number) : thirdPartyScriptCount;
+  const blocking = psi?.blockingMs ?? null;
+  const statusFromMeasured: Status = rendered ? band(count, 5, 12) : band(count, 15, 30);
   checks.push({
     id: "apps-third-party-scripts",
-    label: "Third-party scripts on the page",
-    status: !scanOk ? "na" : band(thirdPartyScriptCount, 15, 30),
+    label: "Third-party services on the page",
+    status: !scanOk && !rendered ? "na" : statusFromMeasured,
     tier: "signal",
-    value: `${thirdPartyScriptCount} distinct hosts`,
+    value: rendered
+      ? `${count} third-party service${count === 1 ? "" : "s"}${blocking != null ? ` · ~${blocking}ms blocking` : ""}`
+      : `${count} distinct script hosts`,
     current: thirdPartyScriptHosts.length
-      ? `Loading from: ${thirdPartyScriptHosts.slice(0, 8).join(", ")}${thirdPartyScriptHosts.length > 8 ? ` +${thirdPartyScriptHosts.length - 8} more` : ""}`
+      ? `Detected: ${thirdPartyScriptHosts.slice(0, 8).join(", ")}${thirdPartyScriptHosts.length > 8 ? ` +${thirdPartyScriptHosts.length - 8} more` : ""}`
       : undefined,
     impact: "M",
     effort: "M",
-    fix: "Reduce third-party scripts; defer non-critical ones to cut render-blocking and improve INP.",
+    fix: "Reduce third-party services; defer non-critical ones to cut render-blocking and improve INP.",
     ref: REF.bloat,
   });
 

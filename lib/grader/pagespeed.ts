@@ -43,6 +43,9 @@ export interface PageSpeedData {
   cacheScore: number | null;
   /** Lighthouse LCP-image priority/preload audit score (0..1). */
   lcpPreloadScore: number | null;
+  /** Third-party entities on the rendered page + their total main-thread blocking (ms). */
+  thirdPartyCount: number | null;
+  thirdPartyBlockingMs: number | null;
   /** The element/image that is the Largest Contentful Paint (what to optimize). */
   lcpElement: string | null;
   /** Final rendered screenshot as a data URI (from Lighthouse). */
@@ -59,6 +62,9 @@ interface PsiNode {
 interface PsiListItem {
   node?: PsiNode;
   items?: PsiListItem[];
+  /** third-party-summary entries. */
+  entity?: string;
+  blockingTime?: number;
 }
 interface PsiAudit {
   numericValue?: number;
@@ -121,6 +127,8 @@ export async function runPageSpeed(
     totalByteBytes: null,
     cacheScore: null,
     lcpPreloadScore: null,
+    thirdPartyCount: null,
+    thirdPartyBlockingMs: null,
     lcpElement: null,
     screenshotDataUri: null,
   };
@@ -186,6 +194,15 @@ export async function runPageSpeed(
     totalByteBytes: audits["total-byte-weight"]?.numericValue ?? null,
     cacheScore: audits["uses-long-cache-ttl"]?.score ?? null,
     lcpPreloadScore: audits["prioritize-lcp-image"]?.score ?? audits["preload-lcp-image"]?.score ?? null,
+    thirdPartyCount: (() => {
+      const items = audits["third-party-summary"]?.details?.items;
+      return Array.isArray(items) ? items.length : null;
+    })(),
+    thirdPartyBlockingMs: (() => {
+      const items = audits["third-party-summary"]?.details?.items;
+      if (!Array.isArray(items)) return null;
+      return Math.round(items.reduce((s, it) => s + (typeof it.blockingTime === "number" ? it.blockingTime : 0), 0));
+    })(),
     lcpElement: firstNode(audits["largest-contentful-paint-element"]?.details?.items),
     screenshotDataUri: audits["final-screenshot"]?.details?.data ?? null,
   };

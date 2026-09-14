@@ -410,7 +410,10 @@ export async function runAudit({ url, email = "" }: RunAuditInput): Promise<Repo
       ...cartChecks(scan, contentReliable),
     ]),
     buildPillar("seo", "SEO & Discoverability", [...buildSeoChecks(mobile), ...seoChecks(scan, contentReliable)]),
-    buildPillar("apps", "App & Script Health", appChecks(detection, scan.home.ok)),
+    buildPillar("apps", "App & Script Health", appChecks(detection, scan.home.ok, {
+      count: (mobile.fetchedOk ? mobile : desktop).thirdPartyCount,
+      blockingMs: (mobile.fetchedOk ? mobile : desktop).thirdPartyBlockingMs,
+    })),
     buildPillar("trust", "Trust & Security", [...buildTrustChecks(mobile), ...trustChecks(scan, contentReliable)]),
   ];
 
