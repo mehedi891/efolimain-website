@@ -38,8 +38,10 @@ export interface PageSpeedData {
   cwvSource: "field" | "lab" | "none";
   /** Diagnostics for findings. */
   renderBlockingMs: number | null;
+  /** Lighthouse render-blocking-resources score (0..1); 1 = nothing blocking. */
+  renderBlockingScore: number | null;
   totalByteBytes: number | null;
-  /** Lighthouse "uses-long-cache-ttl" audit score (0..1) — efficient asset caching. */
+  /** Efficient asset caching (0..1), derived from uses-long-cache-ttl. */
   cacheScore: number | null;
   /** Lighthouse LCP-image priority/preload audit score (0..1). */
   lcpPreloadScore: number | null;
@@ -62,9 +64,17 @@ interface PsiNode {
 interface PsiListItem {
   node?: PsiNode;
   items?: PsiListItem[];
-  /** third-party-summary entries. */
+  /** third-party / opportunity entries. */
   entity?: string;
   blockingTime?: number;
+  mainThreadTime?: number;
+  wastedMs?: number;
+}
+
+/** Sum a numeric field across list items. */
+function sumField(items: PsiListItem[] | undefined, field: "wastedMs" | "blockingTime" | "mainThreadTime"): number | null {
+  if (!Array.isArray(items)) return null;
+  return Math.round(items.reduce((s, it) => s + (typeof it[field] === "number" ? (it[field] as number) : 0), 0));
 }
 interface PsiAudit {
   numericValue?: number;
@@ -124,6 +134,7 @@ export async function runPageSpeed(
     fcpMs: null,
     cwvSource: "none",
     renderBlockingMs: null,
+    renderBlockingScore: null,
     totalByteBytes: null,
     cacheScore: null,
     lcpPreloadScore: null,
@@ -190,20 +201,44 @@ export async function runPageSpeed(
     tbtMs: labTbt,
     fcpMs: audits["first-contentful-paint"]?.numericValue ?? null,
     cwvSource: hasField ? "field" : labLcp != null ? "lab" : "none",
-    renderBlockingMs: audits["render-blocking-resources"]?.details?.overallSavingsMs ?? null,
+    // Lighthouse 12+ renamed these to "*-insight" audits; fall back to the older
+    // keys for stores still served by an older Lighthouse.
+    renderBlockingMs: (() => {
+      const a = audits["render-blocking-insight"];
+      if (a?.details?.items) return sumField(a.details.items, "wastedMs");
+      return audits["render-blocking-resources"]?.details?.overallSavingsMs ?? null;
+    })(),
+    // Present but score-less = notApplicable = nothing blocking = pass (1).
+    renderBlockingScore: (() => {
+      const a = audits["render-blocking-insight"] ?? audits["render-blocking-resources"];
+      return a ? (a.score ?? 1) : null;
+    })(),
     totalByteBytes: audits["total-byte-weight"]?.numericValue ?? null,
-    cacheScore: audits["uses-long-cache-ttl"]?.score ?? null,
-    lcpPreloadScore: audits["prioritize-lcp-image"]?.score ?? audits["preload-lcp-image"]?.score ?? null,
+    cacheScore: (() => {
+      const a = audits["cache-insight"] ?? audits["uses-long-cache-ttl"];
+      if (!a) return null;
+      if (typeof a.score === "number") return a.score;
+      const items = a.details?.items;
+      if (Array.isArray(items)) return items.length === 0 ? 1 : 0.4;
+      return 1; // audit ran, nothing flagged → efficient caching
+    })(),
+    lcpPreloadScore:
+      audits["lcp-discovery-insight"]?.score ??
+      audits["prioritize-lcp-image"]?.score ??
+      audits["preload-lcp-image"]?.score ??
+      null,
     thirdPartyCount: (() => {
-      const items = audits["third-party-summary"]?.details?.items;
+      const items = (audits["third-parties-insight"] ?? audits["third-party-summary"])?.details?.items;
       return Array.isArray(items) ? items.length : null;
     })(),
     thirdPartyBlockingMs: (() => {
-      const items = audits["third-party-summary"]?.details?.items;
-      if (!Array.isArray(items)) return null;
-      return Math.round(items.reduce((s, it) => s + (typeof it.blockingTime === "number" ? it.blockingTime : 0), 0));
+      const items = (audits["third-parties-insight"] ?? audits["third-party-summary"])?.details?.items;
+      return sumField(items, "blockingTime") ?? sumField(items, "mainThreadTime");
     })(),
-    lcpElement: firstNode(audits["largest-contentful-paint-element"]?.details?.items),
+    lcpElement:
+      firstNode(audits["lcp-discovery-insight"]?.details?.items) ??
+      firstNode(audits["lcp-breakdown-insight"]?.details?.items) ??
+      firstNode(audits["largest-contentful-paint-element"]?.details?.items),
     screenshotDataUri: audits["final-screenshot"]?.details?.data ?? null,
   };
 }

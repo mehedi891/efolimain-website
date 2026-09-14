@@ -194,9 +194,17 @@ function buildPerformanceChecks(mobile: PageSpeedData, desktop: PageSpeedData): 
     {
       id: "render-blocking",
       label: "Render-blocking resources",
-      status: lowerIsBetter(src.renderBlockingMs, 150, 600),
+      status: src.renderBlockingScore != null
+        ? higherIsBetter(Math.round(src.renderBlockingScore * 100), 90, 50)
+        : lowerIsBetter(src.renderBlockingMs, 150, 600),
       tier: "measured",
-      value: src.renderBlockingMs != null ? `~${fmtMs(src.renderBlockingMs)} potential savings` : "n/a",
+      value:
+        src.renderBlockingMs != null && src.renderBlockingMs > 0
+          ? `~${fmtMs(src.renderBlockingMs)} potential savings`
+          : src.renderBlockingScore != null
+            ? "none blocking first paint"
+            : "n/a",
+      note: src.renderBlockingScore == null && src.renderBlockingMs == null ? "Lighthouse didn't report this audit this run." : undefined,
       impact: "M",
       effort: "M",
       fix: "Defer or async non-critical scripts and inline critical CSS to unblock first paint.",
@@ -207,7 +215,8 @@ function buildPerformanceChecks(mobile: PageSpeedData, desktop: PageSpeedData): 
       label: "Static assets cached (long Cache-Control)",
       status: higherIsBetter(src.cacheScore != null ? Math.round(src.cacheScore * 100) : null, 90, 50),
       tier: "measured",
-      value: src.cacheScore != null ? `${Math.round(src.cacheScore * 100)}% efficient` : "n/a",
+      value: src.cacheScore != null ? (src.cacheScore >= 0.9 ? "efficient" : "some assets short-cached") : "n/a",
+      note: src.cacheScore == null ? "No cacheable static assets were flagged on this page this run." : undefined,
       impact: "M",
       effort: "M",
       fix: "Serve static assets (images, JS, CSS) with a long Cache-Control max-age so repeat visits load from cache.",
@@ -219,6 +228,7 @@ function buildPerformanceChecks(mobile: PageSpeedData, desktop: PageSpeedData): 
       status: higherIsBetter(src.lcpPreloadScore != null ? Math.round(src.lcpPreloadScore * 100) : null, 90, 50),
       tier: "measured",
       value: src.lcpPreloadScore != null ? (src.lcpPreloadScore >= 0.9 ? "prioritized" : "not prioritized") : "n/a",
+      note: src.lcpPreloadScore == null ? "The largest element is text (not an image) on this page, so there's nothing to preload." : undefined,
       impact: "H",
       effort: "M",
       fix: "Preload the LCP image (<link rel=preload>) and mark it fetchpriority=high so it loads first.",
