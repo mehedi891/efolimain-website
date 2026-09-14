@@ -39,6 +39,10 @@ export interface PageSpeedData {
   /** Diagnostics for findings. */
   renderBlockingMs: number | null;
   totalByteBytes: number | null;
+  /** Lighthouse "uses-long-cache-ttl" audit score (0..1) — efficient asset caching. */
+  cacheScore: number | null;
+  /** Lighthouse LCP-image priority/preload audit score (0..1). */
+  lcpPreloadScore: number | null;
   /** The element/image that is the Largest Contentful Paint (what to optimize). */
   lcpElement: string | null;
   /** Final rendered screenshot as a data URI (from Lighthouse). */
@@ -58,6 +62,7 @@ interface PsiListItem {
 }
 interface PsiAudit {
   numericValue?: number;
+  score?: number | null;
   details?: {
     data?: string;
     overallSavingsMs?: number;
@@ -114,6 +119,8 @@ export async function runPageSpeed(
     cwvSource: "none",
     renderBlockingMs: null,
     totalByteBytes: null,
+    cacheScore: null,
+    lcpPreloadScore: null,
     lcpElement: null,
     screenshotDataUri: null,
   };
@@ -177,6 +184,8 @@ export async function runPageSpeed(
     cwvSource: hasField ? "field" : labLcp != null ? "lab" : "none",
     renderBlockingMs: audits["render-blocking-resources"]?.details?.overallSavingsMs ?? null,
     totalByteBytes: audits["total-byte-weight"]?.numericValue ?? null,
+    cacheScore: audits["uses-long-cache-ttl"]?.score ?? null,
+    lcpPreloadScore: audits["prioritize-lcp-image"]?.score ?? audits["preload-lcp-image"]?.score ?? null,
     lcpElement: firstNode(audits["largest-contentful-paint-element"]?.details?.items),
     screenshotDataUri: audits["final-screenshot"]?.details?.data ?? null,
   };

@@ -1,7 +1,8 @@
 /** Shared deterministic scoring for tool checks. */
 import type { ToolCheck } from "./types";
 
-const POINTS = { pass: 100, warn: 55, fail: 0 } as const;
+// `warn` sits below the midpoint so a "needs work" pulls the score down honestly.
+const POINTS = { pass: 100, warn: 40, fail: 0 } as const;
 
 export function scoreChecks(checks: ToolCheck[]): number {
   const scored = checks.filter(

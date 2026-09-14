@@ -36,7 +36,8 @@ const REF = {
 /** Which page each check is derived from (collection/cart checks self-tag). */
 const PAGE_BY_ID: Record<string, CheckScope> = {
   "perf-score": "home", lcp: "home", fcp: "home", cls: "home", inp: "home", ttfb: "home",
-  tbt: "home", "render-blocking": "home", "page-weight": "home", "product-perf-score": "product",
+  tbt: "home", "render-blocking": "home", "asset-caching": "home", "lcp-preload": "home",
+  "page-weight": "home", "product-perf-score": "product",
   "mobile-perf": "home", "mobile-cls": "home", "mobile-a11y": "home",
   "seo-lighthouse": "home", "seo-title": "home", "seo-meta-description": "home",
   "seo-h1": "home", "seo-canonical": "home", "seo-og": "home",
@@ -200,6 +201,28 @@ function buildPerformanceChecks(mobile: PageSpeedData, desktop: PageSpeedData): 
       effort: "M",
       fix: "Defer or async non-critical scripts and inline critical CSS to unblock first paint.",
       ref: REF.renderBlocking,
+    },
+    {
+      id: "asset-caching",
+      label: "Static assets cached (long Cache-Control)",
+      status: higherIsBetter(src.cacheScore != null ? Math.round(src.cacheScore * 100) : null, 90, 50),
+      tier: "measured",
+      value: src.cacheScore != null ? `${Math.round(src.cacheScore * 100)}% efficient` : "n/a",
+      impact: "M",
+      effort: "M",
+      fix: "Serve static assets (images, JS, CSS) with a long Cache-Control max-age so repeat visits load from cache.",
+      ref: REF.perf,
+    },
+    {
+      id: "lcp-preload",
+      label: "LCP image prioritized / preloaded",
+      status: higherIsBetter(src.lcpPreloadScore != null ? Math.round(src.lcpPreloadScore * 100) : null, 90, 50),
+      tier: "measured",
+      value: src.lcpPreloadScore != null ? (src.lcpPreloadScore >= 0.9 ? "prioritized" : "not prioritized") : "n/a",
+      impact: "H",
+      effort: "M",
+      fix: "Preload the LCP image (<link rel=preload>) and mark it fetchpriority=high so it loads first.",
+      ref: REF.lcp,
     },
     {
       id: "page-weight",

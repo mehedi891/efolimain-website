@@ -8,10 +8,12 @@
 
 import type { Check, Grade, Pillar, Status } from "./types";
 
-/** Points a check contributes by status. `na` and `manual`-tier checks are excluded. */
+/** Points a check contributes by status. `na` and `manual`-tier checks are excluded.
+ *  `warn` is deliberately below the midpoint: a "needs work" is closer to a
+ *  miss than a pass, so the headline score reflects real weaknesses. */
 const STATUS_POINTS: Record<Exclude<Status, "na">, number> = {
   pass: 100,
-  warn: 55,
+  warn: 40,
   fail: 0,
 };
 
