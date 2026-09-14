@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { FiArrowUpRight } from "react-icons/fi";
-import { APP_GOALS, appsByKeys } from "@/data/apps";
+import { APP_GOALS, appsByKeys, appStoreHref } from "@/data/apps";
 
 /**
  * "Built by a Shopify app studio" — indirect app promotion, grouped by goal.
@@ -33,7 +33,7 @@ export default function AppStudioSection() {
                 {appsByKeys(g.appKeys).map((a) => (
                   <a
                     key={a.key}
-                    href={a.url}
+                    href={appStoreHref(a)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="group -mx-2 flex items-center gap-3 rounded-xl p-2 transition hover:bg-[#F2FBFA]"
