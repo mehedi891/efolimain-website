@@ -9,7 +9,8 @@ import pbIcon from "@/public/img/home/pbLogo.png";
 import drIcon from "@/public/img/home/drLogo.png";
 import emIcon from "@/public/img/home/emLogo.png";
 import orIcon from "@/public/img/home/or_icon.png";
-import qwIcon from "@/public/img/home/qw-icon.png";
+// qw-icon.png is a white logo (invisible on light backgrounds); use the colored app icon.
+import qwIcon from "@/public/img/home/qw-icon-color.png";
 
 export interface EfoliApp {
   key: string;
