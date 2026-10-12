@@ -19,8 +19,9 @@ export const CAMPAIGN = {
 export const PAGE_PATH = "/efoli-bfcm-2026";
 export const PAGE_URL = `https://efoli.com${PAGE_PATH}`;
 
-/** The blog post every deal CTA points into (one section per app). */
-export const DEALS_POST = "/blog/best-shopify-bfcm-apps";
+/** The blog post every deal CTA points into (one section per app). Full
+ *  absolute URL, exactly as supplied in the campaign's CTA link list. */
+export const DEALS_POST = "https://efoli.com/blog/best-shopify-bfcm-apps";
 
 export function dealHref(anchor: string): string {
   return `${DEALS_POST}#${anchor}`;
