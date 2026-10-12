@@ -6,8 +6,6 @@ import s from "./bfcm.module.css";
 import { ArrowRight, Check } from "./icons";
 import type { EfoliOffer, OfferCategory } from "@/data/bfcm2026";
 
-export type OfferCard = EfoliOffer & { href: string };
-
 /**
  * eFoli app cards with "All / Sell more / Operate smarter" filter tabs. Every
  * card is always in the HTML (filtered ones get `hidden`), so crawlers see all six.
@@ -19,7 +17,7 @@ export default function AppOffers({
   code,
   discount,
 }: {
-  offers: OfferCard[];
+  offers: EfoliOffer[];
   filters: { id: "all" | OfferCategory; label: string }[];
   terms: string[];
   code: string;
@@ -80,7 +78,7 @@ export default function AppOffers({
               <span className={s.codeChip}>CODE: {code}</span>
               <a className={s.appLink} href={o.href} target="_blank" rel="noopener">
                 View deal <ArrowRight />
-                <span className="sr-only"> for {o.name} (opens Shopify App Store)</span>
+                <span className="sr-only"> for {o.name} (opens in a new tab)</span>
               </a>
             </div>
           </article>

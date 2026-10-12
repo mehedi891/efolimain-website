@@ -16,6 +16,7 @@
  */
 
 import type { StaticImageData } from "next/image";
+import { CAMPAIGN, dealHref } from "./bfcmCampaign";
 
 import mvIcon from "@/public/img/home/mv_icon.png";
 import pbIcon from "@/public/img/home/pbLogo.png";
@@ -73,20 +74,7 @@ export { default as partnerBadge } from "@/public/img/bfcm-2026/partner-badge.we
 // Campaign
 // ---------------------------------------------------------------------------
 
-export const CAMPAIGN = {
-  code: "BFCM26",
-  discount: 30,
-  /** Countdown target (end of day UTC). */
-  endsAt: "2026-12-12T23:59:59Z",
-  endsLong: "December 12, 2026",
-  endsMedium: "Dec 12, 2026",
-  endsShort: "Dec 12",
-  /** Partner cards shown before "View more". */
-  partnersVisible: 6,
-} as const;
-
-export const PAGE_PATH = "/efoli-bfcm-2026";
-export const PAGE_URL = `https://efoli.com${PAGE_PATH}`;
+export { CAMPAIGN, PAGE_PATH, PAGE_URL, dealHref } from "./bfcmCampaign";
 
 export const TRUST_POINTS = [
   "Built for Shopify",
@@ -118,8 +106,8 @@ export const OFFER_FILTERS: { id: "all" | OfferCategory; label: string }[] = [
 export interface EfoliOffer {
   /** In-page anchor (hero pills link to it). */
   id: string;
-  /** Key into data/apps.ts — supplies the Shopify App Store URL. */
-  appKey: string;
+  /** "View deal" target — this app's section in the BFCM deals blog post. */
+  href: string;
   name: string;
   category: OfferCategory;
   label: string;
@@ -134,7 +122,7 @@ export interface EfoliOffer {
 export const EFOLI_OFFERS: EfoliOffer[] = [
   {
     id: "multivariants",
-    appKey: "mv",
+    href: dealHref("app-multivariants-bulk-order"),
     name: "MultiVariants",
     category: "sell",
     label: "Bulk ordering",
@@ -145,7 +133,7 @@ export const EFOLI_OFFERS: EfoliOffer[] = [
   },
   {
     id: "push-bundle",
-    appKey: "pb",
+    href: dealHref("app-push-bundle-build-a-box"),
     name: "Push Bundle",
     category: "sell",
     label: "Bundles & AOV",
@@ -156,7 +144,7 @@ export const EFOLI_OFFERS: EfoliOffer[] = [
   },
   {
     id: "discountray",
-    appKey: "dr",
+    href: dealHref("app-discountray"),
     name: "DiscountRay",
     category: "sell",
     label: "Custom pricing",
@@ -167,7 +155,7 @@ export const EFOLI_OFFERS: EfoliOffer[] = [
   },
   {
     id: "embedup",
-    appKey: "em",
+    href: dealHref("app-embedup-affiliate-buy-button"),
     name: "EmbedUp",
     category: "operate",
     label: "New sales channels",
@@ -178,7 +166,7 @@ export const EFOLI_OFFERS: EfoliOffer[] = [
   },
   {
     id: "orderrules",
-    appKey: "or",
+    href: dealHref("app-orderrules-limits-delivery"),
     name: "OrderRules",
     category: "operate",
     label: "Order control",
@@ -189,7 +177,7 @@ export const EFOLI_OFFERS: EfoliOffer[] = [
   },
   {
     id: "quotway",
-    appKey: "qw",
+    href: dealHref("app-quotway-b2b-quote-negotiation"),
     name: "QuotWay",
     category: "operate",
     label: "Quote workflows",
@@ -243,6 +231,7 @@ export interface PartnerDeal {
   code: string | null;
   /** Shown instead of a code box when `code` is null. */
   codeNote?: string;
+  /** "Get deal" target — this app's section in the BFCM deals blog post. */
   href: string;
   /** 1200×628 banner; null shows the placeholder. */
   banner: StaticImageData | null;
@@ -266,7 +255,7 @@ export const PARTNERS: PartnerDeal[] = [
     until: "Until Dec 30, 2026",
     code: null,
     codeNote: "Applied through the deal link",
-    href: "https://www.outfy.com/pricing?code=OTg0ZmQxYjE5YWU0MTcyY9%2B7zvlWg4gHxvrDk11GqEN5w4XCqyAS%2FRtUdGExn9uBSiFfA8Vcyk54JLIMfFYG3TbvhGPw6g3pWZW2KPFnnWo%3D&utm_source=6xWjYfue&utm_campaign=bfcm-efoli",
+    href: dealHref("app-outfy-social-media-auto-post"),
     banner: outfyBanner,
     logo: outfyLogo,
     initials: "OS",
@@ -282,7 +271,7 @@ export const PARTNERS: PartnerDeal[] = [
     terms: "Paid plans · new customers",
     until: "Until Nov 30, 2026",
     code: "BFCM50",
-    href: "https://makeprosimp.com/partnership/efoli-multivariants-toastibar",
+    href: dealHref("app-toastibar-sales-popup-timers"),
     banner: toastibarBanner,
     logo: toastibarLogo,
     initials: "TS",
@@ -298,7 +287,7 @@ export const PARTNERS: PartnerDeal[] = [
     terms: "All paid plans · 3 months",
     until: "Until Dec 31, 2026",
     code: "FOXPARTNER35",
-    href: "https://apps.shopify.com/xflow?utm_source=EFOLI&utm_medium=partnership&utm_campaign=BFCM2026",
+    href: dealHref("app-xflow-back-in-stock-alert"),
     banner: xflowBanner,
     logo: xflowLogo,
     initials: "XB",
@@ -315,7 +304,7 @@ export const PARTNERS: PartnerDeal[] = [
     until: "Until Dec 31, 2026",
     code: null,
     codeNote: "Applied through the deal link",
-    href: "https://embedded.transcy.io/?code=TCBFCM26",
+    href: dealHref("app-transcy-ai-language-translate"),
     banner: transcyBanner,
     logo: transcyLogo,
     initials: "TA",
@@ -332,7 +321,7 @@ export const PARTNERS: PartnerDeal[] = [
     until: "Until Dec 31, 2026",
     code: null,
     codeNote: "No code needed",
-    href: "https://apps.shopify.com/zotek-cod",
+    href: dealHref("app-zotek-cod-form-bundles-upsells"),
     banner: zotekCodBanner,
     logo: zotekCodLogo,
     initials: "ZC",
@@ -348,7 +337,7 @@ export const PARTNERS: PartnerDeal[] = [
     terms: "For life · all paid plans · new customers",
     until: "Until Dec 2, 2026",
     code: "622EBF26",
-    href: "https://apps.shopify.com/kudobuzz-testimonials",
+    href: dealHref("app-kudobuzz-reviews-social-proof"),
     banner: null, // awaiting partner banner
     logo: null, // awaiting partner logo
     initials: "KR",
@@ -364,7 +353,7 @@ export const PARTNERS: PartnerDeal[] = [
     terms: "For life · all paid plans",
     until: "Until Jan 1, 2027",
     code: "EFOLI20",
-    href: "https://apps.shopify.com/smart-seo?utm_source=efoli&utm_medium=partners&utm_campaign=efoli-bfcm&utm_content=text-link",
+    href: dealHref("app-smart-seo-ai-image-optimizer"),
     banner: smartSeoBanner,
     logo: smartSeoLogo,
     initials: "SS",
@@ -381,7 +370,7 @@ export const PARTNERS: PartnerDeal[] = [
     until: "Until Dec 1, 2026",
     code: null,
     codeNote: "Applied automatically after install",
-    href: "https://apps.shopify.com/gdpr-backpack?utm_source=partner&utm_medium=multivariants&utm_campaign=bfcm_2026",
+    href: dealHref("app-consentmo-gdpr-compliance"),
     banner: consentmoBanner,
     logo: consentmoLogo,
     initials: "CG",
@@ -397,7 +386,7 @@ export const PARTNERS: PartnerDeal[] = [
     terms: "Paid plans · new customers",
     until: "Until Nov 30, 2026",
     code: "BFCM50",
-    href: "https://makeprosimp.com/partnership/efoli-multivariants-bulk-order-buystro",
+    href: dealHref("app-buystro"),
     banner: buystroBanner,
     logo: buystroLogo,
     initials: "B",
@@ -413,7 +402,7 @@ export const PARTNERS: PartnerDeal[] = [
     terms: "Paid plans · new customers",
     until: "Until Nov 30, 2026",
     code: "BFCM50",
-    href: "https://makeprosimp.com/partnership/efoli-multivariants-bulk-order-notim",
+    href: dealHref("app-notim-back-in-stock-notify-me"),
     banner: notimBanner,
     logo: notimLogo,
     initials: "NB",
@@ -429,7 +418,7 @@ export const PARTNERS: PartnerDeal[] = [
     terms: "2 months · new customers",
     until: "Until Dec 31, 2026",
     code: "ZOTEKEFOLI30",
-    href: "https://apps.shopify.com/facebook-multiple-pixel?utm_source=shopidevs&utm_medium=in_app_partners&utm_campaign=recommended-apps",
+    href: dealHref("app-zotek-facebook-pixel-tiktok-pixel"),
     banner: zotekPixelBanner,
     logo: zotekPixelLogo,
     initials: "ZF",
@@ -445,7 +434,7 @@ export const PARTNERS: PartnerDeal[] = [
     terms: "Paid plans · new customers",
     until: "Until Nov 30, 2026",
     code: "BFCM30",
-    href: "https://makeprosimp.com/partnership/efoli-multivariants-bulk-order-feedomix",
+    href: dealHref("app-feedomix-google-shopping-feed"),
     banner: feedomixBanner,
     logo: feedomixLogo,
     initials: "FG",
@@ -463,7 +452,7 @@ export const PARTNERS: PartnerDeal[] = [
     // The design had a "[Code coming]" placeholder — show a note, not a copyable fake code.
     code: null,
     codeNote: "Code coming soon",
-    href: "https://apps.shopify.com/gempages",
+    href: dealHref("app-gempages-landing-page-builder"),
     banner: null, // awaiting partner banner
     logo: gempagesLogo,
     initials: "GL",
@@ -479,7 +468,7 @@ export const PARTNERS: PartnerDeal[] = [
     terms: "For life · all paid plans",
     until: "Until Jan 1, 2027",
     code: "EFOLI20",
-    href: "https://apps.shopify.com/content-translation?utm_source=efoli&utm_medium=partners&utm_campaign=efoli-bfcm&utm_content=text-link",
+    href: dealHref("app-t-lab-ai-language-translate"),
     banner: tlabBanner,
     logo: tlabLogo,
     initials: "TL",
@@ -495,7 +484,7 @@ export const PARTNERS: PartnerDeal[] = [
     terms: "Paid plans · new customers",
     until: "Until Nov 30, 2026",
     code: "BFCM20",
-    href: "https://makeprosimp.com/partnership/efoli-multivariants-bulk-order-storedoctor-ai",
+    href: dealHref("app-storedoctor-ai"),
     banner: storedoctorBanner,
     logo: storedoctorLogo,
     initials: "SA",
@@ -512,7 +501,7 @@ export const PARTNERS: PartnerDeal[] = [
     until: "Until Nov 30, 2026",
     code: null,
     codeNote: "Contact PehnAI support after install",
-    href: "https://makeprosimp.com/partnership/efoli-multivariants-bulk-order-pehnai",
+    href: dealHref("app-pehnai-ai-virtual-try-on"),
     banner: pehnaiBanner,
     logo: pehnaiLogo,
     initials: "PA",
@@ -529,7 +518,7 @@ export const PARTNERS: PartnerDeal[] = [
     until: "Until Dec 31, 2026",
     code: null,
     codeNote: "Applied through the deal link",
-    href: "https://icart.identixweb.com/icart/?app_discount=NdVTIGuwzayySxtiBFd9bnk2cdCMwIyncsfWESe",
+    href: dealHref("app-icart-cart-drawer-cart-upsell"),
     banner: icartBanner,
     logo: icartLogo,
     initials: "IC",
@@ -546,7 +535,7 @@ export const PARTNERS: PartnerDeal[] = [
     until: "Until Dec 31, 2026",
     code: null,
     codeNote: "No code needed",
-    href: "https://apps.shopify.com/auto-discounts?utm_source=efoli&utm_medium=bfcm_page&utm_campaign=bfcm_campaign",
+    href: dealHref("app-fad-upsell-bundle-discounts"),
     banner: fadBanner,
     logo: fadLogo,
     initials: "FU",
@@ -563,7 +552,7 @@ export const PARTNERS: PartnerDeal[] = [
     until: "Until Dec 31, 2026",
     code: null,
     codeNote: "No discount code",
-    href: "https://apps.shopify.com/transtore-language-and-currency?utm_medium=efoli-bfcm&utm_source=transtore-partnership&utm_campaign=transtore",
+    href: dealHref("app-transtore-language-currency-solution"),
     banner: transtoreBanner,
     logo: transtoreLogo,
     initials: "TL",

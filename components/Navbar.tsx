@@ -27,6 +27,7 @@ const TOOL_LINKS: NavChild[] = [
 
 const navLinks: NavLink[] = [
   { name: "Home", href: "/", end: true },
+  { name: "BFCM 2026", href: "/efoli-bfcm-2026" },
   { name: "Growth Tools", href: "/free-tools", badge: "Free", children: TOOL_LINKS },
   { name: "About Us", href: "/about-us" },
   { name: "Blog", href: "/blog" },
@@ -80,7 +81,7 @@ export default function Navbar({
           </Link>
 
           {/* Desktop links */}
-          <ul className="hidden lg:flex items-center gap-10.5">
+          <ul className="hidden lg:flex items-center gap-5 xl:gap-10.5">
             {navLinks.map((l) => {
               const active = isActive(l.href, l.end);
               return (
@@ -88,7 +89,7 @@ export default function Navbar({
                   <Link
                     href={l.href}
                     aria-haspopup={l.children ? "menu" : undefined}
-                    className={`inline-flex items-center gap-1.5 ${
+                    className={`inline-flex items-center gap-1.5 whitespace-nowrap ${
                       active
                         ? "active text-[#0D99FF] font-medium"
                         : `text-[#13181E] font-medium ${linkClassName ?? ""}`

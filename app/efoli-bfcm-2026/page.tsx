@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import SiteChrome from "@/components/SiteChrome";
 import JsonLd from "@/components/JsonLd";
-import { appByKey, appStoreHref } from "@/data/apps";
 import {
   CAMPAIGN,
   EFOLI_OFFERS,
@@ -22,7 +21,7 @@ import {
   partnerBadge,
 } from "@/data/bfcm2026";
 import s from "./bfcm.module.css";
-import AppOffers, { type OfferCard } from "./AppOffers";
+import AppOffers from "./AppOffers";
 import PartnerDeals from "./PartnerDeals";
 import CopyButton from "./CopyButton";
 import Countdown from "./Countdown";
@@ -57,12 +56,6 @@ const faqJsonLd = {
   })),
 };
 
-/** eFoli "View deal" → each app's Shopify App Store listing, UTM-tagged for BFCM. */
-const offerCards: OfferCard[] = EFOLI_OFFERS.map((o) => {
-  const app = appByKey(o.appKey);
-  return { ...o, href: app ? appStoreHref(app, "bfcm_2026", "bfcm_page") : "/" };
-});
-
 const guideCount = 1 + GUIDE_GROUPS.reduce((n, g) => n + g.links.length, 0);
 
 // Light header + dark footer, site CTA banner hidden (the page has its own CTAs).
@@ -71,10 +64,6 @@ export default function EfoliBfcm2026Page() {
     <SiteChrome darkFooter hideBanner>
       <main className={s.page}>
         <JsonLd data={faqJsonLd} />
-
-        <div className={s.announce}>
-          BFCM 2026 • {CAMPAIGN.discount}% off all eFoli apps • Ends {CAMPAIGN.endsLong.replace(", 2026", "")}
-        </div>
 
         {/* HERO */}
         <section className={`${s.hero} ${s.center}`}>
@@ -169,7 +158,7 @@ export default function EfoliBfcm2026Page() {
               </p>
             </div>
             <AppOffers
-              offers={offerCards}
+              offers={EFOLI_OFFERS}
               filters={OFFER_FILTERS}
               terms={OFFER_TERMS}
               code={CAMPAIGN.code}

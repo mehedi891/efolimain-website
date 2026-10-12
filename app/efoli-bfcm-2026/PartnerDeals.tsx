@@ -106,9 +106,9 @@ export default function PartnerDeals({
                 ) : (
                   <div className={`${s.pcCode} ${s.nocode}`}>{p.codeNote}</div>
                 )}
-                <a className={s.pcLink} href={p.href} target="_blank" rel="noopener sponsored">
+                <a className={s.pcLink} href={p.href} target="_blank" rel="noopener">
                   Get deal <ArrowRight />
-                  <span className="sr-only"> on {p.name}</span>
+                  <span className="sr-only"> on {p.name} (opens in a new tab)</span>
                 </a>
               </div>
             </div>

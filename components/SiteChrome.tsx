@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import PreviewBanner from "./PreviewBanner";
+import BfcmAnnouncement from "./BfcmAnnouncement";
 
 export interface SiteChromeProps {
   children: ReactNode;
@@ -32,6 +33,8 @@ export default function SiteChrome({
   return (
     <>
       {preview && <PreviewBanner />}
+      {/* Campaign bar sits above the sticky navbar and scrolls away with the page. */}
+      <BfcmAnnouncement />
       <Navbar
         parentClassName={
           darkHeader

@@ -126,18 +126,6 @@
   box-shadow: 0 14px 30px rgba(214, 255, 79, 0.3);
 }
 
-/* Announcement bar */
-.announce {
-  background: linear-gradient(90deg, #0b4d83, #1d74bf 50%, #168780);
-  color: #fff;
-  text-align: center;
-  padding: 9px 16px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
 /* Hero */
 .hero {
   position: relative;
