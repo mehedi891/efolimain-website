@@ -280,7 +280,7 @@ const Tiers = () => (
       </motion.div>
 
       <p className="mt-6 text-center text-sm text-[#4B5154]">
-        These are the standard tiers, shown live in your dashboard. Rates aren't
+        These are the standard tiers, shown live in your dashboard. Rates aren&apos;t
         fixed — high-volume and select partners can be offered a{" "}
         <span className="font-semibold text-[#13181E]">special custom rate</span>.
         <a href={links.apply} target="_blank" rel="noopener noreferrer" className="ml-1 font-semibold text-[#0D99FF] hover:underline">
@@ -492,7 +492,7 @@ const FinalCta = () => (
         Ready to earn recurring revenue?
       </h2>
       <p className="relative mx-auto mt-4 max-w-xl text-base/[1.75] text-white/60 md:text-lg">
-        Join the eFoli Partner Program — approval takes {config.approvalTime}, and there's no cost to join.
+        Join the eFoli Partner Program — approval takes {config.approvalTime}, and there&apos;s no cost to join.
       </p>
       <div className="relative mt-9 flex flex-wrap items-center justify-center gap-4">
         <a href={links.apply} target="_blank" rel="noopener noreferrer">

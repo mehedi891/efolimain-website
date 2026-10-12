@@ -57,10 +57,12 @@ const Timer3 = ({ endDate, interpretAsLocal = false, onComplete }: Timer3Props) 
     return NaN;
   }, [endDate, interpretAsLocal]);
 
+  const isValidEnd = !!endTs && !Number.isNaN(endTs);
+
   useEffect(() => {
-    if (!endTs || Number.isNaN(endTs)) {
+    if (!isValidEnd) {
+      // Zeros are derived at render time (see `shown`), not set here.
       console.warn("Timer3: invalid endDate", endDate);
-      setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       return;
     }
 
@@ -88,20 +90,23 @@ const Timer3 = ({ endDate, interpretAsLocal = false, onComplete }: Timer3Props) 
     }, 1000);
 
     return () => clearInterval(id);
-  }, [endTs, endDate, onComplete]);
+  }, [endTs, endDate, onComplete, isValidEnd]);
+
+  // An invalid end date always shows zeros.
+  const shown: TimeLeft = isValidEnd ? timeLeft : { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
   const pad = (n: number) => String(n).padStart(2, "0");
 
   return (
     <div className="flex justify-center gap-3 sm:gap-8">
       {/* Days */}
-      <Box label={timeLeft.days === 1 ? "Day" : "Days"} value={pad(timeLeft.days)} />
+      <Box label={shown.days === 1 ? "Day" : "Days"} value={pad(shown.days)} />
       {/* Hours */}
-      <Box label={timeLeft.hours === 1 ? "Hour" : "Hours"} value={pad(timeLeft.hours)} />
+      <Box label={shown.hours === 1 ? "Hour" : "Hours"} value={pad(shown.hours)} />
       {/* Minutes */}
-      <Box label={timeLeft.minutes === 1 ? "Minute" : "Minutes"} value={pad(timeLeft.minutes)} />
+      <Box label={shown.minutes === 1 ? "Minute" : "Minutes"} value={pad(shown.minutes)} />
       {/* Seconds */}
-      <Box label={timeLeft.seconds === 1 ? "Second" : "Seconds"} value={pad(timeLeft.seconds)} />
+      <Box label={shown.seconds === 1 ? "Second" : "Seconds"} value={pad(shown.seconds)} />
     </div>
   );
 };

@@ -191,9 +191,13 @@ const Bloglist = ({
   const [isPending, startTransition] = useTransition();
 
   // Keep the input in sync when the URL changes from elsewhere (e.g. clearing).
-  useEffect(() => {
+  // Adjusting state during render on a prop change (react.dev "You might not
+  // need an effect") instead of setState inside an effect.
+  const [syncedQ, setSyncedQ] = useState(q);
+  if (q !== syncedQ) {
+    setSyncedQ(q);
     setTerm(q);
-  }, [q]);
+  }
 
   // Debounce search → URL, so every keystroke doesn't hit the loader.
   useEffect(() => {
