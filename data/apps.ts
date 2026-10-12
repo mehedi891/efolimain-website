@@ -33,17 +33,21 @@ export const APPS: EfoliApp[] = [
 ];
 
 /**
- * App Store listing URL tagged with UTM params so installs from the free-tools
- * pages are attributable. `content` distinguishes which app card was clicked.
+ * App Store listing URL tagged with UTM params so installs are attributable.
+ * Defaults suit the free-tools pages; `utm_content` identifies the app card.
  */
-export function appStoreHref(app: EfoliApp, campaign = "app_studio"): string {
+export function appStoreHref(app: EfoliApp, campaign = "app_studio", medium = "free_tools"): string {
   const params = new URLSearchParams({
     utm_source: "efoli",
-    utm_medium: "free_tools",
+    utm_medium: medium,
     utm_campaign: campaign,
     utm_content: app.key,
   });
   return `${app.shopifyUrl}?${params.toString()}`;
+}
+
+export function appByKey(key: string): EfoliApp | undefined {
+  return APPS.find((a) => a.key === key);
 }
 
 /** Apps grouped by the merchant goal they serve — lets us promote by outcome, not by pitch. */
