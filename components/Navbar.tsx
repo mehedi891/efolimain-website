@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Button from "./Button";
+import { PAGE_PATH as BFCM_PATH } from "@/data/bfcmCampaign";
 
 interface NavChild {
   name: string;
@@ -27,7 +28,7 @@ const TOOL_LINKS: NavChild[] = [
 
 const navLinks: NavLink[] = [
   { name: "Home", href: "/", end: true },
-  { name: "BFCM 2026", href: "/efoli-bfcm-2026" },
+  { name: "BFCM 2026", href: BFCM_PATH },
   { name: "Growth Tools", href: "/free-tools", badge: "Free", children: TOOL_LINKS },
   { name: "About Us", href: "/about-us" },
   { name: "Blog", href: "/blog" },

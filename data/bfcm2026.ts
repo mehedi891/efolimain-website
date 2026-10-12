@@ -1,5 +1,5 @@
 /**
- * eFoli BFCM 2026 deals page (/efoli-bfcm-2026) — all campaign content.
+ * eFoli BFCM 2026 deals page (/bfcm-offers) — all campaign content.
  *
  * Editing guide (mirrors the original campaign HTML):
  *  - Campaign code / end date / discount: edit CAMPAIGN.

@@ -16,7 +16,7 @@ export const CAMPAIGN = {
   partnersVisible: 6,
 } as const;
 
-export const PAGE_PATH = "/efoli-bfcm-2026";
+export const PAGE_PATH = "/bfcm-offers";
 export const PAGE_URL = `https://efoli.com${PAGE_PATH}`;
 
 /** The blog post every deal CTA points into (one section per app). Full

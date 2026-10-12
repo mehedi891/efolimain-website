@@ -59,7 +59,7 @@ const faqJsonLd = {
 const guideCount = 1 + GUIDE_GROUPS.reduce((n, g) => n + g.links.length, 0);
 
 // Light header + dark footer, site CTA banner hidden (the page has its own CTAs).
-export default function EfoliBfcm2026Page() {
+export default function BfcmOffersPage() {
   return (
     <SiteChrome darkFooter hideBanner>
       <main className={s.page}>

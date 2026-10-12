@@ -2,12 +2,13 @@ import { NextResponse, type NextRequest } from "next/server";
 
 /**
  * Edge request rewriting (Next 16's renamed middleware — `proxy()` +
- * `proxyConfig`). Two jobs, ported from the React Router app:
+ * `proxyConfig`). Jobs (the first two ported from the React Router app):
  *
  *   1. Canonicalize every URL to NO trailing slash (/blog, not /blog/) with a
  *      single 301 — was app/root.jsx's loader.
  *   2. 301 legacy WordPress blog archives to their equivalent, in one hop —
  *      was app/routes/blogLegacyRedirect.jsx (+ the routes.js matchers).
+ *   3. 301 renamed pages (RENAMED_PATHS) to their new path, in one hop.
  *
  * The matcher below excludes `_next/*` and any path containing a dot (static
  * files like /sitemap.xml, /robots.txt, assets), so those are never rewritten —
@@ -52,8 +53,22 @@ function legacyBlogTarget(pathname: string): string | null {
   return null;
 }
 
+/**
+ * Renamed pages: old path → new path. One 301 hop (with or without a trailing
+ * slash), keeping the query string so already-shared UTM links still track.
+ */
+const RENAMED_PATHS: Record<string, string> = {
+  "/efoli-bfcm-2026": "/bfcm-offers",
+};
+
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
+
+  // 0. Renamed pages → their new path.
+  const renamed = RENAMED_PATHS[pathname.replace(/\/+$/, "")];
+  if (renamed) {
+    return NextResponse.redirect(new URL(`${renamed}${search}`, request.url), 301);
+  }
 
   // 1. Legacy WordPress blog archives → single 301 to their equivalent.
   if (LEGACY_BLOG_PATH.test(pathname)) {

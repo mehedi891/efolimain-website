@@ -21,7 +21,7 @@ const staticPages = [
   { path: "/career", priority: 0.8, changeFrequency: "weekly" },
   { path: "/affiliate", priority: 0.8, changeFrequency: "monthly" },
   { path: "/contact-us", priority: 0.8, changeFrequency: "monthly" },
-  { path: "/efoli-bfcm-2026", priority: 0.8, changeFrequency: "weekly" },
+  { path: "/bfcm-offers", priority: 0.8, changeFrequency: "weekly" },
   { path: "/free-tools", priority: 0.7, changeFrequency: "monthly" },
   { path: "/free-tools/shopify-store-audit", priority: 0.8, changeFrequency: "monthly" },
   { path: "/free-tools/meta-social-preview", priority: 0.7, changeFrequency: "monthly" },
