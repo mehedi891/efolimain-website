@@ -21,12 +21,12 @@ import emIcon from "@/public/img/home/emLogo.png";
 import orIcon from "@/public/img/home/or_icon.png";
 import qwIcon from "@/public/img/bfcm-2026/qw-icon.webp";
 
-import mvMedia from "@/public/img/bfcm-2026/apps/multivariants.webp";
-import pbMedia from "@/public/img/bfcm-2026/apps/push-bundle.webp";
-import drMedia from "@/public/img/bfcm-2026/apps/discountray.webp";
-import emMedia from "@/public/img/bfcm-2026/apps/embedup.webp";
-import orMedia from "@/public/img/bfcm-2026/apps/orderrules.webp";
-import qwMedia from "@/public/img/bfcm-2026/apps/quotway.webp";
+import mvMedia from "@/public/img/bfcm-2026/apps/multivariants.png";
+import pbMedia from "@/public/img/bfcm-2026/apps/push-bundle.png";
+import drMedia from "@/public/img/bfcm-2026/apps/discountray.png";
+import emMedia from "@/public/img/bfcm-2026/apps/embedup.png";
+import orMedia from "@/public/img/bfcm-2026/apps/orderrules.png";
+import qwMedia from "@/public/img/bfcm-2026/apps/quotway.png";
 
 export { default as partnerBadge } from "@/public/img/bfcm-2026/partner-badge.webp";
 
