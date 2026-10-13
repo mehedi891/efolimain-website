@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { requireAdmin } from "@/lib/admin/auth";
 import LogoutButton from "./LogoutButton";
+import AdminNav from "./AdminNav";
 
 export const metadata: Metadata = {
-  title: "Admin · eFoli Free Tools",
+  title: "Admin · eFoli",
   robots: { index: false, follow: false },
 };
 
@@ -17,13 +18,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <div>
             <p className="font-display text-lg font-bold text-[#0D99FF] leading-none">eFoli</p>
-            <p className="text-xs text-gray-500">Free-tools admin</p>
+            <p className="text-xs text-gray-500">Admin</p>
           </div>
           <div className="flex items-center gap-3">
             <span className="hidden text-sm text-[#4B5154] sm:inline">{session.email}</span>
             <LogoutButton />
           </div>
         </div>
+        <AdminNav />
       </header>
       <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
     </div>

@@ -4,15 +4,11 @@
  * Editing guide (mirrors the original campaign HTML):
  *  - Campaign code / end date / discount: edit CAMPAIGN.
  *  - eFoli app cards: EFOLI_OFFERS. `category` is "sell" or "operate".
- *  - Partner deals: PARTNERS. `category` is marketing | conversion | operations |
- *    global | trust; `accent` sets the card colour. Banner 1200×628, logo square.
- *    Set `banner`/`logo` to null to show the placeholder, `code` to null to show
- *    `codeNote` instead of a copyable code. The first CAMPAIGN.partnersVisible
- *    cards show; the rest sit under "View more".
+ *  - Partner deals + their category tabs live in MongoDB and are managed in
+ *    /admin/bfcm/partners (lib/bfcm/store.ts). Initial data: scripts/bfcm-seed-data.mts.
  *  - FAQ: FAQS feeds BOTH the visible accordion and the FAQPage JSON-LD, so they
  *    can never drift apart.
- *  - Images live in public/img/bfcm-2026/ (self-hosted copies of the partner
- *    assets — no Google Drive links at runtime).
+ *  - eFoli images live in public/img/bfcm-2026/.
  */
 
 import type { StaticImageData } from "next/image";
@@ -31,42 +27,6 @@ import drMedia from "@/public/img/bfcm-2026/apps/discountray.webp";
 import emMedia from "@/public/img/bfcm-2026/apps/embedup.webp";
 import orMedia from "@/public/img/bfcm-2026/apps/orderrules.webp";
 import qwMedia from "@/public/img/bfcm-2026/apps/quotway.webp";
-
-import outfyBanner from "@/public/img/bfcm-2026/partners/outfy-banner.webp";
-import outfyLogo from "@/public/img/bfcm-2026/partners/outfy-logo.webp";
-import toastibarBanner from "@/public/img/bfcm-2026/partners/toastibar-banner.webp";
-import toastibarLogo from "@/public/img/bfcm-2026/partners/toastibar-logo.webp";
-import xflowBanner from "@/public/img/bfcm-2026/partners/xflow-banner.webp";
-import xflowLogo from "@/public/img/bfcm-2026/partners/xflow-logo.webp";
-import transcyBanner from "@/public/img/bfcm-2026/partners/transcy-banner.webp";
-import transcyLogo from "@/public/img/bfcm-2026/partners/transcy-logo.webp";
-import zotekCodBanner from "@/public/img/bfcm-2026/partners/zotek-cod-banner.webp";
-import zotekCodLogo from "@/public/img/bfcm-2026/partners/zotek-cod-logo.webp";
-import smartSeoBanner from "@/public/img/bfcm-2026/partners/smart-seo-banner.webp";
-import smartSeoLogo from "@/public/img/bfcm-2026/partners/smart-seo-logo.webp";
-import consentmoBanner from "@/public/img/bfcm-2026/partners/consentmo-banner.webp";
-import consentmoLogo from "@/public/img/bfcm-2026/partners/consentmo-logo.webp";
-import buystroBanner from "@/public/img/bfcm-2026/partners/buystro-banner.webp";
-import buystroLogo from "@/public/img/bfcm-2026/partners/buystro-logo.webp";
-import notimBanner from "@/public/img/bfcm-2026/partners/notim-banner.webp";
-import notimLogo from "@/public/img/bfcm-2026/partners/notim-logo.webp";
-import zotekPixelBanner from "@/public/img/bfcm-2026/partners/zotek-pixel-banner.webp";
-import zotekPixelLogo from "@/public/img/bfcm-2026/partners/zotek-pixel-logo.webp";
-import feedomixBanner from "@/public/img/bfcm-2026/partners/feedomix-banner.webp";
-import feedomixLogo from "@/public/img/bfcm-2026/partners/feedomix-logo.webp";
-import gempagesLogo from "@/public/img/bfcm-2026/partners/gempages-logo.webp";
-import tlabBanner from "@/public/img/bfcm-2026/partners/tlab-banner.webp";
-import tlabLogo from "@/public/img/bfcm-2026/partners/tlab-logo.webp";
-import storedoctorBanner from "@/public/img/bfcm-2026/partners/storedoctor-banner.webp";
-import storedoctorLogo from "@/public/img/bfcm-2026/partners/storedoctor-logo.webp";
-import pehnaiBanner from "@/public/img/bfcm-2026/partners/pehnai-banner.webp";
-import pehnaiLogo from "@/public/img/bfcm-2026/partners/pehnai-logo.webp";
-import icartBanner from "@/public/img/bfcm-2026/partners/icart-banner.webp";
-import icartLogo from "@/public/img/bfcm-2026/partners/icart-logo.webp";
-import fadBanner from "@/public/img/bfcm-2026/partners/fad-banner.webp";
-import fadLogo from "@/public/img/bfcm-2026/partners/fad-logo.webp";
-import transtoreBanner from "@/public/img/bfcm-2026/partners/transtore-banner.webp";
-import transtoreLogo from "@/public/img/bfcm-2026/partners/transtore-logo.webp";
 
 export { default as partnerBadge } from "@/public/img/bfcm-2026/partner-badge.webp";
 
@@ -192,381 +152,14 @@ export const EFOLI_OFFERS: EfoliOffer[] = [
 export const OFFER_TERMS = ["For one year", `New users · Eligible free users · Ends ${CAMPAIGN.endsMedium}`];
 
 // ---------------------------------------------------------------------------
-// Partner deals
-// ---------------------------------------------------------------------------
-
-export type PartnerCategory = "marketing" | "conversion" | "operations" | "global" | "trust";
-
-export const PARTNER_CATEGORY_LABELS: Record<PartnerCategory, string> = {
-  marketing: "Marketing",
-  conversion: "Conversion",
-  operations: "Store operations",
-  global: "Global selling",
-  trust: "Reviews & trust",
-};
-
-export const PARTNER_FILTERS: { id: "all" | PartnerCategory; label: string }[] = [
-  { id: "all", label: "All deals" },
-  { id: "marketing", label: "Marketing" },
-  { id: "conversion", label: "Conversion" },
-  { id: "operations", label: "Store operations" },
-  { id: "global", label: "Global selling" },
-  { id: "trust", label: "Reviews & trust" },
-];
-
-export interface PartnerDeal {
-  id: string;
-  name: string;
-  by: string;
-  category: PartnerCategory;
-  accent: string;
-  /** Badge on the banner, e.g. "50% OFF". */
-  offer: string;
-  blurb: string;
-  /** Plan/eligibility line. */
-  terms: string;
-  /** Validity line, e.g. "Until Dec 31, 2026". */
-  until: string;
-  /** Copyable code, or null when no code is needed. */
-  code: string | null;
-  /** Shown instead of a code box when `code` is null. */
-  codeNote?: string;
-  /** "Get deal" target — this app's section in the BFCM deals blog post. */
-  href: string;
-  /** 1200×628 banner; null shows the placeholder. */
-  banner: StaticImageData | null;
-  /** Square logo; null shows the initials. */
-  logo: StaticImageData | null;
-  initials: string;
-}
-
-const C = { blue: "#3e97f0", violet: "#8b5cf6", amber: "#f59e0b", pink: "#ec4899", teal: "#14b8a6" } as const;
-
-export const PARTNERS: PartnerDeal[] = [
-  {
-    id: "outfy",
-    name: "Outfy – Social Media Auto Post",
-    by: "Outfy Inc",
-    category: "marketing",
-    accent: C.blue,
-    offer: "50% OFF",
-    blurb: "Keep your BFCM promotions visible, consistent, and active across social media throughout the sale season.",
-    terms: "Growth & Unlimited annual plans · forever",
-    until: "Until Dec 30, 2026",
-    code: null,
-    codeNote: "Applied through the deal link",
-    href: dealHref("app-outfy-social-media-auto-post"),
-    banner: outfyBanner,
-    logo: outfyLogo,
-    initials: "OS",
-  },
-  {
-    id: "toastibar",
-    name: "Toastibar Sales Popup & Timers",
-    by: "MakeProSimp",
-    category: "trust",
-    accent: C.violet,
-    offer: "50% OFF",
-    blurb: "Boost conversions with AI-powered sales popups, social proof, and countdown timers.",
-    terms: "Paid plans · new customers",
-    until: "Until Nov 30, 2026",
-    code: "BFCM50",
-    href: dealHref("app-toastibar-sales-popup-timers"),
-    banner: toastibarBanner,
-    logo: toastibarLogo,
-    initials: "TS",
-  },
-  {
-    id: "xflow",
-    name: "XFlow Back in Stock Alert",
-    by: "XFlow",
-    category: "marketing",
-    accent: C.blue,
-    offer: "35% OFF",
-    blurb: "Recover lost sales during the busiest season with automated, personalized back-in-stock alerts.",
-    terms: "All paid plans · 3 months",
-    until: "Until Dec 31, 2026",
-    code: "FOXPARTNER35",
-    href: dealHref("app-xflow-back-in-stock-alert"),
-    banner: xflowBanner,
-    logo: xflowLogo,
-    initials: "XB",
-  },
-  {
-    id: "transcy",
-    name: "Transcy: AI Language Translate",
-    by: "Transcy",
-    category: "global",
-    accent: C.amber,
-    offer: "30% OFF",
-    blurb: "Don't miss your cross-border shoppers this peak season: 147+ languages and 168+ currencies.",
-    terms: "Paid plans · first 3 months · new sign-ups, excl. Global plan",
-    until: "Until Dec 31, 2026",
-    code: null,
-    codeNote: "Applied through the deal link",
-    href: dealHref("app-transcy-ai-language-translate"),
-    banner: transcyBanner,
-    logo: transcyLogo,
-    initials: "TA",
-  },
-  {
-    id: "zotek-cod",
-    name: "Zotek COD Form Bundles & Upsells",
-    by: "Zotek",
-    category: "conversion",
-    accent: C.pink,
-    offer: "FREE",
-    blurb: "Make COD ordering easier for BFCM shoppers, grow order value, and control risky orders.",
-    terms: "First year · new customers",
-    until: "Until Dec 31, 2026",
-    code: null,
-    codeNote: "No code needed",
-    href: dealHref("app-zotek-cod-form-bundles-upsells"),
-    banner: zotekCodBanner,
-    logo: zotekCodLogo,
-    initials: "ZC",
-  },
-  {
-    id: "kudobuzz",
-    name: "Kudobuzz Reviews",
-    by: "Kudobuzz",
-    category: "trust",
-    accent: C.violet,
-    offer: "25% OFF",
-    blurb: "Give BFCM shoppers the social proof they need with photo, video, and imported reviews.",
-    terms: "For life · all paid plans · new customers",
-    until: "Until Dec 2, 2026",
-    code: "622EBF26",
-    href: dealHref("app-kudobuzz-reviews-social-proof"),
-    banner: null, // awaiting partner banner
-    logo: null, // awaiting partner logo
-    initials: "KR",
-  },
-  {
-    id: "smart-seo",
-    name: "Smart SEO AI & Image Optimizer",
-    by: "Sherpas Design",
-    category: "operations",
-    accent: C.teal,
-    offer: "20% OFF",
-    blurb: "AI-powered SEO automation to improve rankings and drive more organic traffic this BFCM.",
-    terms: "For life · all paid plans",
-    until: "Until Jan 1, 2027",
-    code: "EFOLI20",
-    href: dealHref("app-smart-seo-ai-image-optimizer"),
-    banner: smartSeoBanner,
-    logo: smartSeoLogo,
-    initials: "SS",
-  },
-  {
-    id: "consentmo",
-    name: "Consentmo GDPR Compliance",
-    by: "Consentmo",
-    category: "operations",
-    accent: C.teal,
-    offer: "25% OFF",
-    blurb: "Find consent and accessibility issues before they affect your BFCM storefront.",
-    terms: "All paid plans · first 3 months",
-    until: "Until Dec 1, 2026",
-    code: null,
-    codeNote: "Applied automatically after install",
-    href: dealHref("app-consentmo-gdpr-compliance"),
-    banner: consentmoBanner,
-    logo: consentmoLogo,
-    initials: "CG",
-  },
-  {
-    id: "buystro",
-    name: "Buystro",
-    by: "MakeProSimp",
-    category: "conversion",
-    accent: C.pink,
-    offer: "50% OFF",
-    blurb: "Speed up purchases with sticky Add to Cart, Quick Buy, a floating cart, and cross-device carts.",
-    terms: "Paid plans · new customers",
-    until: "Until Nov 30, 2026",
-    code: "BFCM50",
-    href: dealHref("app-buystro"),
-    banner: buystroBanner,
-    logo: buystroLogo,
-    initials: "B",
-  },
-  {
-    id: "notim",
-    name: "Notim: Back In Stock + Notify Me",
-    by: "MakeProSimp",
-    category: "operations",
-    accent: C.teal,
-    offer: "50% OFF",
-    blurb: "Recover lost sales with Notify Me buttons, back-in-stock alerts, and multi-location inventory tracking.",
-    terms: "Paid plans · new customers",
-    until: "Until Nov 30, 2026",
-    code: "BFCM50",
-    href: dealHref("app-notim-back-in-stock-notify-me"),
-    banner: notimBanner,
-    logo: notimLogo,
-    initials: "NB",
-  },
-  {
-    id: "zotek-pixel",
-    name: "Zotek Facebook Pixel Tiktok Pixel",
-    by: "Zotek",
-    category: "marketing",
-    accent: C.blue,
-    offer: "30% OFF",
-    blurb: "Keep BFCM conversion tracking clear across Meta, TikTok, and Snapchat with CAPI and real-time reports.",
-    terms: "2 months · new customers",
-    until: "Until Dec 31, 2026",
-    code: "ZOTEKEFOLI30",
-    href: dealHref("app-zotek-facebook-pixel-tiktok-pixel"),
-    banner: zotekPixelBanner,
-    logo: zotekPixelLogo,
-    initials: "ZF",
-  },
-  {
-    id: "feedomix",
-    name: "Feedomix Google Shopping Feed",
-    by: "MakeProSimp",
-    category: "marketing",
-    accent: C.blue,
-    offer: "30% OFF",
-    blurb: "Keep your Google Shopping feeds accurate, optimized, and BFCM-ready.",
-    terms: "Paid plans · new customers",
-    until: "Until Nov 30, 2026",
-    code: "BFCM30",
-    href: dealHref("app-feedomix-google-shopping-feed"),
-    banner: feedomixBanner,
-    logo: feedomixLogo,
-    initials: "FG",
-  },
-  {
-    id: "gempages",
-    name: "GemPages Landing Page Builder",
-    by: "GemPages",
-    category: "conversion",
-    accent: C.pink,
-    offer: "20% OFF",
-    blurb: "Effortlessly launch high-converting stores with the AI-powered CRO page builder.",
-    terms: "Monthly plans · first 3 months · new & eligible free users",
-    until: "Until Dec 31, 2026",
-    // The design had a "[Code coming]" placeholder — show a note, not a copyable fake code.
-    code: null,
-    codeNote: "Code coming soon",
-    href: dealHref("app-gempages-landing-page-builder"),
-    banner: null, // awaiting partner banner
-    logo: gempagesLogo,
-    initials: "GL",
-  },
-  {
-    id: "tlab",
-    name: "T Lab – AI Language Translate",
-    by: "Sherpas Design",
-    category: "global",
-    accent: C.amber,
-    offer: "20% OFF",
-    blurb: "Expand globally this BFCM with accurate AI translations and multi-currency support.",
-    terms: "For life · all paid plans",
-    until: "Until Jan 1, 2027",
-    code: "EFOLI20",
-    href: dealHref("app-t-lab-ai-language-translate"),
-    banner: tlabBanner,
-    logo: tlabLogo,
-    initials: "TL",
-  },
-  {
-    id: "storedoctor",
-    name: "StoreDoctor AI",
-    by: "MakeProSimp",
-    category: "operations",
-    accent: C.teal,
-    offer: "20% OFF",
-    blurb: "Optimize your store with AI audits, SEO and conversion recommendations, and AI copy.",
-    terms: "Paid plans · new customers",
-    until: "Until Nov 30, 2026",
-    code: "BFCM20",
-    href: dealHref("app-storedoctor-ai"),
-    banner: storedoctorBanner,
-    logo: storedoctorLogo,
-    initials: "SA",
-  },
-  {
-    id: "pehnai",
-    name: "PehnAI: AI Virtual Try On",
-    by: "MakeProSimp",
-    category: "conversion",
-    accent: C.pink,
-    offer: "20% OFF",
-    blurb: "Help BFCM shoppers see products on themselves and shop with more confidence.",
-    terms: "Paid plans · first 2 months",
-    until: "Until Nov 30, 2026",
-    code: null,
-    codeNote: "Contact PehnAI support after install",
-    href: dealHref("app-pehnai-ai-virtual-try-on"),
-    banner: pehnaiBanner,
-    logo: pehnaiLogo,
-    initials: "PA",
-  },
-  {
-    id: "icart",
-    name: "iCart Cart Drawer Cart Upsell",
-    by: "Identixweb",
-    category: "conversion",
-    accent: C.pink,
-    offer: "50% OFF",
-    blurb: "Turn every BFCM cart into an upsell opportunity and grow average order value without extra ad spend.",
-    terms: "All paid plans · first 3 months · new customers",
-    until: "Until Dec 31, 2026",
-    code: null,
-    codeNote: "Applied through the deal link",
-    href: dealHref("app-icart-cart-drawer-cart-upsell"),
-    banner: icartBanner,
-    logo: icartLogo,
-    initials: "IC",
-  },
-  {
-    id: "fad",
-    name: "FAD: Upsell & Bundle Discounts",
-    by: "Cirkle Studio",
-    category: "conversion",
-    accent: C.pink,
-    offer: "14-DAY TRIAL",
-    blurb: "Increase cart size during BFCM with flexible discounts, bundles, upsells, and free gifts.",
-    terms: "Free trial",
-    until: "Until Dec 31, 2026",
-    code: null,
-    codeNote: "No code needed",
-    href: dealHref("app-fad-upsell-bundle-discounts"),
-    banner: fadBanner,
-    logo: fadLogo,
-    initials: "FU",
-  },
-  {
-    id: "transtore",
-    name: "Transtore – Language & Currency",
-    by: "Transtore",
-    category: "global",
-    accent: C.amber,
-    offer: "BFCM PICK",
-    blurb: "Merchants using translation solutions see 20% higher sales during BFCM.",
-    terms: "Install from the Shopify App Store",
-    until: "Until Dec 31, 2026",
-    code: null,
-    codeNote: "No discount code",
-    href: dealHref("app-transtore-language-currency-solution"),
-    banner: transtoreBanner,
-    logo: transtoreLogo,
-    initials: "TL",
-  },
-];
-
-// ---------------------------------------------------------------------------
 // Hero floating icons (decorative). Positions are % of the hero box.
+// `icon: null` slots are filled, in order, with the logos of the first visible
+// partners (admin order), so a removed partner never keeps floating here.
 // `more` icons are hidden on small screens to keep the hero calm.
 // ---------------------------------------------------------------------------
 
-export interface FloatIcon {
-  src: StaticImageData;
-  kind: "ef" | "pt";
+export interface HeroSlot {
+  icon: StaticImageData | null;
   more?: boolean;
   left: string;
   top: string;
@@ -575,20 +168,20 @@ export interface FloatIcon {
   delay: number;
 }
 
-export const HERO_FLOAT: FloatIcon[] = [
-  { src: mvIcon, kind: "ef", left: "4%", top: "10%", size: 84, rotate: -14, delay: 0 },
-  { src: outfyLogo, kind: "pt", left: "17%", top: "24%", size: 44, rotate: 12, delay: -2 },
-  { src: pbIcon, kind: "ef", left: "7%", top: "44%", size: 78, rotate: 10, delay: -4 },
-  { src: toastibarLogo, kind: "pt", more: true, left: "19%", top: "60%", size: 48, rotate: -10, delay: -1 },
-  { src: orIcon, kind: "ef", left: "3%", top: "76%", size: 72, rotate: -6, delay: -3 },
-  { src: xflowLogo, kind: "pt", more: true, left: "14%", top: "88%", size: 42, rotate: 16, delay: -5 },
-  { src: drIcon, kind: "ef", left: "90%", top: "10%", size: 84, rotate: 14, delay: -1.5 },
-  { src: transcyLogo, kind: "pt", left: "80%", top: "22%", size: 44, rotate: -12, delay: -3.5 },
-  { src: gempagesLogo, kind: "pt", more: true, left: "77%", top: "41%", size: 42, rotate: -18, delay: -2.2 },
-  { src: emIcon, kind: "ef", left: "87.6%", top: "44%", size: 78, rotate: -10, delay: -2.5 },
-  { src: smartSeoLogo, kind: "pt", more: true, left: "77.7%", top: "60%", size: 48, rotate: 10, delay: -4.5 },
-  { src: qwIcon, kind: "ef", left: "92%", top: "76%", size: 72, rotate: 6, delay: -0.5 },
-  { src: consentmoLogo, kind: "pt", more: true, left: "83%", top: "88%", size: 42, rotate: -16, delay: -5.5 },
+export const HERO_SLOTS: HeroSlot[] = [
+  { icon: mvIcon, left: "4%", top: "10%", size: 84, rotate: -14, delay: 0 },
+  { icon: null, left: "17%", top: "24%", size: 44, rotate: 12, delay: -2 },
+  { icon: pbIcon, left: "7%", top: "44%", size: 78, rotate: 10, delay: -4 },
+  { icon: null, more: true, left: "19%", top: "60%", size: 48, rotate: -10, delay: -1 },
+  { icon: orIcon, left: "3%", top: "76%", size: 72, rotate: -6, delay: -3 },
+  { icon: null, more: true, left: "14%", top: "88%", size: 42, rotate: 16, delay: -5 },
+  { icon: drIcon, left: "90%", top: "10%", size: 84, rotate: 14, delay: -1.5 },
+  { icon: null, left: "80%", top: "22%", size: 44, rotate: -12, delay: -3.5 },
+  { icon: null, more: true, left: "77%", top: "41%", size: 42, rotate: -18, delay: -2.2 },
+  { icon: emIcon, left: "87.6%", top: "44%", size: 78, rotate: -10, delay: -2.5 },
+  { icon: null, more: true, left: "77.7%", top: "60%", size: 48, rotate: 10, delay: -4.5 },
+  { icon: qwIcon, left: "92%", top: "76%", size: 72, rotate: 6, delay: -0.5 },
+  { icon: null, more: true, left: "83%", top: "88%", size: 42, rotate: -16, delay: -5.5 },
 ];
 
 // ---------------------------------------------------------------------------

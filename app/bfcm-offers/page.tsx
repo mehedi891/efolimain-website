@@ -9,17 +9,15 @@ import {
   FAQS,
   FEATURED_GUIDE,
   GUIDE_GROUPS,
-  HERO_FLOAT,
+  HERO_SLOTS,
   OFFER_FILTERS,
   OFFER_TERMS,
   PAGE_URL,
-  PARTNERS,
-  PARTNER_CATEGORY_LABELS,
-  PARTNER_FILTERS,
   TICKER_ITEMS,
   TRUST_POINTS,
   partnerBadge,
 } from "@/data/bfcm2026";
+import { getPublicBfcmData } from "@/lib/bfcm/store";
 import s from "./bfcm.module.css";
 import AppOffers from "./AppOffers";
 import PartnerDeals from "./PartnerDeals";
@@ -58,8 +56,23 @@ const faqJsonLd = {
 
 const guideCount = 1 + GUIDE_GROUPS.reduce((n, g) => n + g.links.length, 0);
 
+// Partner deals come from MongoDB (managed in /admin). The page stays pre-built;
+// admin saves refresh it immediately (revalidatePath), and this hourly re-render
+// is the fallback (e.g. deals set to hide after their end date).
+export const revalidate = 3600;
+
 // Light header + dark footer, site CTA banner hidden (the page has its own CTAs).
-export default function BfcmOffersPage() {
+export default async function BfcmOffersPage() {
+  const { partners, categories } = await getPublicBfcmData();
+
+  // Hero: eFoli icons stay fixed; partner slots take the first visible partners' logos.
+  const partnerLogos = partners.map((p) => p.logoUrl).filter((u): u is string => !!u);
+  let nextLogo = 0;
+  const heroIcons = HERO_SLOTS.flatMap((slot) => {
+    const src = slot.icon ?? partnerLogos[nextLogo++];
+    return src ? [{ ...slot, src, isEfoli: !!slot.icon }] : [];
+  });
+
   return (
     <SiteChrome darkFooter hideBanner>
       <main className={s.page}>
@@ -68,14 +81,14 @@ export default function BfcmOffersPage() {
         {/* HERO */}
         <section className={`${s.hero} ${s.center}`}>
           <div className={s.heroFloat} aria-hidden="true">
-            {HERO_FLOAT.map((f, i) => (
+            {heroIcons.map((f, i) => (
               <Image
                 key={i}
                 src={f.src}
                 alt=""
                 width={f.size}
                 height={f.size}
-                className={[f.kind === "ef" ? s.floatEf : "", f.more ? s.floatMore : ""].join(" ").trim() || undefined}
+                className={[f.isEfoli ? s.floatEf : "", f.more ? s.floatMore : ""].join(" ").trim() || undefined}
                 style={
                   {
                     left: f.left,
@@ -198,12 +211,11 @@ export default function BfcmOffersPage() {
                 </p>
               </div>
             </div>
-            <PartnerDeals
-              partners={PARTNERS}
-              filters={PARTNER_FILTERS}
-              categoryLabels={PARTNER_CATEGORY_LABELS}
-              visibleCount={CAMPAIGN.partnersVisible}
-            />
+            {partners.length > 0 ? (
+              <PartnerDeals partners={partners} categories={categories} visibleCount={CAMPAIGN.partnersVisible} />
+            ) : (
+              <p className={s.secCopy}>Partner deals are on their way — check back soon.</p>
+            )}
           </div>
         </section>
 
