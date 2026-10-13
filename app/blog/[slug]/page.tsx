@@ -30,7 +30,7 @@ function blogPostingLd(post: Post) {
       name: "EFOLI",
       logo: {
         "@type": "ImageObject",
-        url: "https://efoli.com/assets/logo-qfFYDzw2.svg",
+        url: "https://efoli.com/brand/logo.svg",
       },
     },
     mainEntityOfPage: { "@type": "WebPage", "@id": url },

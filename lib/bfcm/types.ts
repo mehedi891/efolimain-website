@@ -52,6 +52,8 @@ export interface PublicPartner {
   description: string;
   offerBadge: string;
   terms: string;
+  /** Last valid day, YYYY-MM-DD (for structured data). */
+  validUntil: string;
   untilLabel: string;
   code: string | null;
   codeNote: string | null;

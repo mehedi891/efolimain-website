@@ -13,7 +13,7 @@ export const homeJsonLd = {
       "url": "https://efoli.com/",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://efoli.com/assets/logo-qfFYDzw2.svg"
+        "url": "https://efoli.com/brand/logo.svg"
       },
       "description": "EFOLI is a software company specializing in Shopify apps and B2B eCommerce solutions for merchants worldwide.",
       "email": "info@efoli.com",
@@ -67,7 +67,7 @@ export const aboutJsonLd = {
       "url": "https://efoli.com/",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://efoli.com/assets/logo-qfFYDzw2.svg"
+        "url": "https://efoli.com/brand/logo.svg"
       },
       "description": "EFOLI is a software company specializing in Shopify apps and B2B eCommerce solutions for merchants worldwide.",
       "foundingDate": "2010",
@@ -322,7 +322,7 @@ export const serviceJsonLd = {
       "url": "https://efoli.com/",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://efoli.com/assets/logo-qfFYDzw2.svg"
+        "url": "https://efoli.com/brand/logo.svg"
       },
       "description": "EFOLI is a software company specializing in Shopify apps, SaaS products, and full-stack B2B eCommerce solutions.",
       "foundingDate": "2010",
@@ -459,7 +459,7 @@ export const careerJsonLd = {
       "url": "https://efoli.com/",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://efoli.com/assets/logo-qfFYDzw2.svg"
+        "url": "https://efoli.com/brand/logo.svg"
       },
       "description": "EFOLI is a software company specializing in Shopify apps and B2B eCommerce solutions for merchants worldwide.",
       "foundingDate": "2010",
@@ -692,7 +692,7 @@ export const contactJsonLd = {
       "url": "https://efoli.com/",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://efoli.com/assets/logo-qfFYDzw2.svg"
+        "url": "https://efoli.com/brand/logo.svg"
       },
       "description": "EFOLI is a software company specializing in Shopify apps, SaaS products, and full-stack B2B eCommerce solutions.",
       "foundingDate": "2010",

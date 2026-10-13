@@ -18,6 +18,7 @@ import {
   partnerBadge,
 } from "@/data/bfcm2026";
 import { getPublicBfcmData } from "@/lib/bfcm/store";
+import { buildBfcmJsonLd } from "@/lib/bfcm/schema";
 import s from "./bfcm.module.css";
 import AppOffers from "./AppOffers";
 import PartnerDeals from "./PartnerDeals";
@@ -43,17 +44,6 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { themeColor: "#1d74bf" };
 
-/** Built from the same FAQS array as the visible accordion — they can't drift. */
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: FAQS.map((f) => ({
-    "@type": "Question",
-    name: f.q,
-    acceptedAnswer: { "@type": "Answer", text: f.a },
-  })),
-};
-
 const guideCount = 1 + GUIDE_GROUPS.reduce((n, g) => n + g.links.length, 0);
 
 // Partner deals come from MongoDB (managed in /admin). The page stays pre-built;
@@ -64,6 +54,9 @@ export const revalidate = 3600;
 // Light header + dark footer, site CTA banner hidden (the page has its own CTAs).
 export default async function BfcmOffersPage() {
   const { partners, categories } = await getPublicBfcmData();
+
+  // Offers + FAQ structured data, from the same data as the visible cards.
+  const jsonLd = buildBfcmJsonLd({ title: TITLE, description: DESCRIPTION, efoliOffers: EFOLI_OFFERS, partners, faqs: FAQS });
 
   // Hero: eFoli icons stay fixed; partner slots take the first visible partners' logos.
   const partnerLogos = partners.map((p) => p.logoUrl).filter((u): u is string => !!u);
@@ -76,7 +69,7 @@ export default async function BfcmOffersPage() {
   return (
     <SiteChrome darkFooter hideBanner>
       <main className={s.page}>
-        <JsonLd data={faqJsonLd} />
+        <JsonLd data={jsonLd} />
 
         {/* HERO */}
         <section className={`${s.hero} ${s.center}`}>

@@ -50,6 +50,7 @@ export function toPublicPartner(
     description: p.description,
     offerBadge: p.offerBadge,
     terms: p.terms,
+    validUntil: p.validUntil,
     untilLabel: untilLabel(p.validUntil),
     code: p.code,
     codeNote: p.codeNote,
