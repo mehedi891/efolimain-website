@@ -75,6 +75,9 @@ function toPartner(d: PartnerDoc): BfcmPartner {
     category: d.category,
     description: d.description,
     offerBadge: d.offerBadge,
+    // Records saved before these fields existed: a live discount.
+    offerType: d.offerType ?? "discount",
+    comingSoon: !!d.comingSoon,
     terms: d.terms,
     validUntil: d.validUntil,
     hideAfterEnd: !!d.hideAfterEnd,

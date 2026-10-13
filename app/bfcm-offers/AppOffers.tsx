@@ -27,7 +27,7 @@ export default function AppOffers({
 
   return (
     <>
-      <div className={s.tabs} role="group" aria-label="Filter eFoli apps">
+      <div className={s.tabs} role="group" aria-label="Filter EFOLI apps">
         {filters.map((f) => (
           <button
             key={f.id}
@@ -35,6 +35,9 @@ export default function AppOffers({
             className={s.tab}
             aria-pressed={filter === f.id}
             onClick={() => setFilter(f.id)}
+            data-ev="category_select"
+            data-section="efoli"
+            data-category={f.id}
           >
             {f.label}
           </button>
@@ -77,7 +80,15 @@ export default function AppOffers({
             </ul>
             <div className={s.appFoot}>
               <span className={s.codeChip}>CODE: {code}</span>
-              <a className={s.appLink} href={o.href} target="_blank" rel="noopener">
+              <a
+                className={s.appLink}
+                href={o.href}
+                target="_blank"
+                rel="noopener"
+                data-ev="efoli_offer_click"
+                data-offer-id={o.id}
+                data-category={o.category}
+              >
                 View deal <ArrowRight />
                 <span className="sr-only"> for {o.name} (opens in a new tab)</span>
               </a>

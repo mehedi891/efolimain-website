@@ -18,28 +18,29 @@ import {
   partnerBadge,
 } from "@/data/bfcm2026";
 import { getPublicBfcmData } from "@/lib/bfcm/store";
+import { isCampaignLive } from "@/data/bfcmCampaign";
 import { buildBfcmJsonLd } from "@/lib/bfcm/schema";
 import s from "./bfcm.module.css";
 import AppOffers from "./AppOffers";
 import PartnerDeals from "./PartnerDeals";
 import CopyButton from "./CopyButton";
 import Countdown from "./Countdown";
+import BfcmAnalytics from "./BfcmAnalytics";
 import Faq from "./Faq";
 import HeroCount from "./HeroCount";
 import { ArrowRight, ArrowUpRight, GuideIcon, Mail } from "./icons";
 
-const TITLE = "eFoli BFCM 2026: Shopify App & Partner Deals";
+const TITLE = "BFCM 2026 Shopify App Deals & Partner Offers | EFOLI";
 const DESCRIPTION =
-  "Explore eFoli BFCM 2026 Shopify app discounts and curated partner offers for B2B growth, bundles, pricing, operations, SEO, reviews, and retention.";
-const OG_DESCRIPTION =
-  "Explore limited-time eFoli Shopify app discounts and curated partner offers built to help merchants sell, operate, and grow.";
+  "Explore BFCM 2026 Shopify app offers from EFOLI and our partners. Save 30% on eligible EFOLI plans and discover deals for bundles, marketing, and more.";
 
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: PAGE_URL },
-  openGraph: { type: "website", siteName: "eFoli", url: PAGE_URL, title: TITLE, description: OG_DESCRIPTION },
-  twitter: { card: "summary" },
+  // og:image / twitter:image come from opengraph-image.tsx + twitter-image.tsx in this folder.
+  openGraph: { type: "website", siteName: "EFOLI", url: PAGE_URL, title: TITLE, description: DESCRIPTION },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
 };
 
 export const viewport: Viewport = { themeColor: "#1d74bf" };
@@ -54,6 +55,9 @@ export const revalidate = 3600;
 // Light header + dark footer, site CTA banner hidden (the page has its own CTAs).
 export default async function BfcmOffersPage() {
   const { partners, categories } = await getPublicBfcmData();
+  // Re-checked on every ISR render (hourly + on admin saves).
+  const live = isCampaignLive();
+  const deadline = `${CAMPAIGN.endsLong} at ${CAMPAIGN.endsTime}`;
 
   // Offers + FAQ structured data, from the same data as the visible cards.
   const jsonLd = buildBfcmJsonLd({ title: TITLE, description: DESCRIPTION, efoliOffers: EFOLI_OFFERS, partners, faqs: FAQS });
@@ -70,6 +74,7 @@ export default async function BfcmOffersPage() {
     <SiteChrome darkFooter hideBanner>
       <main className={s.page}>
         <JsonLd data={jsonLd} />
+        <BfcmAnalytics />
 
         {/* HERO */}
         <section className={`${s.hero} ${s.center}`}>
@@ -96,28 +101,39 @@ export default async function BfcmOffersPage() {
           </div>
 
           <div className={s.wrap}>
-            <span className={s.tag}>Black Friday 2026 • eFoli + partner exclusives</span>
+            {!live && (
+              <p className={s.endedNote} role="status">
+                The EFOLI BFCM 2026 offer ended on {CAMPAIGN.endsLong}. Partner offers have their own end dates.
+              </p>
+            )}
+            <span className={s.tag}>EFOLI BFCM Partner Campaign 2026</span>
             <h1>
-              More ways to
-              <br />
-              <em>win BFCM.</em>
-              <span className={s.dCount} role="img" aria-label={`${CAMPAIGN.discount} percent off every app`}>
+              Find the Right Shopify Apps for Your <em>BFCM Growth.</em>
+            </h1>
+            <p className={s.heroHighlight}>
+              <span
+                className={s.dCount}
+                role="img"
+                aria-label={`${CAMPAIGN.discount} percent off eligible EFOLI plans for ${CAMPAIGN.duration}`}
+              >
                 <b>
                   <HeroCount to={CAMPAIGN.discount} />%
                 </b>
                 <i>
-                  OFF
+                  OFF eligible
                   <br />
-                  every app
+                  EFOLI plans
+                  <br />
+                  for {CAMPAIGN.duration}
                 </i>
               </span>
-            </h1>
+            </p>
             <p className={s.heroLede}>
-              Discover exclusive offers from <strong>eFoli and our Partners</strong>, built to help merchants sell
-              more, operate smoothly, and keep growing long after the rush.
+              Explore offers from <strong>EFOLI and participating Shopify app partners</strong>. Find tools for
+              bundles, discounts, marketing, conversion, and store operations.
             </p>
 
-            <nav className={s.appPills} aria-label="eFoli apps on offer">
+            <nav className={s.appPills} aria-label="EFOLI apps on offer">
               {EFOLI_OFFERS.map((o) => (
                 <a key={o.id} className={s.appPill} href={`#${o.id}`}>
                   <Image src={o.icon} alt="" width={26} height={26} />
@@ -130,15 +146,24 @@ export default async function BfcmOffersPage() {
               <div className={s.codeBox}>
                 <span>Campaign code</span>
                 <strong>{CAMPAIGN.code}</strong>
-                <CopyButton className={s.copyBtn} text={CAMPAIGN.code} label="Copy code" resetMs={2500} />
+                <CopyButton
+                  className={s.copyBtn}
+                  text={CAMPAIGN.code}
+                  label="Copy code"
+                  resetMs={2500}
+                  track={{ ev: "promo_code_copy", offerId: "efoli", code: CAMPAIGN.code }}
+                />
               </div>
-              <a className={s.btn} href="#offers">
-                Explore eFoli offers
+              <a className={s.btn} href="#offers" data-ev="hero_cta_click" data-target="efoli">
+                Explore EFOLI Offers
               </a>
-              <a className={`${s.btn} ${s.btnOutline}`} href="#partners">
-                Browse partner deals
+              <a className={`${s.btn} ${s.btnOutline}`} href="#partners" data-ev="hero_cta_click" data-target="partners">
+                Browse Partner Offers
               </a>
             </div>
+            <p className={s.heroDeadline}>
+              Code <strong>{CAMPAIGN.code}</strong> · Ends {deadline}
+            </p>
           </div>
         </section>
 
@@ -154,9 +179,9 @@ export default async function BfcmOffersPage() {
         <section className={s.apps} id="offers">
           <div className={s.wrap}>
             <div className={s.center}>
-              <span className={s.tag}>eFoli campaign offers</span>
+              <span className={s.tag}>EFOLI campaign offers</span>
               <h2 className={s.secTitle}>
-                <em>{CAMPAIGN.discount}% OFF</em> the Entire eFoli Lineup
+                <em>{CAMPAIGN.discount}% OFF</em> Eligible Plans on Every EFOLI App
               </h2>
               <p className={s.secCopy}>
                 Choose the apps that match your next growth move, from larger wholesale orders and smarter pricing to
@@ -188,7 +213,7 @@ export default async function BfcmOffersPage() {
                 <Image
                   className={s.partnerBadge}
                   src={partnerBadge}
-                  alt="eFoli BFCM Partner 2026 badge"
+                  alt="EFOLI BFCM Partner 2026 badge"
                   width={170}
                   height={170}
                 />
@@ -196,11 +221,12 @@ export default async function BfcmOffersPage() {
               <div>
                 <span className={s.tag}>Campaign partners</span>
                 <h2 className={s.secTitle}>
-                  Trusted Partners. <em>Exclusive BFCM Deals.</em>
+                  Trusted Partners. <em>BFCM Offers &amp; Picks.</em>
                 </h2>
                 <p className={s.secCopy}>
-                  Hand-picked Shopify apps from our Partners, each with its own BFCM offer, across marketing,
-                  conversion, store operations, global selling, and reviews.
+                  Hand-picked Shopify apps from our partners across marketing, conversion, store operations, global
+                  selling, and reviews. Each offer is provided and supported by its partner, so check every card for
+                  its own terms and end date.
                 </p>
               </div>
             </div>
@@ -269,11 +295,11 @@ export default async function BfcmOffersPage() {
         {/* COUNTDOWN */}
         <section className={s.countdown}>
           <div className={s.wrap}>
-            <h2>Your Growth Window Is Open.</h2>
+            <h2>{live ? "Your Growth Window Is Open." : "The BFCM 2026 Window Has Closed."}</h2>
             <Countdown endsAt={CAMPAIGN.endsAt} />
             <p>
-              The eFoli BFCM campaign closes on {CAMPAIGN.endsLong}. Get <b>{CAMPAIGN.discount}% OFF</b> every eFoli
-              app with code <b>{CAMPAIGN.code}</b>.
+              The EFOLI offer closes on {deadline}. Get <b>{CAMPAIGN.discount}% OFF</b> eligible EFOLI plans for{" "}
+              {CAMPAIGN.duration} with code <b>{CAMPAIGN.code}</b>.
             </p>
             <a className={`${s.btn} ${s.btnLime}`} href="#offers">
               Explore All Offers <ArrowRight />
@@ -287,10 +313,12 @@ export default async function BfcmOffersPage() {
             <div className={s.faqIntro}>
               <span className={s.tag}>Good to know</span>
               <h2 className={s.secTitle}>Offer Details, Made Clear.</h2>
-              <p className={s.secCopy}>Everything you need before choosing the eFoli tools that fit your store.</p>
+              <p className={s.secCopy}>Everything you need before choosing the EFOLI tools that fit your store.</p>
               <div className={s.faqFacts}>
                 <span>Code {CAMPAIGN.code}</span>
-                <span>{CAMPAIGN.discount}% off · 1 year</span>
+                <span>
+                  {CAMPAIGN.discount}% off · {CAMPAIGN.duration}
+                </span>
                 <span>Ends {CAMPAIGN.endsShort}</span>
               </div>
             </div>
@@ -299,7 +327,11 @@ export default async function BfcmOffersPage() {
               <div className={s.faqHelp}>
                 <Mail />
                 <p>
-                  Still have questions? Email <a href="mailto:info@efoli.com">info@efoli.com</a>.
+                  Questions about an EFOLI offer or the {CAMPAIGN.code} code? Email{" "}
+                  <a href="mailto:info@efoli.com" data-ev="support_click">
+                    info@efoli.com
+                  </a>
+                  .
                 </p>
               </div>
             </div>
@@ -311,13 +343,13 @@ export default async function BfcmOffersPage() {
           <div className={`${s.wrap} ${s.closingCard}`}>
             <div>
               <h2>Make This Selling Season Your Smartest One Yet.</h2>
-              <p>Compare eFoli and partner offers, choose your tools, and build a stronger commerce experience.</p>
+              <p>Compare EFOLI and partner offers, choose your tools, and build a stronger commerce experience.</p>
             </div>
             <a className={`${s.btn} ${s.btnLime}`} href="#offers">
               Explore all deals <ArrowRight />
             </a>
           </div>
-          <p className={`${s.wrap} ${s.disclaimer}`}>All offer terms are subject to partner confirmation.</p>
+          <p className={`${s.wrap} ${s.disclaimer}`}>Partner offer terms are set by each partner and subject to their confirmation.</p>
         </section>
       </main>
     </SiteChrome>

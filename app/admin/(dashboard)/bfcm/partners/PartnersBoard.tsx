@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 import { FiEdit2, FiExternalLink, FiPlus, FiTrash2 } from "react-icons/fi";
 import type { BfcmCategory, BfcmPartner } from "@/lib/bfcm/types";
 import { initialsOf, isExpired, untilLabel } from "@/lib/bfcm/format";
+import { offerTypeInfo } from "@/lib/bfcm/validate";
 import { SortableList, Switch } from "../Sortable";
 import { deletePartnerAction, reorderPartnersAction, setPartnerActiveAction } from "../actions";
 
@@ -163,6 +164,16 @@ export default function PartnersBoard({
                 </span>
 
                 <span className="shrink-0 rounded-full bg-[#d6ff4f] px-2.5 py-1 text-xs font-bold text-[#0b1020]">{p.offerBadge}</span>
+                {p.comingSoon && (
+                  <span className="shrink-0 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
+                    Coming soon
+                  </span>
+                )}
+                {p.offerType !== "discount" && (
+                  <span className="shrink-0 rounded-full bg-gray-50 px-2.5 py-1 text-xs font-semibold text-gray-600 ring-1 ring-gray-200">
+                    {offerTypeInfo(p.offerType).label}
+                  </span>
+                )}
 
                 <Switch checked={p.isActive} onChange={(v) => toggle(p, v)} label={`Show ${p.name} on the page`} disabled={pending} />
 

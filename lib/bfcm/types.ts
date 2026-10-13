@@ -11,6 +11,12 @@ export interface BfcmCategory {
   isActive: boolean;
 }
 
+/**
+ * What kind of offer a card is — keeps claims honest (spec: standard trials and
+ * plain listings must not be presented as exclusive discounts).
+ */
+export type OfferType = "discount" | "free" | "trial" | "listing";
+
 /** A partner deal as stored/edited in admin. */
 export interface BfcmPartner {
   id: string;
@@ -22,6 +28,10 @@ export interface BfcmPartner {
   category: string;
   description: string;
   offerBadge: string;
+  /** discount / free period / free trial / app pick without a special offer. */
+  offerType: OfferType;
+  /** Announced but not redeemable yet — the card shows "Coming soon", no active CTA. */
+  comingSoon: boolean;
   terms: string;
   /** Last valid day, YYYY-MM-DD. Shown as "Until Dec 30, 2026". */
   validUntil: string;
@@ -51,6 +61,8 @@ export interface PublicPartner {
   developer: string;
   description: string;
   offerBadge: string;
+  offerType: OfferType;
+  comingSoon: boolean;
   terms: string;
   /** Last valid day, YYYY-MM-DD (for structured data). */
   validUntil: string;

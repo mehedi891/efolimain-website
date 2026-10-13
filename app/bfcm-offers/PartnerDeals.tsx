@@ -22,7 +22,8 @@ export default function PartnerDeals({
   const [filter, setFilter] = useState<string>("all");
   const [expanded, setExpanded] = useState(false);
 
-  const tabs = [{ slug: "all", label: "All deals" }, ...categories];
+  const countIn = (slug: string) => (slug === "all" ? partners.length : partners.filter((p) => p.categorySlug === slug).length);
+  const tabs = [{ slug: "all", label: "All offers" }, ...categories];
   const matches = partners.filter((p) => filter === "all" || p.categorySlug === filter);
   const shown = new Set((expanded ? matches : matches.slice(0, visibleCount)).map((p) => p.slug));
   const rest = matches.length - visibleCount;
@@ -37,8 +38,11 @@ export default function PartnerDeals({
             className={s.tab}
             aria-pressed={filter === t.slug}
             onClick={() => setFilter(t.slug)}
+            data-ev="category_select"
+            data-section="partners"
+            data-category={t.slug}
           >
-            {t.label}
+            {t.label} <span className={s.tabCount}>{countIn(t.slug)}</span>
           </button>
         ))}
       </div>
@@ -51,8 +55,19 @@ export default function PartnerDeals({
 
       {!expanded && rest > 0 && (
         <div className={s.moreWrap}>
-          <button className={s.btn} type="button" onClick={() => setExpanded(true)}>
-            View more partner deals ({rest})
+          <button
+            className={s.btn}
+            type="button"
+            data-ev="expand_more_deals"
+            data-category={filter}
+            onClick={() => {
+              // The button disappears once expanded, so move focus to the first newly shown card.
+              const firstNew = matches[visibleCount]?.slug;
+              setExpanded(true);
+              setTimeout(() => document.getElementById(`p-${firstNew}`)?.focus(), 0);
+            }}
+          >
+            View more partner offers ({rest})
           </button>
         </div>
       )}

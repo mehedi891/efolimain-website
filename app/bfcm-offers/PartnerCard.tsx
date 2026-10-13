@@ -3,6 +3,7 @@ import s from "./bfcm.module.css";
 import CopyButton from "./CopyButton";
 import { ArrowRight, Clock, Tag } from "./icons";
 import type { PublicPartner } from "@/lib/bfcm/types";
+import { offerTypeInfo } from "@/lib/bfcm/validate";
 
 /**
  * One partner deal card — used by the public grid AND the admin live preview,
@@ -18,9 +19,12 @@ export default function PartnerCard({
   hidden?: boolean;
   preview?: boolean;
 }) {
+  const type = offerTypeInfo(p.offerType);
   return (
     <article
       id={preview ? undefined : `p-${p.slug}`}
+      // Focus target after "View more" reveals new cards (not in the tab order).
+      tabIndex={preview ? undefined : -1}
       className={s.pcard}
       hidden={hidden}
       style={{ "--accent": p.accent } as React.CSSProperties}
@@ -73,15 +77,36 @@ export default function PartnerCard({
             <div className={s.pcCode}>
               <span>Code</span>
               <strong>{p.code}</strong>
-              <CopyButton className={s.pcCopy} text={p.code} srContext={`code ${p.code}`} />
+              <CopyButton
+                className={s.pcCopy}
+                text={p.code}
+                srContext={`code ${p.code}`}
+                track={preview ? undefined : { ev: "promo_code_copy", offerId: p.slug, code: p.code }}
+              />
             </div>
           ) : (
             <div className={`${s.pcCode} ${s.nocode}`}>{p.codeNote}</div>
           )}
-          <a className={s.pcLink} href={p.ctaUrl} target="_blank" rel="noopener">
-            Get deal <ArrowRight />
-            <span className="sr-only"> on {p.name} (opens in a new tab)</span>
-          </a>
+          {p.comingSoon ? (
+            // Announced but not redeemable yet — no active CTA implying it is.
+            <span className={`${s.pcLink} ${s.pcSoon}`}>
+              Coming soon
+            </span>
+          ) : (
+            <a
+              className={s.pcLink}
+              href={p.ctaUrl}
+              target="_blank"
+              rel="noopener"
+              data-ev="partner_deal_click"
+              data-offer-id={p.slug}
+              data-offer-type={p.offerType}
+              data-category={p.categorySlug}
+            >
+              {type.cta} <ArrowRight />
+              <span className="sr-only"> on {p.name} (opens in a new tab)</span>
+            </a>
+          )}
         </div>
       </div>
     </article>

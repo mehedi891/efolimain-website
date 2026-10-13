@@ -15,6 +15,7 @@ import { APPS } from "@/data/apps";
 import { CAMPAIGN, PAGE_URL } from "@/data/bfcmCampaign";
 import type { EfoliOffer } from "@/data/bfcm2026";
 import type { PublicPartner } from "./types";
+import { offerTypeInfo } from "./validate";
 
 const SITE = "https://efoli.com";
 const ORG_ID = `${SITE}/#organization`;
@@ -27,8 +28,8 @@ function efoliOffer(o: EfoliOffer) {
   return {
     "@type": "Offer",
     "@id": `${PAGE_URL}#${o.id}`,
-    name: `${o.name} — ${CAMPAIGN.discount}% off for one year`,
-    description: `${o.blurb} BFCM 2026 deal: ${CAMPAIGN.discount}% off eligible plans for one year with code ${CAMPAIGN.code}, for new users and eligible free users. Ends ${CAMPAIGN.endsLong}.`,
+    name: `${o.name} — ${CAMPAIGN.discount}% off eligible plans for ${CAMPAIGN.duration}`,
+    description: `${o.blurb} BFCM 2026 offer: ${CAMPAIGN.discount}% off eligible plans for ${CAMPAIGN.duration} with code ${CAMPAIGN.code}, for new users and eligible free users. Ends ${CAMPAIGN.endsLong} at ${CAMPAIGN.endsTime}.`,
     url: o.href,
     category: o.label,
     validThrough: CAMPAIGN.endsAt,
@@ -82,7 +83,10 @@ export function buildBfcmJsonLd({
   partners: PublicPartner[];
   faqs: { q: string; a: string }[];
 }) {
-  const offers = [...efoliOffers.map(efoliOffer), ...partners.map(partnerOffer)];
+  // Only real, redeemable deals become Offers: no "coming soon", standard
+  // trials or plain app picks (they're visible on the page, but not offers).
+  const deals = partners.filter((p) => !p.comingSoon && offerTypeInfo(p.offerType).isDeal);
+  const offers = [...efoliOffers.map(efoliOffer), ...deals.map(partnerOffer)];
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -117,7 +121,7 @@ export function buildBfcmJsonLd({
       {
         "@type": "ItemList",
         "@id": `${PAGE_URL}#offers`,
-        name: "eFoli BFCM 2026 Shopify app deals",
+        name: "EFOLI BFCM 2026 Shopify app offers",
         numberOfItems: offers.length,
         itemListElement: offers.map((item, i) => ({ "@type": "ListItem", position: i + 1, item })),
       },

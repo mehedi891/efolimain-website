@@ -49,6 +49,8 @@ export function toPublicPartner(
     developer: p.developer,
     description: p.description,
     offerBadge: p.offerBadge,
+    offerType: p.offerType ?? "discount",
+    comingSoon: !!p.comingSoon,
     terms: p.terms,
     validUntil: p.validUntil,
     untilLabel: untilLabel(p.validUntil),

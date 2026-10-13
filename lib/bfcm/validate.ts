@@ -5,7 +5,7 @@
  */
 
 import { imageUrlProblem, normalizeImageUrl } from "./imageHosts";
-import type { PartnerInput } from "./types";
+import type { OfferType, PartnerInput } from "./types";
 
 export type FieldErrors = Partial<Record<keyof PartnerInput | "label" | "color", string>>;
 
@@ -19,6 +19,18 @@ export const LIMITS = {
   codeNote: 60,
   categoryLabel: 24,
 } as const;
+
+/** Offer types: admin label, the card's button text, and whether it counts as a deal in structured data. */
+export const OFFER_TYPES: { id: OfferType; label: string; cta: string; isDeal: boolean; hint: string }[] = [
+  { id: "discount", label: "Discount", cta: "Get deal", isDeal: true, hint: "A BFCM price discount, e.g. 50% off." },
+  { id: "free", label: "Free period", cta: "Get deal", isDeal: true, hint: "Free months/year beyond the normal plan." },
+  { id: "trial", label: "Free trial", cta: "Start free trial", isDeal: false, hint: "A free trial. If it's the app's standard trial, it isn't a BFCM deal." },
+  { id: "listing", label: "App pick — no special offer", cta: "View app", isDeal: false, hint: "Recommended app without a BFCM offer." },
+];
+
+export function offerTypeInfo(id: OfferType | undefined) {
+  return OFFER_TYPES.find((t) => t.id === id) ?? OFFER_TYPES[0];
+}
 
 /** Ready-made notes for deals without a code (the admin can also type their own). */
 export const CODE_NOTE_PRESETS = [
@@ -97,6 +109,8 @@ export function parsePartnerInput(raw: unknown): { ok: true; data: PartnerInput 
       category,
       description,
       offerBadge,
+      offerType: OFFER_TYPES.some((t) => t.id === r.offerType) ? (r.offerType as OfferType) : "discount",
+      comingSoon: r.comingSoon === true,
       terms,
       validUntil,
       hideAfterEnd: r.hideAfterEnd === true,

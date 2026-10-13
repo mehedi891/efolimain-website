@@ -99,7 +99,7 @@
   padding: 0 28px;
   border-radius: 12px;
   border: 1.5px solid transparent;
-  background: var(--blue-bright);
+  background: var(--blue);
   color: #fff;
   font-weight: 700;
   font-size: 1rem;
@@ -143,11 +143,12 @@
   color: #b45f06;
 }
 .hero h1 {
-  margin-top: 22px;
+  max-width: 980px;
+  margin: 22px auto 0;
   font-weight: 800;
-  font-size: clamp(3rem, 8.4vw, 6.6rem);
-  line-height: 0.95;
-  letter-spacing: -0.055em;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 1.02;
+  letter-spacing: -0.05em;
 }
 .hero h1 em {
   font-style: normal;
@@ -517,12 +518,12 @@
   min-height: 44px;
   padding: 0 16px;
   border-radius: 10px;
-  background: var(--blue-bright);
+  background: var(--blue);
   font-weight: 700;
   font-size: 0.9rem;
 }
 .appLink:hover {
-  background: #5aa9f5;
+  background: #1663a4;
 }
 
 /* Ticker */
@@ -742,14 +743,14 @@
 /* Initials, shown only when a partner hasn't supplied a logo yet. */
 .pcLogo .ph {
   font: 800 1.1rem var(--display);
-  color: color-mix(in srgb, var(--accent) 75%, #000);
+  color: color-mix(in srgb, var(--accent) 55%, #000);
 }
 .pcCat {
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--accent) 75%, #000);
+  color: color-mix(in srgb, var(--accent) 55%, #000);
 }
 .pcard h3 {
   font-weight: 700;
@@ -827,7 +828,7 @@
   padding: 4px 14px;
   font-size: 0.86rem;
   font-weight: 700;
-  color: color-mix(in srgb, var(--accent) 70%, #000);
+  color: color-mix(in srgb, var(--accent) 55%, #000);
 }
 .pcCopy {
   min-height: 36px;
@@ -875,7 +876,7 @@
 }
 .guides .tag {
   background: var(--blue-soft);
-  color: var(--blue);
+  color: #175f9e;
 }
 .guidesHead {
   display: flex;
@@ -995,7 +996,7 @@
   border: 1px solid color-mix(in srgb, var(--c) 30%, #fff);
   font-size: 0.72rem;
   font-weight: 700;
-  color: color-mix(in srgb, var(--c) 70%, #000);
+  color: color-mix(in srgb, var(--c) 55%, #000);
 }
 .gTopicH {
   margin: 14px 20px 0;
@@ -1032,7 +1033,7 @@
 }
 .gList a:hover {
   background: color-mix(in srgb, var(--c) 10%, #fff);
-  color: color-mix(in srgb, var(--c) 75%, #000);
+  color: color-mix(in srgb, var(--c) 55%, #000);
 }
 .gList svg {
   flex: 0 0 auto;
@@ -1346,4 +1347,83 @@
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* Partner offer announced but not redeemable yet. */
+.pcLink.pcSoon,
+.pcLink.pcSoon:hover {
+  background: #eef1f5;
+  color: var(--muted);
+  cursor: default;
+}
+.pcard:focus-visible {
+  outline: 3px solid var(--lime);
+  outline-offset: 3px;
+}
+
+/* Card count inside a filter tab. */
+.tabCount {
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.partners .tab[aria-pressed="true"] .tabCount {
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+/* Hero: the 30% count-up as its own highlight line under the headline. */
+.heroHighlight {
+  margin: 20px 0 0;
+  font: 800 clamp(3.2rem, 7.5vw, 5.6rem) / 1 var(--display);
+  letter-spacing: -0.055em;
+}
+.heroHighlight .dCount {
+  margin-left: 0;
+}
+.heroDeadline {
+  margin: 16px 0 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.heroDeadline strong {
+  color: var(--ink);
+  letter-spacing: 0.06em;
+}
+/* Shown only after the EFOLI offer deadline. */
+.endedNote {
+  display: inline-block;
+  margin: 0 0 18px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: #fff4d6;
+  color: #7c5306;
+  font-weight: 600;
+}
+.countdown .timerEnded {
+  margin: 40px auto 34px;
+  font: 800 clamp(1.6rem, 3.5vw, 2.4rem) var(--display);
+  color: var(--lime);
+}
+
+/* Very narrow phones (≤400px): the icon + app name + "30% OFF" badge don't fit
+   on one line, so let the badge wrap instead of being clipped by the card. */
+@media (max-width: 400px) {
+  .appTop {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+  .appTop h3 {
+    font-size: 1.3rem;
+  }
+}
+
+/* Keep the highlight's small label readable on phones (it scales with the big
+   number, which would make it ~8px at 390px wide). */
+.heroHighlight .dCount i {
+  font-size: max(12px, 0.16em);
 }

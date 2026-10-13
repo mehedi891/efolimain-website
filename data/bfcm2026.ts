@@ -45,7 +45,7 @@ export const TRUST_POINTS = [
 
 export const TICKER_ITEMS = [
   "BFCM 2026",
-  `${CAMPAIGN.discount}% off eFoli apps`,
+  `${CAMPAIGN.discount}% off eligible EFOLI plans`,
   "Partner deals",
   `Code ${CAMPAIGN.code}`,
   `Ends ${CAMPAIGN.endsLong.replace(", 2026", "")}`,
@@ -149,7 +149,7 @@ export const EFOLI_OFFERS: EfoliOffer[] = [
 ];
 
 /** Shared terms line on every eFoli card. */
-export const OFFER_TERMS = ["For one year", `New users · Eligible free users · Ends ${CAMPAIGN.endsMedium}`];
+export const OFFER_TERMS = [`${CAMPAIGN.discount}% off eligible plans for ${CAMPAIGN.duration}`, `New users · Eligible free users · Ends ${CAMPAIGN.endsMedium}`];
 
 // ---------------------------------------------------------------------------
 // Hero floating icons (decorative). Positions are % of the hero box.
@@ -247,23 +247,31 @@ export const GUIDE_GROUPS: GuideGroup[] = [
 
 export const FAQS: { q: string; a: string }[] = [
   {
-    q: "Who can use the eFoli BFCM offer?",
-    a: "The offer is for new users and eligible free users starting an eligible plan during the campaign period. Final eligibility can be confirmed with the eFoli product team.",
+    q: "Who can use the EFOLI BFCM offer?",
+    a: "The offer is for new users and eligible free users starting an eligible plan during the campaign period. Final eligibility can be confirmed with the EFOLI product team.",
   },
   {
-    q: "How long does the eFoli BFCM discount last?",
-    a: `The ${CAMPAIGN.discount}% discount applies for one year on eligible plans. Standard pricing resumes after the promotional period.`,
+    q: "How long does the EFOLI BFCM discount last?",
+    a: `The ${CAMPAIGN.discount}% discount applies to eligible plans for ${CAMPAIGN.duration}. Standard pricing resumes after the promotional period.`,
   },
   {
-    q: "Can I use the code on more than one eFoli app?",
-    a: "Yes. Where each selected app and plan is eligible, the campaign code can support a multi-app eFoli setup. Confirm the combination before checkout.",
+    q: "Can I use the code on more than one EFOLI app?",
+    a: "Yes. Where each selected app and plan is eligible, the campaign code can support a multi-app EFOLI setup. Confirm the combination before checkout.",
   },
   {
-    q: "Will eFoli help with setup?",
-    a: "eFoli provides technical support across its product ecosystem. Setup scope can vary by app and plan, so contact the relevant product team for details.",
+    q: "Will EFOLI help with setup?",
+    a: "EFOLI provides technical support for its own apps. Setup scope varies by app and plan, so contact the relevant EFOLI product team for details.",
   },
   {
-    q: "When does the eFoli BFCM campaign end?",
-    a: `The eFoli BFCM campaign closes on ${CAMPAIGN.endsLong}.`,
+    q: "When does the EFOLI BFCM campaign end?",
+    a: `The EFOLI offer closes on ${CAMPAIGN.endsLong} at ${CAMPAIGN.endsTime}. Partner offers have their own end dates, shown on each card.`,
+  },
+  {
+    q: "What if the BFCM26 code doesn't work?",
+    a: "Email info@efoli.com with the EFOLI app name and your store URL, and the team will look into it.",
+  },
+  {
+    q: "Who supports the partner offers?",
+    a: "Each partner offer is provided and supported by that app's developer. For help redeeming a partner offer, contact the partner directly.",
   },
 ];

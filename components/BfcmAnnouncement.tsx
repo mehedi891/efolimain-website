@@ -15,7 +15,7 @@ export default function BfcmAnnouncement() {
       href={PAGE_PATH}
       className="block bg-[linear-gradient(90deg,#0b4d83,#1d74bf_50%,#168780)] px-4 py-[9px] text-center text-[0.82rem] font-bold uppercase tracking-[0.05em] text-white transition hover:brightness-110 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white"
     >
-      BFCM 2026 • {CAMPAIGN.discount}% off all eFoli apps • Ends {ends}
+      BFCM 2026 • {CAMPAIGN.discount}% off eligible EFOLI plans for {CAMPAIGN.duration} • Ends {ends}
     </Link>
   );
 }

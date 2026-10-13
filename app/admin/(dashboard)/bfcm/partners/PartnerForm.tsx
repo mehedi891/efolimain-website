@@ -8,8 +8,8 @@ import s from "@/app/bfcm-offers/bfcm.module.css";
 import PartnerCard from "@/app/bfcm-offers/PartnerCard";
 import { slugify, toPublicPartner, untilLabel } from "@/lib/bfcm/format";
 import { imageUrlProblem, normalizeImageUrl } from "@/lib/bfcm/imageHosts";
-import { CODE_NOTE_PRESETS, LIMITS, parsePartnerInput, type FieldErrors } from "@/lib/bfcm/validate";
-import type { BfcmCategory, BfcmPartner } from "@/lib/bfcm/types";
+import { CODE_NOTE_PRESETS, LIMITS, OFFER_TYPES, offerTypeInfo, parsePartnerInput, type FieldErrors } from "@/lib/bfcm/validate";
+import type { BfcmCategory, BfcmPartner, OfferType } from "@/lib/bfcm/types";
 import { deletePartnerAction, savePartnerAction } from "../actions";
 
 const inputCls =
@@ -146,6 +146,8 @@ export default function PartnerForm({
     category: initial?.category ?? categories.find((c) => c.isActive)?.slug ?? categories[0]?.slug ?? "",
     description: initial?.description ?? "",
     offerBadge: initial?.offerBadge ?? "",
+    offerType: (initial?.offerType ?? "discount") as OfferType,
+    comingSoon: initial?.comingSoon ?? false,
     terms: initial?.terms ?? "",
     validUntil: initial?.validUntil ?? defaultUntil,
     hideAfterEnd: initial?.hideAfterEnd ?? false,
@@ -289,6 +291,35 @@ export default function PartnerForm({
               </select>
             </Field>
             {text("offerBadge", "Offer badge", "50% OFF")}
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field id="f-offerType" label="Offer type" hint={offerTypeInfo(f.offerType).hint}>
+              <select
+                id="f-offerType"
+                value={f.offerType}
+                onChange={(e) => set("offerType", e.target.value as OfferType)}
+                className={inputCls}
+              >
+                {OFFER_TYPES.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.label} — button: “{t.cta}”
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <label className="flex items-start gap-2 self-center pt-5 text-sm text-[#13181E]">
+              <input
+                type="checkbox"
+                checked={f.comingSoon}
+                onChange={(e) => set("comingSoon", e.target.checked)}
+                className="mt-0.5 h-4 w-4 accent-[#0D99FF]"
+              />
+              <span>
+                Coming soon
+                <span className="block text-xs text-gray-500">Not redeemable yet — shows “Coming soon” instead of a button.</span>
+              </span>
+            </label>
           </div>
 
           <Field

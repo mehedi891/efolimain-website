@@ -28,12 +28,19 @@ async function copyText(text: string): Promise<boolean> {
   }
 }
 
+/** { ev, offerId } → { "data-ev", "data-offer-id" } */
+function dataAttrs(track?: Record<string, string>): Record<string, string> {
+  if (!track) return {};
+  return Object.fromEntries(Object.entries(track).map(([k, v]) => [`data-${k.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`, v]));
+}
+
 export default function CopyButton({
   text,
   className,
   label = "Copy",
   resetMs = 2000,
   srContext,
+  track,
 }: {
   text: string;
   className?: string;
@@ -41,6 +48,8 @@ export default function CopyButton({
   resetMs?: number;
   /** Extra screen-reader-only context, e.g. "code BFCM50" (keeps the visible label short). */
   srContext?: string;
+  /** Analytics tags rendered as data-* attributes (picked up by BfcmAnalytics), e.g. { ev: "promo_code_copy" }. */
+  track?: Record<string, string>;
 }) {
   const [state, setState] = useState<"idle" | "ok" | "fail">("idle");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -57,7 +66,7 @@ export default function CopyButton({
   }
 
   return (
-    <button type="button" className={className} onClick={onClick} aria-live="polite">
+    <button type="button" className={className} onClick={onClick} aria-live="polite" {...dataAttrs(track)}>
       {state === "ok" ? "Copied!" : state === "fail" ? "Select to copy" : label}
       {state === "idle" && srContext && <span className="sr-only"> {srContext}</span>}
     </button>

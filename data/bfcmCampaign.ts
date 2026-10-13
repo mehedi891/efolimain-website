@@ -12,6 +12,10 @@ export const CAMPAIGN = {
   endsLong: "December 12, 2026",
   endsMedium: "Dec 12, 2026",
   endsShort: "Dec 12",
+  /** endsAt as shown to people (the deadline is end of day UTC). */
+  endsTime: "11:59 PM UTC",
+  /** Discount duration, worded as in the official terms. */
+  duration: "12 months",
   /** Partner cards shown before "View more". */
   partnersVisible: 6,
 } as const;

@@ -73,22 +73,22 @@ export default function Footer({ isDark, isBannerHide = false }: FooterProps) {
       >
         <div className="max-w-lg">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={logo} alt="eFoli" className="max-w-[100px] object-contain" />
+          <img src={logo} alt="EFOLI" className="max-w-[100px] object-contain" />
           <p className="text-[18px]/[1.7] pt-5 pb-7">
-            Crafting B2B eCommerce Solutions, Empowering Success EFOLI is a
-            Bangladeshi software company with 15+ years of experience,
-            specializing in cutting-edge solutions for eCommerce businesses.
+            EFOLI is a global software company building SaaS products and
+            Shopify apps that help eCommerce businesses grow, streamline
+            operations, and deliver better buying experiences.
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <Image
               src={partner}
-              alt="eFoli"
+              alt="Shopify Partners badge"
               className="max-w-[200px] h-[60px] w-auto object-contain"
             />
             <Image
               src={basis}
-              alt="eFoli"
+              alt="BASIS membership badge (Bangladesh Association of Software and Information Services)"
               className="max-w-[120px] h-[60px] w-auto object-contain "
             />
           </div>
