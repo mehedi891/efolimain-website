@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useSpring } from "motion/react";
@@ -10,6 +11,7 @@ import {
   readingTime,
 } from "@/lib/blog";
 import Avatar from "./Avatar";
+import { deferCmsScripts, useRunCmsScripts } from "./cmsScripts";
 import type { Post } from "@/data/cms-types";
 
 // Keep the cover's entrance animation while gaining next/image optimization.
@@ -28,10 +30,9 @@ const fadeUp = {
 };
 
 const ShareLinks = ({ post, vertical = false }: { post: Post; vertical?: boolean }) => {
-  const url =
-    typeof window !== "undefined"
-      ? window.location.href
-      : `https://efoli.com${postPath(post)}`;
+  // Always share the canonical URL — identical on server and client (no
+  // hydration mismatch) and never a preview domain, localhost, or #anchor.
+  const url = `https://efoli.com${postPath(post)}`;
   const text = encodeURIComponent(post.title);
   const encoded = encodeURIComponent(url);
 
@@ -121,7 +122,13 @@ const Singlepost = ({ post, related = [] }: SinglepostProps) => {
     restDelta: 0.001,
   });
 
-  const { html, headings } = buildToc(post.content);
+  const toc = buildToc(post.content);
+  const headings = toc.headings;
+  // CMS custom-HTML <script>s are run on the client (see cmsScripts.ts) so they
+  // work after client-side navigation too, not only on a direct page load.
+  const html = deferCmsScripts(toc.html);
+  const contentRef = useRef<HTMLDivElement>(null);
+  useRunCmsScripts(contentRef, html);
 
   return (
     <article>
@@ -258,6 +265,7 @@ const Singlepost = ({ post, related = [] }: SinglepostProps) => {
             )}
 
             <div
+              ref={contentRef}
               className="blog-content"
               dangerouslySetInnerHTML={{ __html: html }}
             />
