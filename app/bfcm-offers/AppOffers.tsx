@@ -51,7 +51,7 @@ export default function AppOffers({
             style={{ "--glow": o.glow } as React.CSSProperties}
           >
             <div className={s.appTop}>
-              <Image className={s.appIcon} src={o.icon} alt="" width={48} height={48} />
+              <Image className={s.appIcon} src={o.icon} alt="" width={48} height={48} quality={100} />
               <div>
                 <h3>{o.name}</h3>
                 <span className={s.appCat}>{o.label}</span>
@@ -62,6 +62,7 @@ export default function AppOffers({
               <Image
                 src={o.media}
                 alt={`${o.name} on a Shopify store`}
+                quality={100}
                 sizes="(max-width: 640px) calc(100vw - 80px), (max-width: 980px) 45vw, 340px"
               />
             </div>

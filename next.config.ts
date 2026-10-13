@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
   // author avatars), the 404 illustration host, and the BFCM partner image
   // hosts admins may paste links from (lib/bfcm/imageHosts.ts).
   images: {
+    // 75 = Next's default for everything; 100 is opted into per image where
+    // fine detail matters (e.g. the BFCM eFoli app screenshots full of small UI
+    // text). Next 16 coerces any `quality` prop not listed here.
+    qualities: [75, 100],
     remotePatterns: [...new Set([...BASE_IMAGE_HOSTS, ...BFCM_IMAGE_HOSTS])].map((hostname) => ({
       protocol: "https" as const,
       hostname,
