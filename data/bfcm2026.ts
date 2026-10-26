@@ -189,7 +189,7 @@ export const HERO_SLOTS: HeroSlot[] = [
 // ---------------------------------------------------------------------------
 
 export const FEATURED_GUIDE = {
-  href: "/blog/best-shopify-apps-for-bfcm",
+  href: "/blog/best-shopify-apps-for-q4",
   eyebrow: "Start here",
   title: "Best Shopify Apps for Q4 2026",
   blurb: "The short list of apps worth installing before the BFCM rush, from bundles and pricing to bulk orders.",
