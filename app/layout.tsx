@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Red_Hat_Display } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import MicrosoftClarity from "@/components/MicrosoftClarity";
 import "./globals.css";
 
 // Body text (matches the current site's Inter usage)
@@ -35,6 +36,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="font-sans">{children}</body>
       {/* GA4 — @next/third-parties handles SPA pageviews on route change */}
       <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
+      {/* Clarity — efoli.com only, lazy-loaded after first interaction / idle */}
+      <MicrosoftClarity />
     </html>
   );
 }
