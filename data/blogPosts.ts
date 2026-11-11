@@ -23,6 +23,7 @@ import type {
   RawPost,
   RawPostList,
 } from "./cms-types";
+import { sanitizeCmsHtml } from "@/lib/cmsHtml";
 
 /**
  * All CMS storefront endpoints live under `/api/public` (posts, single post,
@@ -68,7 +69,8 @@ function normalizePost(raw: RawPost | null | undefined): Post | null {
     slug: raw.slug ?? "",
     title: raw.title || "",
     excerpt: cleanExcerpt(raw.excerpt || ""),
-    content: raw.content || "",
+    // Rendered as raw HTML, so sanitize it here, on the server (lib/cmsHtml.ts).
+    content: sanitizeCmsHtml(raw.content || ""),
     cover: raw.coverImage || null,
     coverAlt: raw.coverImageAlt || raw.title || "",
     category: raw.category || raw.categories?.[0] || null,

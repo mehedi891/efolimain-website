@@ -11,7 +11,7 @@ import {
   readingTime,
 } from "@/lib/blog";
 import Avatar from "./Avatar";
-import { deferCmsScripts, useRunCmsScripts } from "./cmsScripts";
+import { useCmsBlocks } from "./cmsBlocks";
 import type { Post } from "@/data/cms-types";
 
 // Keep the cover's entrance animation while gaining next/image optimization.
@@ -124,11 +124,12 @@ const Singlepost = ({ post, related = [] }: SinglepostProps) => {
 
   const toc = buildToc(post.content);
   const headings = toc.headings;
-  // CMS custom-HTML <script>s are run on the client (see cmsScripts.ts) so they
-  // work after client-side navigation too, not only on a direct page load.
-  const html = deferCmsScripts(toc.html);
+  // post.content is already sanitized on the server (lib/cmsHtml.ts), which
+  // strips CMS <script>s; custom HTML blocks get their reveal + Copy-button
+  // behaviour from cmsBlocks.ts instead.
+  const html = toc.html;
   const contentRef = useRef<HTMLDivElement>(null);
-  useRunCmsScripts(contentRef, html);
+  useCmsBlocks(contentRef, html);
 
   return (
     <article>
