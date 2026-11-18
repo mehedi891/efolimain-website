@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
 import { getAllPosts } from "@/data/blogPosts";
+import { isLandingSlug, listLandingPages } from "@/data/landingPages";
 
 /**
- * CMS-driven sitemap. Static pages plus every indexable blog post, with real
- * per-post lastmod. Ported from routes/sitemap[.xml].jsx — Next serves it at
+ * CMS-driven sitemap. Static pages, indexable CMS landing pages and every
+ * indexable blog post, with real per-item lastmod. Ported from routes/sitemap[.xml].jsx — Next serves it at
  * /sitemap.xml automatically from this file.
  *
  * URLs have no trailing slash, matching the site's canonical form (proxy.ts).
@@ -30,7 +31,10 @@ const staticPages = [
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const posts = await getAllPosts();
+  const [posts, landingPages] = await Promise.all([
+    getAllPosts(),
+    listLandingPages(),
+  ]);
 
   // Newest posts first, and never list anything the CMS marked noIndex.
   const indexablePosts = posts
@@ -61,5 +65,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticEntries, ...postEntries];
+  // Published CMS landing pages at the root, minus noIndex ones and any slug
+  // already listed above (a static route always wins over a landing page).
+  const staticPaths = new Set<string>(staticPages.map((page) => page.path));
+  const landingEntries: MetadataRoute.Sitemap = landingPages
+    .filter(
+      (page) =>
+        !page.noIndex &&
+        isLandingSlug(page.slug) &&
+        !staticPaths.has(`/${page.slug}`)
+    )
+    .map((page) => ({
+      url: `${BASE_URL}/${page.slug}`,
+      lastModified: new Date(page.updatedAt || page.publishedAt || Date.now()),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    }));
+
+  return [...staticEntries, ...landingEntries, ...postEntries];
 }

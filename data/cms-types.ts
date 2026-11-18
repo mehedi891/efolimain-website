@@ -102,3 +102,46 @@ export interface ListPostsParams {
   tag?: string;
   search?: string;
 }
+
+/* ── Landing pages (served at https://efoli.com/<slug>) ──────────────────── */
+
+/**
+ * A CMS landing page. `content` is the editor's HTML, Raw HTML blocks
+ * (<div data-html-block>) included. It is rendered exactly as received:
+ * never sanitized, scripts and all.
+ */
+export interface LandingPage {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  showHeader: boolean;
+  showFooter: boolean;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  ogImage: string | null;
+  canonicalUrl: string | null;
+  noIndex: boolean;
+  publishedAt: string | null;
+  updatedAt: string | null;
+  // Preview-only fields (present when fetched with the preview token).
+  status: PostStatus | null;
+  isPreview: boolean;
+}
+
+/** Loose shape of a landing page as returned by the CMS. */
+export type RawLandingPage = Partial<LandingPage>;
+
+/** One row of GET /api/public/landing-pages (no content; for the sitemap). */
+export interface LandingPageSummary {
+  title: string;
+  slug: string;
+  noIndex?: boolean;
+  publishedAt: string | null;
+  updatedAt: string | null;
+}
+
+export interface RawLandingPageList {
+  pages?: LandingPageSummary[];
+  total?: number;
+}

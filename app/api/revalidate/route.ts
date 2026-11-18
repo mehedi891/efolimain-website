@@ -1,5 +1,6 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { clearBlogCache } from "@/data/blogPosts";
+import { CMS_TAG } from "@/data/landingPages";
 
 /**
  * On-demand revalidation — POST /api/revalidate
@@ -11,11 +12,16 @@ import { clearBlogCache } from "@/data/blogPosts";
  *   - Fails CLOSED: with REVALIDATE_SECRET unset it returns 503 and refuses to
  *     run rather than authenticating a tokenless request.
  *
- * On Next we do two things for a blog change: drop the in-memory post-list
- * cache (used by search, category pills, the homepage rail and the sitemap)
- * via clearBlogCache(), and call revalidatePath() so any cached routes refresh.
- * Non-blog sections aren't consumed from the CMS on this site, so they're
- * acknowledged but no-op.
+ * Every accepted call:
+ *   - expires the `cms` fetch tag (landing pages + their sitemap list) and
+ *     revalidates the exact path sent, so a root path like /black-friday — a
+ *     landing page published, edited, unpublished or deleted — is fresh on its
+ *     next visit. When a landing page's URL changes, the CMS also sends the old
+ *     path, which then re-renders as a 404.
+ *   - refreshes the sitemap.
+ * A blog change additionally drops the in-memory post-list cache (used by
+ * search, category pills, the homepage rail and the sitemap) and refreshes the
+ * blog routes.
  */
 
 function tagForPath(path: string): "cms:blog" | null {
@@ -50,18 +56,30 @@ export async function POST(request: Request) {
   if (!path || typeof path !== "string") {
     return Response.json({ error: "path required" }, { status: 400 });
   }
+  if (!path.startsWith("/") || path.length > 1024) {
+    return Response.json(
+      { error: "path must be a site path starting with /" },
+      { status: 400 }
+    );
+  }
+
+  // Landing pages (and anything else fetched with the `cms` tag). This is a
+  // webhook, so expire right away rather than serving stale-while-revalidate:
+  // the editor should see the change on their next reload.
+  revalidateTag(CMS_TAG, { expire: 0 });
+  revalidatePath(path);
+  revalidatePath("/sitemap.xml");
 
   const tag = tagForPath(path);
   if (tag === "cms:blog") {
     clearBlogCache();
-    // Refresh the routes that render CMS content.
+    // Refresh the routes that render blog content.
     revalidatePath("/");
     revalidatePath("/blog");
     revalidatePath("/blog/[slug]", "page");
-    revalidatePath("/sitemap.xml");
   }
 
-  return Response.json({ revalidated: Boolean(tag), path, tag });
+  return Response.json({ revalidated: true, path, tags: tag ? [CMS_TAG, tag] : [CMS_TAG] });
 }
 
 // A loader so a stray GET returns 405 instead of a router match error.

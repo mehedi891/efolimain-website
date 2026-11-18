@@ -12,8 +12,12 @@ export interface SiteChromeProps {
   darkFooter?: boolean;
   /** Hide the "Let's Make a Real Impact" CTA banner (service, offer). */
   hideBanner?: boolean;
-  /** Show the draft-preview banner (blog post pages in draft mode — Phase 6). */
+  /** Show the draft-preview banner (blog post / landing pages in draft mode). */
   preview?: boolean;
+  /** Render the header (BFCM bar + navbar). CMS landing pages can turn it off. */
+  showHeader?: boolean;
+  /** Render the footer. CMS landing pages can turn it off. */
+  showFooter?: boolean;
 }
 
 /**
@@ -29,23 +33,31 @@ export default function SiteChrome({
   darkFooter = false,
   hideBanner = false,
   preview = false,
+  showHeader = true,
+  showFooter = true,
 }: SiteChromeProps) {
   return (
     <>
+      {/* Always shown in draft mode, even with the header off — a draft must
+          never be mistaken for the live page. */}
       {preview && <PreviewBanner />}
-      {/* Campaign bar sits above the sticky navbar and scrolls away with the page. */}
-      <BfcmAnnouncement />
-      <Navbar
-        parentClassName={
-          darkHeader
-            ? "bg-[#0A0C00]"
-            : "bg-white/90 backdrop-blur border-b border-gray-100"
-        }
-        linkClassName={darkHeader ? "text-white" : "text-[#4b5154]"}
-        isDark={darkHeader}
-      />
+      {showHeader && (
+        <>
+          {/* Campaign bar sits above the sticky navbar and scrolls away with the page. */}
+          <BfcmAnnouncement />
+          <Navbar
+            parentClassName={
+              darkHeader
+                ? "bg-[#0A0C00]"
+                : "bg-white/90 backdrop-blur border-b border-gray-100"
+            }
+            linkClassName={darkHeader ? "text-white" : "text-[#4b5154]"}
+            isDark={darkHeader}
+          />
+        </>
+      )}
       {children}
-      <Footer isDark={darkFooter} isBannerHide={hideBanner} />
+      {showFooter && <Footer isDark={darkFooter} isBannerHide={hideBanner} />}
     </>
   );
 }

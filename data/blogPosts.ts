@@ -1,8 +1,9 @@
 /**
  * Blog data layer — eFoli CMS (https://cms.efoli.com/api/public).
  *
- * This is the only module that talks to the CMS. Everything else consumes the
- * normalized `Post` shape produced by `normalizePost()` below.
+ * The only module that fetches blog content. Everything else consumes the
+ * normalized `Post` shape produced by `normalizePost()` below. The shared CMS
+ * client (base URL, site slug, fetch) lives in data/cms.ts.
  *
  * Endpoints used:
  *   GET /api/public/posts?site=&page=&limit=&category=&tag=
@@ -24,26 +25,7 @@ import type {
   RawPostList,
 } from "./cms-types";
 import { sanitizeCmsHtml } from "@/lib/cmsHtml";
-
-/**
- * All CMS storefront endpoints live under `/api/public` (posts, single post,
- * and the preview draft fetch all use it). Accept CMS_API_URL in any of these
- * forms and always resolve to the public API root, so setting it to
- * `https://cms.efoli.com/api` (or a bare host, or the full `/api/public`) all
- * work and can't silently 404:
- *   https://cms.efoli.com               → https://cms.efoli.com/api/public
- *   https://cms.efoli.com/api           → https://cms.efoli.com/api/public
- *   https://cms.efoli.com/api/public/   → https://cms.efoli.com/api/public
- */
-function resolvePublicApiBase(raw: string | undefined): string {
-  const base = (raw || "https://cms.efoli.com").trim().replace(/\/+$/, "");
-  if (/\/api\/public$/.test(base)) return base;
-  if (/\/api$/.test(base)) return `${base}/public`;
-  return `${base}/api/public`;
-}
-
-const API_BASE = resolvePublicApiBase(process.env.CMS_API_URL);
-const SITE = process.env.CMS_SITE || "efoli";
+import { buildUrl, CmsError, fetchJson, type FetchOptions } from "./cms";
 
 /** Max the CMS allows per request. */
 const MAX_LIMIT = 100;
@@ -94,47 +76,6 @@ function normalizePost(raw: RawPost | null | undefined): Post | null {
     status: raw.status || null, // DRAFT · PUBLISHED · SCHEDULED · ARCHIVED
     isPreview: Boolean(raw.isPreview),
   };
-}
-
-type QueryParams = Record<string, string | number | undefined | null>;
-
-function buildUrl(path: string, params: QueryParams = {}): string {
-  const url = new URL(`${API_BASE}${path}`);
-  url.searchParams.set("site", SITE);
-  for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined && value !== null && value !== "") {
-      url.searchParams.set(key, String(value));
-    }
-  }
-  return url.toString();
-}
-
-interface FetchOptions {
-  headers?: Record<string, string>;
-  cache?: RequestCache;
-}
-
-/** Error carrying the upstream HTTP status so callers can special-case 404. */
-class CmsError extends Error {
-  status?: number;
-  constructor(message: string, status?: number) {
-    super(message);
-    this.status = status;
-  }
-}
-
-async function fetchJson<T>(
-  url: string,
-  { headers = {}, cache }: FetchOptions = {}
-): Promise<T> {
-  const res = await fetch(url, {
-    headers: { Accept: "application/json", ...headers },
-    ...(cache ? { cache } : {}),
-  });
-  if (!res.ok) {
-    throw new CmsError(`CMS request failed (${res.status}) for ${url}`, res.status);
-  }
-  return res.json() as Promise<T>;
 }
 
 /* ── Full-list cache (only used for search + category derivation) ─────────── */
